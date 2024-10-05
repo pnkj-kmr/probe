@@ -106,14 +106,14 @@ func (d *store) Cursor(bucket string) <-chan []byte {
 	return ch
 }
 
-func (d *store) Len(bucket string) (total int) {
+func (d *store) Len(bucket string) (total uint64) {
 	d.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
 			return bolt.ErrBucketNotFound
 		}
 		data := b.Stats()
-		total = data.KeyN
+		total = uint64(data.KeyN)
 		return nil
 	})
 	return

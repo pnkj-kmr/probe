@@ -3,6 +3,7 @@ module probe
 go 1.22.3
 
 require (
+	github.com/pnkj-kmr/simple-json-db v1.1.0
 	github.com/stretchr/testify v1.8.1
 	go.etcd.io/bbolt v1.3.11
 )

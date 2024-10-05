@@ -10,7 +10,7 @@ type DatabaseReader interface {
 	Find(string, string) ([]byte, error)
 	Cursor(string) <-chan []byte
 	// All(string) ([][]byte, error)
-	Len(string) int
+	Len(string) uint64
 }
 
 // Database helps to define db layer
