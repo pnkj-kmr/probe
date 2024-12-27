@@ -1,0 +1,3 @@
+0.0.1
+
+# TODO - need to embed the pakcage into go lang

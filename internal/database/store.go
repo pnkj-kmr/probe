@@ -2,23 +2,23 @@ package database
 
 import "io"
 
-// DatabaseReader defines the readonly view on database
+// DBView defines the readonly view on database
 // If readonly operation needed
 // like - find and cursor
 // then DatabseReader instance should be used
-type DatabaseReader interface {
+type DBView interface {
 	Find(string, string) ([]byte, error)
 	Cursor(string) <-chan []byte
 	// All(string) ([][]byte, error)
 	Len(string) uint64
 }
 
-// Database helps to define db layer
-// it gives full access over database
+// DB helps to define db layer
+// it gives full access over store
 // read and write both pervilege
-type Database interface {
+type DB interface {
 	io.Closer
-	DatabaseReader
+	DBView
 
 	Create(string, string, []byte) error
 	CreateBulk(string, map[string][]byte) (int, error)

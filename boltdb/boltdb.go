@@ -3,7 +3,6 @@ package boltdb
 import (
 	"context"
 	"path/filepath"
-	"probe/database"
 	"time"
 
 	bolt "go.etcd.io/bbolt"
@@ -11,13 +10,13 @@ import (
 
 var DBName string = "probe.db"
 
-type store struct {
+type Config struct {
 	ctx  context.Context
 	db   *bolt.DB
 	path string
 }
 
-func New(ctx context.Context, directory string) (database.Database, error) {
+func New(ctx context.Context, directory string) (*Config, error) {
 	if directory != "" {
 		_, err := getOrCreateDir(directory)
 		if err != nil {
@@ -29,22 +28,22 @@ func New(ctx context.Context, directory string) (database.Database, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &store{
+	return &Config{
 		ctx:  ctx,
 		db:   db,
 		path: path,
 	}, nil
 }
 
-// func (d *store) Path() string {
+// func (d *Config) Path() string {
 // 	return d.path
 // }
 
-func (d *store) Close() error {
+func (d *Config) Close() error {
 	return d.db.Close()
 }
 
-func (d *store) Create(bucket, key string, data []byte) error {
+func (d *Config) Create(bucket, key string, data []byte) error {
 	return d.db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
 		if err != nil {
@@ -55,7 +54,7 @@ func (d *store) Create(bucket, key string, data []byte) error {
 
 }
 
-func (d *store) Update(bucket, key string, data []byte) error {
+func (d *Config) Update(bucket, key string, data []byte) error {
 	return d.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -65,7 +64,7 @@ func (d *store) Update(bucket, key string, data []byte) error {
 	})
 }
 
-func (d *store) Delete(bucket, key string) error {
+func (d *Config) Delete(bucket, key string) error {
 	return d.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -75,7 +74,7 @@ func (d *store) Delete(bucket, key string) error {
 	})
 }
 
-func (d *store) Find(bucket, key string) (out []byte, err error) {
+func (d *Config) Find(bucket, key string) (out []byte, err error) {
 	err = d.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -88,7 +87,7 @@ func (d *store) Find(bucket, key string) (out []byte, err error) {
 	return
 }
 
-func (d *store) Cursor(bucket string) <-chan []byte {
+func (d *Config) Cursor(bucket string) <-chan []byte {
 	ch := make(chan []byte)
 
 	go func() {
@@ -106,7 +105,7 @@ func (d *store) Cursor(bucket string) <-chan []byte {
 	return ch
 }
 
-func (d *store) Len(bucket string) (total uint64) {
+func (d *Config) Len(bucket string) (total uint64) {
 	d.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -119,7 +118,7 @@ func (d *store) Len(bucket string) (total uint64) {
 	return
 }
 
-func (d *store) CreateBulk(bucket string, data map[string][]byte) (total int, err error) {
+func (d *Config) CreateBulk(bucket string, data map[string][]byte) (total int, err error) {
 	err = d.db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
 		if err != nil {
@@ -139,7 +138,7 @@ func (d *store) CreateBulk(bucket string, data map[string][]byte) (total int, er
 	return
 }
 
-// func (d *store) all(bucket string) (out [][]byte, err error) {
+// func (d *Config) all(bucket string) (out [][]byte, err error) {
 // 	// var out [][]byte
 // 	err = d.db.View(func(tx *bolt.Tx) error {
 // 		b := tx.Bucket([]byte(bucket)) // Assume bucket exists and has keys

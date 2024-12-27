@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	"probe/database/boltdb"
+	"probe/boltdb"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
