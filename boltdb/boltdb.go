@@ -17,13 +17,20 @@ type Config struct {
 }
 
 func New(ctx context.Context, directory string) (*Config, error) {
+	return NewDB(ctx, directory, DBName)
+}
+
+func NewDB(ctx context.Context, directory, db_name string) (*Config, error) {
 	if directory != "" {
 		_, err := getOrCreateDir(directory)
 		if err != nil {
 			return nil, err
 		}
 	}
-	path := filepath.Join(directory, DBName)
+	if db_name == "" {
+		db_name = DBName
+	}
+	path := filepath.Join(directory, db_name)
 	db, err := bolt.Open(path, 0600, &bolt.Options{Timeout: 10 * time.Second})
 	if err != nil {
 		return nil, err

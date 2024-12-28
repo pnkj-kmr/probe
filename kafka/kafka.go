@@ -1,13 +1,13 @@
 package kafka
 
-import "probe/model"
+import M "probe/model"
 
 type Producer interface {
 	IsClosed() bool
-	Done() chan<- model.None
-	Produce() chan<- *model.ProducerMessage
-	OnSuccess() <-chan *model.ProducerMessage
-	OnError() <-chan *model.ProducerError
+	Done() chan<- M.None
+	Produce() chan<- *M.ProducerMessage
+	OnSuccess() <-chan *M.ProducerMessage
+	OnError() <-chan *M.ProducerError
 }
 
 type Config struct {

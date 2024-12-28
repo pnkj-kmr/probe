@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"probe/model"
+	M "probe/model"
 	"time"
 
 	"github.com/IBM/sarama"
@@ -9,11 +9,11 @@ import (
 
 type producer struct {
 	isClosed bool
-	done     chan model.None
+	done     chan M.None
 
 	producer         sarama.AsyncProducer
-	errors           chan *model.ProducerError
-	input, successes chan *model.ProducerMessage
+	errors           chan *M.ProducerError
+	input, successes chan *M.ProducerMessage
 	// TODO - to bind extra metadata or log
 }
 
@@ -72,28 +72,28 @@ func NewProducer(pc *ProducerConfig) (Producer, error) {
 
 	p := &producer{
 		producer:  _producer,
-		done:      make(chan model.None),
-		errors:    make(chan *model.ProducerError),
-		input:     make(chan *model.ProducerMessage),
-		successes: make(chan *model.ProducerMessage),
+		done:      make(chan M.None),
+		errors:    make(chan *M.ProducerError),
+		input:     make(chan *M.ProducerMessage),
+		successes: make(chan *M.ProducerMessage),
 	}
 	go p.loop()
 	return p, nil
 }
 
-func (p *producer) Produce() chan<- *model.ProducerMessage {
+func (p *producer) Produce() chan<- *M.ProducerMessage {
 	return p.input
 }
 
-func (p *producer) OnSuccess() <-chan *model.ProducerMessage {
+func (p *producer) OnSuccess() <-chan *M.ProducerMessage {
 	return p.successes
 }
 
-func (p *producer) OnError() <-chan *model.ProducerError {
+func (p *producer) OnError() <-chan *M.ProducerError {
 	return p.errors
 }
 
-func (p *producer) Done() chan<- model.None {
+func (p *producer) Done() chan<- M.None {
 	return p.done
 }
 
@@ -113,7 +113,7 @@ func (p *producer) close() error {
 	return nil
 }
 
-func (p *producer) toMsg(m *model.ProducerMessage) *sarama.ProducerMessage {
+func (p *producer) toMsg(m *M.ProducerMessage) *sarama.ProducerMessage {
 	return &sarama.ProducerMessage{
 		Topic:     string(m.Topic),
 		Key:       sarama.ByteEncoder(m.Key),
@@ -122,19 +122,19 @@ func (p *producer) toMsg(m *model.ProducerMessage) *sarama.ProducerMessage {
 	}
 }
 
-func (p *producer) fromMsg(m *sarama.ProducerMessage) *model.ProducerMessage {
+func (p *producer) fromMsg(m *sarama.ProducerMessage) *M.ProducerMessage {
 	key, _ := m.Key.Encode()
 	val, _ := m.Value.Encode()
-	return &model.ProducerMessage{
-		Topic:     model.ProducerTopic(m.Topic),
+	return &M.ProducerMessage{
+		Topic:     M.ProducerTopic(m.Topic),
 		Key:       key,
 		Value:     val,
 		Partition: m.Partition,
 	}
 }
 
-func (p *producer) fromError(e *sarama.ProducerError) *model.ProducerError {
-	return &model.ProducerError{
+func (p *producer) fromError(e *sarama.ProducerError) *M.ProducerError {
+	return &M.ProducerError{
 		Msg: p.fromMsg(e.Msg),
 		Err: e.Err,
 	}

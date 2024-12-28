@@ -1,11 +1,14 @@
 package icmp
 
 import (
+	M "probe/model"
+
 	probing "github.com/prometheus-community/pro-bing"
 )
 
-func ping(c C) (out R, err error) {
-	pinger, err := probing.NewPinger(c.IP.String())
+func ping(c M.ICMPConf) (out M.ICMP, err error) {
+	out = M.ICMP{Config: c}
+	pinger, err := probing.NewPinger(c.IP)
 	if err != nil {
 		return
 	}
@@ -18,14 +21,10 @@ func ping(c C) (out R, err error) {
 	}
 
 	stats := pinger.Statistics()
-	out = R{
-		Cid:        c.Cid,
-		Tag:        c.Tag,
-		IP:         c.IP,
-		Ok:         stats.PacketLoss != 100,
-		PacketLoss: stats.PacketLoss,
-		AvgRtt:     stats.AvgRtt,
-		StdDevRtt:  stats.StdDevRtt,
-	}
+	// updating the output stats
+	out.Ok = stats.PacketLoss != 100
+	out.PacketLoss = stats.PacketLoss
+	out.AvgRtt = stats.AvgRtt
+	out.StdDevRtt = stats.StdDevRtt
 	return
 }

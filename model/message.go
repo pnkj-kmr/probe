@@ -1,6 +1,4 @@
-package model
-
-type None struct{}
+package M
 
 type ProducerTopic string
 type ConsumerTopic string
