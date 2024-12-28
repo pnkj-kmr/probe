@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"probe/model"
+	"time"
 
 	"github.com/IBM/sarama"
 )
@@ -18,6 +19,19 @@ type producer struct {
 
 func NewProducer(pc *ProducerConfig) (Producer, error) {
 	conf := sarama.NewConfig()
+
+	// sarama.MaxRequestSize
+	// conf.Producer.Compression = sarama.CompressionNone
+	conf.Producer.Compression = sarama.CompressionSnappy
+	conf.Producer.MaxMessageBytes = 20 * 1024 * 1024
+	conf.Producer.Retry.Max = 3
+	// conf.Producer.Flush = 10 * 1024 * 1024
+	// conf.Producer.Timeout = time.Second * 6
+	conf.Producer.Flush.Frequency = time.Second * 1
+	conf.Producer.Flush.Messages = 10
+	conf.Producer.Flush.Bytes = 20 * 1024 * 1024
+	conf.Producer.Flush.MaxMessages = 1000
+
 	conf.Producer.Retry.Max = pc.Retires
 	conf.Producer.RequiredAcks = sarama.WaitForAll // p.Acks
 	conf.Producer.Return.Successes = true

@@ -22,5 +22,6 @@ test2:
 	-ca "/Users/pankaj/Workspace/golang/src/probe/tmp/ca-cert" \
 	-certificate "/Users/pankaj/Workspace/golang/src/probe/tmp/ca-cert" \
 	-tls \
-	-tls-skip-verify
+	-tls-skip-verify \
+	-c 100
 
