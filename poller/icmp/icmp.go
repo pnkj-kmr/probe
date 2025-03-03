@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	M "probe/model"
-	"probe/poller"
 	"sync"
 	"time"
 )
@@ -24,11 +23,11 @@ type ctx struct {
 	timeout  time.Duration
 }
 
-func NewICMPPoller(db M.DBView, bucket string, receiver M.Receiver, workers int, timeout time.Duration) poller.Poller {
+func NewICMPPoller(db M.DBView, bucket string, receiver M.Receiver, workers int, timeout time.Duration) M.Poller {
 	return &ctx{db, bucket, receiver, workers, timeout}
 }
 
-func NewICMPScanner() poller.Scanner {
+func NewICMPScanner() M.Scanner {
 	return &ctx{}
 }
 

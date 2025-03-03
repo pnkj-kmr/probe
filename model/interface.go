@@ -2,6 +2,14 @@ package M
 
 import "io"
 
+type Poller interface {
+	Poll() error
+}
+
+type Scanner interface {
+	Scan(interface{}) (interface{}, error)
+}
+
 type Receiver interface {
 	Receive() chan<- interface{}
 }
