@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
+	M "probe/model"
 	"probe/repository"
 )
 
@@ -11,11 +13,12 @@ func main() {
 		log.Println(err)
 	}
 
-	// val := []byte("v1")
-	// db.Create("k1", val)
+	val := M.InICMP{IP: "127.0.0.1", Cid: "12345"}
+	d, _ := json.Marshal(val)
+	db.Create("127.0.0.1", d)
 
-	data, err := db.Find("k1")
-	log.Println("k1", string(data), err)
+	data, err := db.Find("127.0.0.1")
+	log.Println("127.0.0.1", string(data), err)
 
 	for x := range db.Consume() {
 		log.Println("curosr ---- ", string(x))

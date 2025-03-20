@@ -68,7 +68,7 @@ func (x *PingMock) spin() {
 
 }
 
-func (x *PingMock) Produce(d any) (err error) {
+func (x *PingMock) Produce(d []byte) (err error) {
 	x.mu.Lock()
 	x.Count = x.Count + 1
 	x.mu.Unlock()

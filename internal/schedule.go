@@ -34,7 +34,7 @@ func NewScheduleEngine(poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, erro
 		if !ok {
 			return nil, ErrPOLLER
 		}
-		sch, err := newSchedule(ICMP, "icmp", e, options.interval, c)
+		sch, err := newSchedule(ICMP, "icmp", e, options.interval, options.maxRestarts, c)
 		if err != nil {
 			return nil, err
 		}
@@ -45,7 +45,7 @@ func NewScheduleEngine(poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, erro
 		if !ok {
 			return nil, ErrPOLLER
 		}
-		sch, err := newSchedule(SNMP, "snmp", e, options.interval, c)
+		sch, err := newSchedule(SNMP, "snmp", e, options.interval, options.maxRestarts, c)
 		if err != nil {
 			return nil, err
 		}
@@ -59,22 +59,23 @@ func (e *ScheduleEngine) Get(id int) (*schedule, bool) {
 }
 
 type schedule struct {
-	id       int
-	name     string
-	pid      *actor.PID
-	repeater actor.SendRepeater
-	engine   *actor.Engine
-	interval time.Duration
-	receiver actor.Receiver
+	id          int
+	name        string
+	pid         *actor.PID
+	repeater    actor.SendRepeater
+	engine      *actor.Engine
+	interval    time.Duration
+	receiver    actor.Receiver
+	maxRestarts int
 }
 
-func newSchedule(id int, name string, e *actor.Engine, t time.Duration, receiver *process) (*schedule, error) {
-	return &schedule{id: id, name: name, engine: e, interval: t, receiver: receiver}, nil
+func newSchedule(id int, name string, e *actor.Engine, t time.Duration, maxRestarts int, receiver *process) (*schedule, error) {
+	return &schedule{id: id, name: name, engine: e, interval: t, receiver: receiver, maxRestarts: maxRestarts}, nil
 }
 
 func (s *schedule) Start() {
 	fmt.Println("schedule---starting------", s.name)
-	s.pid = s.engine.SpawnFunc(s.receiver.Receive, s.name, actor.WithID(strconv.Itoa(s.id)))
+	s.pid = s.engine.SpawnFunc(s.receiver.Receive, s.name, actor.WithID(strconv.Itoa(s.id)), actor.WithMaxRestarts(s.maxRestarts))
 	s.repeater = s.engine.SendRepeat(s.pid, M.PollingBeat{Id: s.id, Name: s.name}, s.interval)
 }
 

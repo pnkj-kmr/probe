@@ -3,6 +3,7 @@ package probe
 import (
 	"fmt"
 	M "probe/model"
+	"probe/poller"
 	"probe/poller/icmp"
 	"time"
 
@@ -14,7 +15,7 @@ type PollEngine struct {
 	poller *safemap.SafeMap[int, *process]
 }
 
-func NewPollEngine(db *DBEngine, opts ...OptFunc) (*PollEngine, error) {
+func NewPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEngine, error) {
 	engine := &PollEngine{
 		poller: safemap.New[int, *process](),
 	}
@@ -28,14 +29,22 @@ func NewPollEngine(db *DBEngine, opts ...OptFunc) (*PollEngine, error) {
 		if !ok {
 			return nil, ErrDB
 		}
-		engine.poller.Set(ICMP, newProcess(ICMP, "icmp", c))
+		export, ok := export.Get(KAFKA)
+		if !ok {
+			return nil, ErrNoKAFKA
+		}
+		engine.poller.Set(ICMP, newProcess(ICMP, "icmp", c, options.workers, export))
 	}
 	if options.snmp {
 		c, ok := db.Get(SNMP)
 		if !ok {
 			return nil, ErrDB
 		}
-		engine.poller.Set(SNMP, newProcess(SNMP, "snmp", c))
+		export, ok := export.Get(KAFKA)
+		if !ok {
+			return nil, ErrNoKAFKA
+		}
+		engine.poller.Set(SNMP, newProcess(SNMP, "snmp", c, options.workers, export))
 	}
 	return engine, nil
 }
@@ -48,18 +57,19 @@ type process struct {
 	id       int
 	name     string
 	db       M.Consumer[<-chan []byte]
-	exporter M.Producer
+	exporter M.Producer[[]byte]
 	poller   M.Poller
+	workers  int
 }
 
-func newProcess(id int, name string, db M.Consumer[<-chan []byte]) *process {
-	return &process{id: id, name: name, db: db}
+func newProcess(id int, name string, db M.Consumer[<-chan []byte], workers int, exporter M.Producer[[]byte]) *process {
+	return &process{id: id, name: name, db: db, workers: workers, exporter: exporter}
 }
 
 func (i *process) setPoller() {
 	switch i.id {
 	case ICMP:
-		i.poller = icmp.NewPoller(i.db, i.exporter)
+		i.poller = icmp.NewPoller(i.db, i.exporter, poller.WithWorkers(i.workers))
 		// case SNMP:
 		// i.poller = snmp.NewPoller
 	}
@@ -93,6 +103,6 @@ func (i *process) Consume() <-chan []byte {
 	return i.db.Consume()
 }
 
-func (i *process) Produce(data any) error {
+func (i *process) Produce(data []byte) error {
 	return i.exporter.Produce(data)
 }

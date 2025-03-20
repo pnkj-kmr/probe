@@ -5,8 +5,13 @@ import (
 )
 
 type StreamType interface {
-	<-chan any | <-chan []byte | iter.Seq[any] | iter.Seq[[]byte]
+	iter.Seq[[]byte] |
+		<-chan []byte |
+		chan<- []byte |
+		[]byte
 }
+
+// <-chan any | iter.Seq[any]
 
 type Poller interface {
 	Poll() error
@@ -20,6 +25,6 @@ type Consumer[T StreamType] interface {
 	Consume() T
 }
 
-type Producer interface {
-	Produce(any) error
+type Producer[T StreamType] interface {
+	Produce(T) error
 }

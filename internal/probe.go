@@ -11,6 +11,7 @@ type Probe struct {
 	db       *DBEngine
 	poll     *PollEngine
 	schedule *ScheduleEngine
+	export   *ExportEngine
 }
 
 // ProbeConfig holds the configuration of the probe.
@@ -41,8 +42,16 @@ func NewProbe(config ProbeConfig, opts ...OptFunc) (*Probe, error) {
 	}
 	p.db = db
 
+	//Export engine init
+	// workers node
+	export, err := NewExportEngine(8, opts...)
+	if err != nil {
+		return nil, err
+	}
+	p.export = export
+
 	// Poller engine init
-	poll, err := NewPollEngine(db, opts...)
+	poll, err := NewPollEngine(db, export, opts...)
 	if err != nil {
 		return nil, err
 	}
