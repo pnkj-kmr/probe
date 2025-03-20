@@ -1,33 +1,37 @@
 package icmp_test
 
 import (
-	"encoding/json"
 	M "probe/model"
+	"probe/poller"
 	"probe/poller/icmp"
+	"probe/repository/mockdata"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestScanner(t *testing.T) {
-	scanner := icmp.NewICMPScanner()
+	var cp = mockdata.NewPingMock()
+	scanner := icmp.NewScanner(cp, cp, poller.WithWorkers(2), poller.WithTimeout(2*time.Second))
 	assert.NotNil(t, scanner)
 }
 
 func TestScanner_Scan(t *testing.T) {
-	var ping = func(c M.ICMPConf) (out M.ICMP, err error) {
-		out = M.ICMP{Config: c}
+	var ping = func(c M.InICMP) (out M.OutICMP, err error) {
+		out = M.OutICMP{Config: c}
 		return
 	}
-	scanner := icmp.NewICMPScanner()
-	i := M.ICMPConf{
+	var cp = mockdata.NewPingMock()
+	scanner := icmp.NewScanner(cp, cp, poller.WithWorkers(2), poller.WithTimeout(2*time.Second))
+	i := M.InICMP{
 		IP: "127.0.0.1",
 	}
 	icmp.Ping = ping
 	out, err := scanner.Scan(i)
 	assert.Nil(t, err)
 	assert.NotNil(t, out)
-	assert.Equal(t, i.IP, out.(M.ICMP).Config.IP)
+	assert.Equal(t, i.IP, out.(M.OutICMP).Config.IP)
 
 	out, err = scanner.Scan([]byte(""))
 	assert.Nil(t, out)
@@ -35,45 +39,24 @@ func TestScanner_Scan(t *testing.T) {
 }
 
 func TestPoller_Poll(t *testing.T) {
-	var ping = func(c M.ICMPConf) (out M.ICMP, err error) {
-		out = M.ICMP{Config: c}
+	var ping = func(c M.InICMP) (out M.OutICMP, err error) {
+		out = M.OutICMP{Config: c}
 		return
 	}
 	icmp.Ping = ping
-	var db = &_mock{}
+	var cp = mockdata.NewPingMock()
 
-	poller := icmp.NewICMPPoller(db, "test", db, 2, 2)
-	err := poller.Poll()
+	p := icmp.NewPoller(cp, cp, poller.WithWorkers(2), poller.WithTimeout(2*time.Second))
+	err := p.Poll()
 	assert.Nil(t, err)
-}
 
-type _mock struct{}
-
-func (x *_mock) Find(i, j string) (d []byte, err error) {
-	return
-}
-func (x *_mock) Cursor(i string) <-chan []byte {
-	ch := make(chan []byte)
-	go func() {
-		defer close(ch)
-		i := M.ICMPConf{
-			IP: "127.0.0.1",
-		}
-		d, _ := json.Marshal(i)
-		ch <- d
-	}()
-	return ch
-}
-func (x *_mock) Len(i string) uint64 {
-	return 0
-}
-
-func (x *_mock) Receive() chan<- interface{} {
-	ch := make(chan interface{})
-	go func() {
-		defer close(ch)
-		for _ = range ch {
-		}
-	}()
-	return ch
+	var ping2 = func(c M.InICMP) (out M.OutICMP, err error) {
+		return out, icmp.ErrICMP
+	}
+	icmp.Ping = ping2
+	var cp2 = mockdata.NewPingMock()
+	p = icmp.NewPoller(cp2, cp2, poller.WithWorkers(2), poller.WithTimeout(2*time.Second))
+	err = p.Poll()
+	assert.Nil(t, err)
+	assert.NotEmpty(t, cp2.Count)
 }

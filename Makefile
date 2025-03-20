@@ -1,4 +1,7 @@
 
+run:
+	go run main.go
+
 
 test:
 	go run tmp/producer/main.go \

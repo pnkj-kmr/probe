@@ -1,6 +1,6 @@
 probe.db
 TODO
-tmp
+tmp*
 bin
 data
 log

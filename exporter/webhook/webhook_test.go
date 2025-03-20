@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"probe/webhook"
+	"probe/exporter/webhook"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

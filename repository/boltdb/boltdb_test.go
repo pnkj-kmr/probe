@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	"probe/boltdb"
+	"probe/repository/boltdb"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -105,7 +105,7 @@ func TestBolt_Find(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, val, []byte("v1"))
 
-	data, err := db.Find("b", "k1")
+	data, _ := db.Find("b", "k1")
 	assert.Equal(t, data, val)
 
 	err = db.Delete("b", "k1")
@@ -151,7 +151,7 @@ func TestBolt_Len(t *testing.T) {
 	defer os.RemoveAll(boltdb.DBName)
 
 	total := db.Len("b")
-	assert.Equal(t, 0, total)
+	assert.Equal(t, uint64(0), total)
 
 	val := []byte("v1")
 	db.Create("b", "k1", val)
@@ -159,5 +159,5 @@ func TestBolt_Len(t *testing.T) {
 	db.Create("b", "k3", val)
 
 	total = db.Len("b")
-	assert.Equal(t, 3, total)
+	assert.Equal(t, uint64(3), total)
 }

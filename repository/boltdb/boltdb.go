@@ -10,17 +10,17 @@ import (
 
 var DBName string = "probe.db"
 
-type Config struct {
+type DB struct {
 	ctx  context.Context
 	db   *bolt.DB
 	path string
 }
 
-func New(ctx context.Context, directory string) (*Config, error) {
+func New(ctx context.Context, directory string) (*DB, error) {
 	return NewDB(ctx, directory, DBName)
 }
 
-func NewDB(ctx context.Context, directory, db_name string) (*Config, error) {
+func NewDB(ctx context.Context, directory, db_name string) (*DB, error) {
 	if directory != "" {
 		_, err := getOrCreateDir(directory)
 		if err != nil {
@@ -35,22 +35,22 @@ func NewDB(ctx context.Context, directory, db_name string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Config{
+	return &DB{
 		ctx:  ctx,
 		db:   db,
 		path: path,
 	}, nil
 }
 
-// func (d *Config) Path() string {
+// func (d *DB) Path() string {
 // 	return d.path
 // }
 
-func (d *Config) Close() error {
+func (d *DB) Close() error {
 	return d.db.Close()
 }
 
-func (d *Config) Create(bucket, key string, data []byte) error {
+func (d *DB) Create(bucket, key string, data []byte) error {
 	return d.db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
 		if err != nil {
@@ -61,7 +61,7 @@ func (d *Config) Create(bucket, key string, data []byte) error {
 
 }
 
-func (d *Config) Update(bucket, key string, data []byte) error {
+func (d *DB) Update(bucket, key string, data []byte) error {
 	return d.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -71,7 +71,7 @@ func (d *Config) Update(bucket, key string, data []byte) error {
 	})
 }
 
-func (d *Config) Delete(bucket, key string) error {
+func (d *DB) Delete(bucket, key string) error {
 	return d.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -81,7 +81,7 @@ func (d *Config) Delete(bucket, key string) error {
 	})
 }
 
-func (d *Config) Find(bucket, key string) (out []byte, err error) {
+func (d *DB) Find(bucket, key string) (out []byte, err error) {
 	err = d.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -94,16 +94,18 @@ func (d *Config) Find(bucket, key string) (out []byte, err error) {
 	return
 }
 
-func (d *Config) Cursor(bucket string) <-chan []byte {
+func (d *DB) Cursor(bucket string) <-chan []byte {
 	ch := make(chan []byte)
 
 	go func() {
 		defer close(ch)
 		d.db.View(func(tx *bolt.Tx) error {
 			b := tx.Bucket([]byte(bucket))
-			c := b.Cursor()
-			for k, v := c.First(); k != nil; k, v = c.Next() {
-				ch <- v
+			if b != nil {
+				c := b.Cursor()
+				for k, v := c.First(); k != nil; k, v = c.Next() {
+					ch <- v
+				}
 			}
 			return nil
 		})
@@ -112,7 +114,7 @@ func (d *Config) Cursor(bucket string) <-chan []byte {
 	return ch
 }
 
-func (d *Config) Len(bucket string) (total uint64) {
+func (d *DB) Len(bucket string) (total uint64) {
 	d.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -125,7 +127,7 @@ func (d *Config) Len(bucket string) (total uint64) {
 	return
 }
 
-func (d *Config) CreateBulk(bucket string, data map[string][]byte) (total int, err error) {
+func (d *DB) CreateBulk(bucket string, data map[string][]byte) (total int, err error) {
 	err = d.db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
 		if err != nil {
@@ -145,7 +147,7 @@ func (d *Config) CreateBulk(bucket string, data map[string][]byte) (total int, e
 	return
 }
 
-// func (d *Config) all(bucket string) (out [][]byte, err error) {
+// func (d *DB) all(bucket string) (out [][]byte, err error) {
 // 	// var out [][]byte
 // 	err = d.db.View(func(tx *bolt.Tx) error {
 // 		b := tx.Bucket([]byte(bucket)) // Assume bucket exists and has keys

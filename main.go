@@ -1,0 +1,34 @@
+package main
+
+import (
+	"context"
+	"log/slog"
+	"os"
+	"os/signal"
+	probe "probe/internal"
+	"syscall"
+)
+
+func main() {
+	signalChan := shutdownSignal()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	probe, err := probe.NewProbe(probe.NewProbeConfig(ctx), probe.WithICMP())
+	if err != nil {
+		slog.Error("err found")
+	}
+
+	go probe.Start()
+	<-signalChan
+	probe.Stop()
+}
+
+func shutdownSignal() <-chan os.Signal {
+	// Create a channel to listen for OS signals (like SIGINT, SIGTERM)
+	signalChan := make(chan os.Signal, 1)
+	// Notify the channel when a termination signal is received (Ctrl+C or SIGTERM)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+	return signalChan
+}
