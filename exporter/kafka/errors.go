@@ -3,5 +3,5 @@ package kafka
 import "errors"
 
 var (
-	NoSASLMechanismFound = errors.New("invalid SHA algorithm: can be either \"sha256\" or \"sha512\"")
+	ErrNoSASLMechanismFound = errors.New("invalid SHA algorithm: can be either \"sha256\" or \"sha512\"")
 )

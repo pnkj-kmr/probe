@@ -75,6 +75,7 @@ func (i *process) setPoller() {
 	}
 }
 
+// Receive - here it's invoke the polling batch on given interval
 func (i *process) Receive(ctx *actor.Context) {
 	switch msg := ctx.Message().(type) {
 	case actor.Initialized:
@@ -103,6 +104,6 @@ func (i *process) Consume() <-chan []byte {
 	return i.db.Consume()
 }
 
-func (i *process) Produce(data []byte) error {
-	return i.exporter.Produce(data)
-}
+// func (i *process) Produce(data []byte) error {
+// 	return i.exporter.Produce(data)
+// }

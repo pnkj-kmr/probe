@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -18,6 +19,7 @@ func main() {
 	probe, err := probe.NewProbe(probe.NewProbeConfig(ctx), probe.WithICMP())
 	if err != nil {
 		slog.Error("err found")
+		log.Fatalln(err)
 	}
 
 	go probe.Start()

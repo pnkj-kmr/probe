@@ -68,9 +68,12 @@ func NewProbe(config ProbeConfig, opts ...OptFunc) (*Probe, error) {
 
 func (p *Probe) Start() {
 	// Simulating work by sleeping
-	p.schedule.scheduler.ForEach(func(i int, scheduler *schedule) {
-		fmt.Println("start----", i)
-		scheduler.Start()
+	p.schedule.scheduler.ForEach(func(i int, s *schedule) {
+		// fmt.Println("start----", i)
+		s.Start()
+	})
+	p.export.exporter.ForEach(func(i int, e *export) {
+		e.Start()
 	})
 
 	<-p.ctx.context.Done()
@@ -79,9 +82,12 @@ func (p *Probe) Start() {
 
 func (p *Probe) Stop() {
 	fmt.Println("Shutting down gracefully...")
-	p.schedule.scheduler.ForEach(func(i int, scheduler *schedule) {
-		fmt.Println("stop----", i)
-		scheduler.Stop()
+	p.schedule.scheduler.ForEach(func(i int, s *schedule) {
+		// fmt.Println("stop----", i)
+		s.Stop()
+	})
+	p.export.exporter.ForEach(func(i int, e *export) {
+		e.Stop()
 	})
 	fmt.Println("probe stop initiated...")
 }

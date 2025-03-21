@@ -28,3 +28,11 @@ type Consumer[T StreamType] interface {
 type Producer[T StreamType] interface {
 	Produce(T) error
 }
+
+// type Receiver[T StreamType] interface {
+// 	Receive() T
+// }
+
+type Exporter[T StreamType] interface {
+	Export() T
+}
