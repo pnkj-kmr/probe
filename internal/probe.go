@@ -2,92 +2,94 @@ package probe
 
 import (
 	"context"
-	"fmt"
+	"log"
 )
 
 // Probe
 type Probe struct {
-	ctx      *Context
-	db       *DBEngine
-	poll     *PollEngine
-	schedule *ScheduleEngine
-	export   *ExportEngine
+	ctx *Context
 }
 
-// ProbeConfig holds the configuration of the probe.
-type ProbeConfig struct {
-	ctx context.Context
+func NewProbeWithContext(c context.Context, opts ...OptFunc) (*Probe, error) {
+	opts = append(opts, WithContext(c))
+	return NewProbe(opts...)
 }
 
-// NewProbeConfig returns a new default ProbeConfig.
-func NewProbeConfig(ctx context.Context) ProbeConfig {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-	return ProbeConfig{ctx: ctx}
-}
-
-func NewProbe(config ProbeConfig, opts ...OptFunc) (*Probe, error) {
+func NewProbe(opts ...OptFunc) (*Probe, error) {
 	p := &Probe{}
 	options := DefaultOpts()
 	for _, opt := range opts {
 		opt(&options)
 	}
-	p.ctx = newContext(config.ctx)
+	p.ctx = newContext(options.context)
 
 	// DB engine init
-	db, err := NewDBEngine(opts...)
+	db, err := newDBEngine(opts...)
 	if err != nil {
 		return nil, err
 	}
-	p.db = db
+	p.ctx.WithDB(db)
 
 	//Export engine init
 	// workers node
-	export, err := NewExportEngine(8, opts...)
+	export, err := newExportEngine(8, opts...)
 	if err != nil {
 		return nil, err
 	}
-	p.export = export
+	p.ctx.WithExport(export)
 
 	// Poller engine init
-	poll, err := NewPollEngine(db, export, opts...)
+	poll, err := newPollEngine(db, export, opts...)
 	if err != nil {
 		return nil, err
 	}
-	p.poll = poll
+	p.ctx.WithPoll(poll)
 
 	// Schedule engine init
-	schedule, err := NewScheduleEngine(poll, opts...)
+	schedule, err := newScheduleEngine(poll, opts...)
 	if err != nil {
 		return nil, err
 	}
-	p.schedule = schedule
+	p.ctx.WithSchdule(schedule)
+
+	// API engine init
+	api, err := newAPIEngine()
+	if err != nil {
+		return nil, err
+	}
+	p.ctx.WithAPI(api)
+
+	// Event engine init
+	event, err := newEventEngine()
+	if err != nil {
+		return nil, err
+	}
+	p.ctx.WithEvent(event)
+
 	return p, nil
 }
 
+func (p *Probe) Context() *Context {
+	return p.ctx
+}
+
 func (p *Probe) Start() {
-	// Simulating work by sleeping
-	p.schedule.scheduler.ForEach(func(i int, s *schedule) {
-		// fmt.Println("start----", i)
-		s.Start()
-	})
-	p.export.exporter.ForEach(func(i int, e *export) {
-		e.Start()
-	})
+	log.Println("[PROBE] started")
+
+	p.ctx.Schedule().Start()
+	p.ctx.Export().Start()
+	p.ctx.API().Start()
 
 	<-p.ctx.context.Done()
-	fmt.Println("Shutting down gracefully...")
 }
 
 func (p *Probe) Stop() {
-	fmt.Println("Shutting down gracefully...")
-	p.schedule.scheduler.ForEach(func(i int, s *schedule) {
-		// fmt.Println("stop----", i)
-		s.Stop()
-	})
-	p.export.exporter.ForEach(func(i int, e *export) {
-		e.Stop()
-	})
-	fmt.Println("probe stop initiated...")
+	log.Println("[PROBE] Shutting down gracefully...")
+
+	p.ctx.Schedule().Stop()
+	p.ctx.Export().Stop()
+	p.ctx.API().Stop()
+
+	log.Println("[PROBE] gracefully shutdown")
+
 }

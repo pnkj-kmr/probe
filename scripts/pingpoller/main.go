@@ -10,7 +10,7 @@ import (
 
 func main() {
 	var ping = func(c M.InICMP) (out M.OutICMP, err error) {
-		out = M.OutICMP{Config: c}
+		out = M.OutICMP{Cid: c.Cid, Params: c.Params}
 		return
 	}
 	icmp.Ping = ping

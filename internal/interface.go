@@ -1,18 +1,5 @@
 package probe
 
-// declaring generic constraints
-const (
-	API = iota
-	ICMP
-	SNMP
-	HTTP
-	SSH
-	TELNET
-	KAFKA
-	RMQ
-	WEBHOOK
-)
-
 // type Receiver interface {
 // 	Receive() chan<- interface{}
 // }

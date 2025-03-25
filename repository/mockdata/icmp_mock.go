@@ -19,7 +19,7 @@ func NewPingMock() *PingMock {
 	return p
 }
 
-func (x *PingMock) Consume() <-chan []byte {
+func (x *PingMock) Receive() <-chan []byte {
 	return x.ch
 }
 
@@ -27,22 +27,15 @@ func (x *PingMock) spin() {
 	for k := 1; k < 9; k++ {
 		if k == 4 {
 			i := M.OutICMP{
-				Config: M.InICMP{
-					IP: "127.0.0.4",
-				},
-				Ok:         true,
-				PacketLoss: 78,
+				Cid:   "44444",
+				Stats: map[string][4]float64{"input": {1, 2, 3, 4}},
 			}
 			d, _ := json.Marshal(i)
 			x.ch <- d
 		}
 		if k == 3 {
 			i := M.OutICMP{
-				Config: M.InICMP{
-					IP: "127.0.0.3",
-				},
-				Ok:         false,
-				PacketLoss: 100,
+				Cid: "12345",
 			}
 			d, _ := json.Marshal(i)
 			x.ch <- d
@@ -68,7 +61,7 @@ func (x *PingMock) spin() {
 
 }
 
-func (x *PingMock) Produce(d []byte) (err error) {
+func (x *PingMock) Send(d []byte) (err error) {
 	x.mu.Lock()
 	x.Count = x.Count + 1
 	x.mu.Unlock()

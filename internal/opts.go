@@ -21,6 +21,7 @@ type OptFunc func(*Opts)
 // DefaultOpts returns default options.
 func DefaultOpts() Opts {
 	return Opts{
+		context:     context.Background(),
 		port:        8080,
 		api:         true,
 		interval:    time.Second * 10,

@@ -20,7 +20,7 @@ func main() {
 	data, err := db.Find("127.0.0.1")
 	log.Println("127.0.0.1", string(data), err)
 
-	for x := range db.Consume() {
+	for x := range db.Receive() {
 		log.Println("curosr ---- ", string(x))
 	}
 

@@ -147,6 +147,26 @@ func (d *DB) CreateBulk(bucket string, data map[string][]byte) (total int, err e
 	return
 }
 
+// func (d *DB) CreateWith(bucket string, data <-chan M.Record) (total int, err error) {
+// 	err = d.db.Update(func(tx *bolt.Tx) error {
+// 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
+// 		if err != nil {
+// 			return err
+// 		}
+// 		var _err error
+// 		for record := range data {
+// 			e := b.Put(record.Key, record.Value)
+// 			if e != nil {
+// 				_err = e
+// 			} else {
+// 				total += 1
+// 			}
+// 		}
+// 		return _err
+// 	})
+// 	return
+// }
+
 // func (d *DB) all(bucket string) (out [][]byte, err error) {
 // 	// var out [][]byte
 // 	err = d.db.View(func(tx *bolt.Tx) error {

@@ -17,7 +17,7 @@ type Exporter struct {
 	id    int
 	name  string
 	kafka sarama.AsyncProducer
-	input chan []byte
+	input chan []byte // generic type declaration
 }
 
 func New(id int, name string) (*Exporter, error) {
@@ -53,7 +53,7 @@ func (r *Exporter) loop() {
 	}
 }
 
-func (r *Exporter) Export() (data chan []byte) {
+func (r *Exporter) Send() (data chan []byte) {
 	// in case of kafka
 	// - need to group the extra metadata into message
 	// - multi message should be group together to push to kafka

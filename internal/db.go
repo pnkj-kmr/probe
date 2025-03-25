@@ -3,16 +3,26 @@ package probe
 import (
 	"probe/repository"
 
+	"github.com/anthdm/hollywood/actor"
 	"github.com/anthdm/hollywood/safemap"
 )
 
 type DBEngine struct {
-	db *safemap.SafeMap[int, *repository.Repository]
+	engine  *actor.Engine
+	db      *safemap.SafeMap[int, *repository.Repository]
+	process *safemap.SafeMap[int, *dbProcess]
 }
 
-func NewDBEngine(opts ...OptFunc) (*DBEngine, error) {
+func newDBEngine(opts ...OptFunc) (*DBEngine, error) {
+	e, err := actor.NewEngine(actor.NewEngineConfig())
+	if err != nil {
+		return nil, err
+	}
+
 	engine := &DBEngine{
-		db: safemap.New[int, *repository.Repository](),
+		engine:  e,
+		db:      safemap.New[int, *repository.Repository](),
+		process: safemap.New[int, *dbProcess](),
 	}
 	options := DefaultOpts()
 	for _, opt := range opts {
@@ -25,6 +35,12 @@ func NewDBEngine(opts ...OptFunc) (*DBEngine, error) {
 			return nil, err
 		}
 		engine.db.Set(ICMP, db)
+
+		p, err := newDBProcess(ICMP, "icmp", e)
+		if err != nil {
+			return nil, err
+		}
+		engine.process.Set(ICMP, p)
 	}
 	if options.snmp {
 		db, err := repository.New("snmp", SNMP)
@@ -32,6 +48,12 @@ func NewDBEngine(opts ...OptFunc) (*DBEngine, error) {
 			return nil, err
 		}
 		engine.db.Set(SNMP, db)
+
+		p, err := newDBProcess(SNMP, "snmp", e)
+		if err != nil {
+			return nil, err
+		}
+		engine.process.Set(SNMP, p)
 	}
 	return engine, nil
 }
