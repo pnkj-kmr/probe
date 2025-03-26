@@ -53,14 +53,14 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 	p.ctx.WithSchdule(schedule)
 
 	// API engine init
-	api, err := newAPIEngine()
+	api, err := newAPIEngine(db, opts...)
 	if err != nil {
 		return nil, err
 	}
 	p.ctx.WithAPI(api)
 
 	// Event engine init
-	event, err := newEventEngine()
+	event, err := newEventEngine(opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,9 +76,10 @@ func (p *Probe) Context() *Context {
 func (p *Probe) Start() {
 	log.Println("[PROBE] started")
 
-	p.ctx.Schedule().Start()
+	// p.ctx.Schedule().Start()
 	p.ctx.Export().Start()
 	p.ctx.API().Start()
+	p.ctx.DB().Start()
 
 	<-p.ctx.context.Done()
 }
@@ -86,9 +87,10 @@ func (p *Probe) Start() {
 func (p *Probe) Stop() {
 	log.Println("[PROBE] Shutting down gracefully...")
 
-	p.ctx.Schedule().Stop()
+	// p.ctx.Schedule().Stop()
 	p.ctx.Export().Stop()
 	p.ctx.API().Stop()
+	p.ctx.DB().Stop()
 
 	log.Println("[PROBE] gracefully shutdown")
 

@@ -17,6 +17,7 @@ func main() {
 	defer cancel()
 
 	probe, err := probe.NewProbeWithContext(ctx, probe.WithICMP())
+	// probe, err := probe.NewProbeWithContext(ctx)
 	if err != nil {
 		slog.Error("err found")
 		log.Fatalln(err)

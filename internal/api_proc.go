@@ -1,11 +1,10 @@
 package probe
 
 import (
-	"fmt"
+	"log"
 	api "probe/apiserver"
 	M "probe/model"
 	"strconv"
-	"time"
 
 	"github.com/anthdm/hollywood/actor"
 )
@@ -16,56 +15,52 @@ type apiProcess struct {
 	engine *actor.Engine
 	pid    *actor.PID
 	server *api.Server
+	db     *DBEngine
 }
 
-func newApiProcess(id int, name string, e *actor.Engine) (*apiProcess, error) {
-	proc := &apiProcess{id: id, name: name, engine: e}
-	if id == API {
-		proc.server = api.New(proc)
-	}
+func newApiProcess(id int, name string, e *actor.Engine, db *DBEngine) (*apiProcess, error) {
+	proc := &apiProcess{id: id, name: name, engine: e, db: db}
 	return proc, nil
 }
 
-func (p *apiProcess) Send(data []byte) error {
-	// on init we need to spin engine spawn with max node
-	// here we put mainporc pid to send
-	fmt.Println("apiProcess produce message received --- ", p.name, data)
-
-	// TODO - need to handle this properly
-	// p.pid inbox size to be increated to avoid extra load which found
-	//
-	p.engine.Send(p.pid, M.ExportMsg{Id: p.id, Name: p.name, Data: data})
-
+func (p *apiProcess) Send(data any) error {
+	log.Println("[API] produce a message")
+	p.engine.Send(p.pid, data)
 	return nil
 }
 
 func (p *apiProcess) Receive(ctx *actor.Context) {
 	switch msg := ctx.Message().(type) {
 	case actor.Initialized:
-		fmt.Println("Initialized apiProcess --- ", p.name)
+		if p.id == API {
+			p.server = api.New(p)
+		}
+		log.Println("[API] process initialized...", p.name)
 	case actor.Started:
-		fmt.Println("apiProcess started.........", p.name)
+		// running API chi server here
+		go p.server.Run()
+		log.Println("[API] process started", p.name)
 	case actor.Stopped:
-		fmt.Println("apiProcess stopped!!!!!!!!", p.name)
-
+		log.Println("[API] process stopped", p.name)
+	case *M.InICMP:
+		db, ok := p.db.GetProcess(ICMP)
+		if ok {
+			db.Send(msg)
+		}
 	default:
-		// need to resend the process
-		fmt.Println("message getting... ,,,, from api to save into system...", p.name, msg)
-		time.Sleep(1 * time.Second)
+		_ = msg
+		log.Println("[API] default message")
 	}
 }
 
 func (p *apiProcess) start() {
-	fmt.Println("apiProcess---starting------", p.name)
+	// log.Println("[API] process starting...")
 	p.pid = p.engine.SpawnFunc(p.Receive, p.name, actor.WithID(strconv.Itoa(p.id)))
-	// running API chi server here
-	go p.server.Run()
 }
 
 func (p *apiProcess) stop() error {
-	fmt.Println("apiProcess---stopping------", p.name)
 	ctx := p.engine.Poison(p.pid)
 	<-ctx.Done()
-	fmt.Println("apiProcess---stopped------", p.name)
+	// log.Println("[API] process stopped")
 	return nil
 }

@@ -12,11 +12,11 @@ API Server
 
 type Server struct {
 	port   int
-	sender M.Sender[[]byte]
+	sender M.Sender[any]
 	// receiver M.Receiver[[]byte]
 }
 
-func New(sender M.Sender[[]byte]) *Server {
+func New(sender M.Sender[any]) *Server {
 	return &Server{
 		port:   3000,
 		sender: sender,
@@ -30,7 +30,7 @@ func (api *Server) Run() error {
 	return http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", api.port), r)
 }
 
-func (api *Server) Send(msg []byte) error {
+func (api *Server) Send(msg any) error {
 	return api.sender.Send(msg)
 }
 

@@ -1,11 +1,10 @@
 package probe
 
 import (
-	"fmt"
+	"log"
 	M "probe/model"
 	"probe/poller"
 	"probe/poller/icmp"
-	"time"
 
 	"github.com/anthdm/hollywood/actor"
 )
@@ -36,14 +35,14 @@ func (p *pollProcess) setPoller() {
 func (p *pollProcess) Receive(ctx *actor.Context) {
 	switch msg := ctx.Message().(type) {
 	case actor.Initialized:
+		log.Println("[POLL] process initialized...", p.name)
 		p.setPoller()
-		fmt.Println("Initialized poller --- ", p.name)
 	case actor.Started:
-		fmt.Println("poller started.........", p.name)
+		log.Println("[POLL] process started", p.name)
 	case actor.Stopped:
-		fmt.Println("poller stopped!!!!!!!!", p.name)
+		log.Println("[POLL] process stopped", p.name)
 	case M.PollingBeat:
-		fmt.Println("invoking polling again ....", p.id, p.name, msg.Name, ctx.PID().ID)
+		log.Println("invoking polling again ....", p.id, p.name, msg.Name, ctx.PID().ID)
 		p.poller.Poll()
 		// for p := 0; p < 10; p++ {
 		// 	ctx.Send(ctx.PID(), "hello")
@@ -51,16 +50,8 @@ func (p *pollProcess) Receive(ctx *actor.Context) {
 		// }
 		// ctx.Send(ctx.PID(), "hello")
 	default:
-		fmt.Println("message getting computted....", p.name, msg)
-		time.Sleep(1 * time.Second)
+		log.Println("[POLL] default poll process message")
+		_ = msg
 	}
 
 }
-
-// func (p *pollProcess) Consume() <-chan []byte {
-// 	return p.db.Receive()
-// }
-
-// func (p *pollProcess) Produce(data []byte) error {
-// 	return p.exporter.Produce(data)
-// }

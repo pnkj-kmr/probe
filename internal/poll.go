@@ -18,7 +18,7 @@ func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEn
 	}
 
 	if options.icmp {
-		c, ok := db.Get(ICMP)
+		c, ok := db.GetDB(ICMP)
 		if !ok {
 			return nil, ErrDB
 		}
@@ -29,7 +29,7 @@ func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEn
 		engine.process.Set(ICMP, newPollProcess(ICMP, "icmp", c, options.workers, export))
 	}
 	if options.snmp {
-		c, ok := db.Get(SNMP)
+		c, ok := db.GetDB(SNMP)
 		if !ok {
 			return nil, ErrDB
 		}

@@ -36,7 +36,7 @@ func newDBEngine(opts ...OptFunc) (*DBEngine, error) {
 		}
 		engine.db.Set(ICMP, db)
 
-		p, err := newDBProcess(ICMP, "icmp", e)
+		p, err := newDBProcess(ICMP, "icmp", e, db)
 		if err != nil {
 			return nil, err
 		}
@@ -49,7 +49,7 @@ func newDBEngine(opts ...OptFunc) (*DBEngine, error) {
 		}
 		engine.db.Set(SNMP, db)
 
-		p, err := newDBProcess(SNMP, "snmp", e)
+		p, err := newDBProcess(SNMP, "snmp", e, db)
 		if err != nil {
 			return nil, err
 		}
@@ -58,6 +58,22 @@ func newDBEngine(opts ...OptFunc) (*DBEngine, error) {
 	return engine, nil
 }
 
-func (e *DBEngine) Get(id int) (*repository.Repository, bool) {
+func (e *DBEngine) GetDB(id int) (*repository.Repository, bool) {
 	return e.db.Get(id)
+}
+
+func (e *DBEngine) GetProcess(id int) (*dbProcess, bool) {
+	return e.process.Get(id)
+}
+
+func (e *DBEngine) Start() {
+	e.process.ForEach(func(i int, s *dbProcess) {
+		s.start()
+	})
+}
+
+func (e *DBEngine) Stop() {
+	e.process.ForEach(func(i int, s *dbProcess) {
+		s.stop()
+	})
 }

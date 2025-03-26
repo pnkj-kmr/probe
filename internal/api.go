@@ -10,7 +10,7 @@ type APIEngine struct {
 	process *safemap.SafeMap[int, *apiProcess]
 }
 
-func newAPIEngine(opts ...OptFunc) (*APIEngine, error) {
+func newAPIEngine(db *DBEngine, opts ...OptFunc) (*APIEngine, error) {
 	e, err := actor.NewEngine(actor.NewEngineConfig())
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func newAPIEngine(opts ...OptFunc) (*APIEngine, error) {
 	}
 
 	if options.api {
-		p, err := newApiProcess(API, "api", e)
+		p, err := newApiProcess(API, "api", e, db)
 		if err != nil {
 			return nil, err
 		}

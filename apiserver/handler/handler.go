@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	M "probe/model"
 
@@ -10,11 +8,11 @@ import (
 )
 
 type handle struct {
-	sender M.Sender[[]byte]
+	sender M.Sender[any]
 	// receiver M.Receiver[[]byte]
 }
 
-func New(s M.Sender[[]byte]) *handle {
+func New(s M.Sender[any]) *handle {
 	return &handle{
 		sender: s,
 		// receiver: r,
@@ -33,12 +31,8 @@ func (h *handle) PaylodICMP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// article := data.Article
-	// dbNewArticle(article)
-	fmt.Println("data ---> ", data)
-	d, _ := json.Marshal(data)
-	h.sender.Send(d)
-	w.Write(d)
+	h.sender.Send(data)
+	w.Write([]byte("request has been sent to queue."))
 	render.Status(r, http.StatusCreated)
 
 }

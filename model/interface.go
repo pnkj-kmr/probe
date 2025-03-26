@@ -8,7 +8,8 @@ type StreamType interface {
 	iter.Seq[[]byte] |
 		<-chan []byte |
 		chan<- []byte |
-		[]byte
+		[]byte |
+		any
 }
 
 // <-chan any | iter.Seq[any]

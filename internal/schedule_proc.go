@@ -1,7 +1,6 @@
 package probe
 
 import (
-	"log"
 	M "probe/model"
 	"strconv"
 	"time"
@@ -30,7 +29,7 @@ func newScheduleProcess(id int, name string, e *actor.Engine, t time.Duration, m
 }
 
 func (p *scheduleProcess) start() {
-	log.Println("[scheduleProcess] starting...", p.name)
+	// log.Println("[SCHEDULE] starting...", p.name)
 	p.pid = p.engine.SpawnFunc(
 		p.receiver.Receive,
 		p.name,
@@ -45,10 +44,10 @@ func (p *scheduleProcess) start() {
 }
 
 func (p *scheduleProcess) stop() error {
-	log.Println("[scheduleProcess] stopping...", p.name)
+	// log.Println("[SCHEDULE] stopping...", p.name)
 	p.repeater.Stop()
 	ctx := p.engine.Poison(p.pid)
 	<-ctx.Done()
-	log.Println("[scheduleProcess] stoppped", p.name)
+	// log.Println("[SCHEDULE] stoppped", p.name)
 	return nil
 }
