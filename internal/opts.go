@@ -14,6 +14,9 @@ type Opts struct {
 	interval    time.Duration
 	maxRestarts int
 	workers     int
+	kafka       bool
+	bucketSize  int
+	partition   int
 }
 
 type OptFunc func(*Opts)
@@ -24,9 +27,13 @@ func DefaultOpts() Opts {
 		context:     context.Background(),
 		port:        8080,
 		api:         true,
+		kafka:       true,
 		interval:    time.Second * 10,
 		maxRestarts: 3,
 		workers:     100,
+		// TODO - need to take from app.yml
+		bucketSize: 2,
+		partition:  2,
 	}
 }
 
@@ -39,6 +46,18 @@ func WithContext(ctx context.Context) OptFunc {
 func WithICMP() OptFunc {
 	return func(opts *Opts) {
 		opts.icmp = true
+	}
+}
+
+func WithKafka() OptFunc {
+	return func(opts *Opts) {
+		opts.kafka = true
+	}
+}
+
+func WithBucketSize(t int) OptFunc {
+	return func(opts *Opts) {
+		opts.bucketSize = t
 	}
 }
 

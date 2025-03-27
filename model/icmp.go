@@ -10,6 +10,7 @@ type PingParams struct {
 	PollType   string        `json:"poll_type"`
 	PCid       string        `json:"parent_ci_id"`
 	MibProfile string        `json:"mib_profile"`
+	IP         string        `json:"poll_addr"`
 	IPs        []string      `json:"ips,omitempty"`
 	PktCount   int           `json:"packsiz,omitempty"`
 	Timeout    time.Duration `json:"timeout,omitempty"`

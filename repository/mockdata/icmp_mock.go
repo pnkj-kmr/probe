@@ -61,7 +61,7 @@ func (x *PingMock) spin() {
 
 }
 
-func (x *PingMock) Send(d []byte) (err error) {
+func (x *PingMock) Send(d any) (err error) {
 	x.mu.Lock()
 	x.Count = x.Count + 1
 	x.mu.Unlock()

@@ -32,7 +32,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 
 	//Export engine init
 	// workers node
-	export, err := newExportEngine(8, opts...)
+	export, err := newExportEngine(opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (p *Probe) Context() *Context {
 func (p *Probe) Start() {
 	log.Println("[PROBE] started")
 
-	// p.ctx.Schedule().Start()
+	p.ctx.Schedule().Start()
 	p.ctx.Export().Start()
 	p.ctx.API().Start()
 	p.ctx.DB().Start()
@@ -87,7 +87,7 @@ func (p *Probe) Start() {
 func (p *Probe) Stop() {
 	log.Println("[PROBE] Shutting down gracefully...")
 
-	// p.ctx.Schedule().Stop()
+	p.ctx.Schedule().Stop()
 	p.ctx.Export().Stop()
 	p.ctx.API().Stop()
 	p.ctx.DB().Stop()

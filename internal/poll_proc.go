@@ -13,12 +13,12 @@ type pollProcess struct {
 	id       int
 	name     string
 	db       M.Receiver[<-chan []byte]
-	exporter M.Sender[[]byte]
+	exporter M.Sender[any]
 	poller   M.Poller
 	workers  int
 }
 
-func newPollProcess(id int, name string, db M.Receiver[<-chan []byte], workers int, exporter M.Sender[[]byte]) *pollProcess {
+func newPollProcess(id int, name string, db M.Receiver[<-chan []byte], workers int, exporter M.Sender[any]) *pollProcess {
 	return &pollProcess{id: id, name: name, db: db, workers: workers, exporter: exporter}
 }
 
@@ -43,12 +43,9 @@ func (p *pollProcess) Receive(ctx *actor.Context) {
 		log.Println("[POLL] process stopped", p.name)
 	case M.PollingBeat:
 		log.Println("invoking polling again ....", p.id, p.name, msg.Name, ctx.PID().ID)
+		p.exporter.Send(M.Do{})
 		p.poller.Poll()
-		// for p := 0; p < 10; p++ {
-		// 	ctx.Send(ctx.PID(), "hello")
-		// 	fmt.Println("msg sent----")
-		// }
-		// ctx.Send(ctx.PID(), "hello")
+		p.exporter.Send(M.Done{})
 	default:
 		log.Println("[POLL] default poll process message")
 		_ = msg
