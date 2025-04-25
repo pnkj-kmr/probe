@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	_ "embed"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -10,7 +12,11 @@ import (
 	"syscall"
 )
 
+//go:embed version.txt
+var appVersion string
+
 func main() {
+	fmt.Println("app version", appVersion)
 	signalChan := shutdownSignal()
 
 	ctx, cancel := context.WithCancel(context.Background())

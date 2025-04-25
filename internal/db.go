@@ -13,12 +13,7 @@ type DBEngine struct {
 	process *safemap.SafeMap[int, *dbProcess]
 }
 
-func newDBEngine(opts ...OptFunc) (*DBEngine, error) {
-	e, err := actor.NewEngine(actor.NewEngineConfig())
-	if err != nil {
-		return nil, err
-	}
-
+func newDBEngine(e *actor.Engine, opts ...OptFunc) (*DBEngine, error) {
 	engine := &DBEngine{
 		engine:  e,
 		db:      safemap.New[int, *repository.Repository](),
@@ -36,7 +31,7 @@ func newDBEngine(opts ...OptFunc) (*DBEngine, error) {
 		}
 		engine.db.Set(ICMP, db)
 
-		p, err := newDBProcess(ICMP, "icmp", e, db)
+		p, err := newDBProcess(ICMP, "db/icmp", e, db)
 		if err != nil {
 			return nil, err
 		}
@@ -49,7 +44,7 @@ func newDBEngine(opts ...OptFunc) (*DBEngine, error) {
 		}
 		engine.db.Set(SNMP, db)
 
-		p, err := newDBProcess(SNMP, "snmp", e, db)
+		p, err := newDBProcess(SNMP, "db/snmp", e, db)
 		if err != nil {
 			return nil, err
 		}

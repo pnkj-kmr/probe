@@ -11,11 +11,7 @@ type ExportEngine struct {
 	process *safemap.SafeMap[int, *exportProcess]
 }
 
-func newExportEngine(opts ...OptFunc) (*ExportEngine, error) {
-	e, err := actor.NewEngine(actor.NewEngineConfig())
-	if err != nil {
-		return nil, err
-	}
+func newExportEngine(e *actor.Engine, opts ...OptFunc) (*ExportEngine, error) {
 	engine := &ExportEngine{
 		engine:  e,
 		process: safemap.New[int, *exportProcess](),
@@ -27,7 +23,7 @@ func newExportEngine(opts ...OptFunc) (*ExportEngine, error) {
 	// assigning the export engine
 	// TODO - need to create multi exporter as per poller count of other point
 	if options.kafka {
-		exprt, err := newExportProcess(options.context, KAFKA, "kafka", e, options.bucketSize, options.partition)
+		exprt, err := newExportProcess(options.context, KAFKA, "export/kafka", e, options.bucketSize, options.partition)
 		if err != nil {
 			return nil, err
 		}

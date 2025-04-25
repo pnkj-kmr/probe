@@ -1,6 +1,8 @@
 package probe
 
-import "context"
+import (
+	"context"
+)
 
 type Context struct {
 	context  context.Context

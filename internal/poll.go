@@ -26,7 +26,7 @@ func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEn
 		if !ok {
 			return nil, ErrNoKAFKA
 		}
-		engine.process.Set(ICMP, newPollProcess(ICMP, "icmp", c, options.workers, export))
+		engine.process.Set(ICMP, newPollProcess(ICMP, "poll/icmp", c, options.workers, export))
 	}
 	if options.snmp {
 		c, ok := db.GetDB(SNMP)
@@ -37,7 +37,7 @@ func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEn
 		if !ok {
 			return nil, ErrNoKAFKA
 		}
-		engine.process.Set(SNMP, newPollProcess(SNMP, "snmp", c, options.workers, export))
+		engine.process.Set(SNMP, newPollProcess(SNMP, "poll/snmp", c, options.workers, export))
 	}
 	return engine, nil
 }

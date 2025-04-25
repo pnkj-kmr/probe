@@ -36,3 +36,17 @@ func (h *handle) PaylodICMP(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusCreated)
 
 }
+
+func (h *handle) GetICMP(w http.ResponseWriter, r *http.Request) {
+
+	data := &M.InICMP{}
+	if err := render.Bind(r, data); err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	h.sender.Send(data)
+	w.Write([]byte("request has been sent to queue."))
+	render.Status(r, http.StatusCreated)
+
+}

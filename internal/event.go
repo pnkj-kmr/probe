@@ -7,11 +7,7 @@ type EventEngine struct {
 	process *eventProcess
 }
 
-func newEventEngine(opts ...OptFunc) (*EventEngine, error) {
-	e, err := actor.NewEngine(actor.NewEngineConfig())
-	if err != nil {
-		return nil, err
-	}
+func newEventEngine(e *actor.Engine, opts ...OptFunc) (*EventEngine, error) {
 
 	engine := &EventEngine{engine: e}
 	options := DefaultOpts()

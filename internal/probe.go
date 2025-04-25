@@ -3,11 +3,14 @@ package probe
 import (
 	"context"
 	"log"
+
+	"github.com/anthdm/hollywood/actor"
 )
 
 // Probe
 type Probe struct {
-	ctx *Context
+	ctx    *Context
+	enigne *actor.Engine
 }
 
 func NewProbeWithContext(c context.Context, opts ...OptFunc) (*Probe, error) {
@@ -17,6 +20,12 @@ func NewProbeWithContext(c context.Context, opts ...OptFunc) (*Probe, error) {
 
 func NewProbe(opts ...OptFunc) (*Probe, error) {
 	p := &Probe{}
+
+	e, err := newEngine()
+	if err != nil {
+		return p, nil
+	}
+	p.enigne = e
 	options := DefaultOpts()
 	for _, opt := range opts {
 		opt(&options)
@@ -24,7 +33,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 	p.ctx = newContext(options.context)
 
 	// DB engine init
-	db, err := newDBEngine(opts...)
+	db, err := newDBEngine(p.enigne, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +41,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 
 	//Export engine init
 	// workers node
-	export, err := newExportEngine(opts...)
+	export, err := newExportEngine(p.enigne, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,21 +55,21 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 	p.ctx.WithPoll(poll)
 
 	// Schedule engine init
-	schedule, err := newScheduleEngine(poll, opts...)
+	schedule, err := newScheduleEngine(p.enigne, poll, opts...)
 	if err != nil {
 		return nil, err
 	}
 	p.ctx.WithSchdule(schedule)
 
 	// API engine init
-	api, err := newAPIEngine(db, opts...)
+	api, err := newAPIEngine(p.enigne, db, opts...)
 	if err != nil {
 		return nil, err
 	}
 	p.ctx.WithAPI(api)
 
 	// Event engine init
-	event, err := newEventEngine(opts...)
+	event, err := newEventEngine(p.enigne, opts...)
 	if err != nil {
 		return nil, err
 	}

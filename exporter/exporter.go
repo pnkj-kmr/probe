@@ -109,8 +109,8 @@ func (r *Exporter) loop2() {
 		// 	break
 		// }
 		select {
-		case <-r.ctx.Done():
-			break
+		// case <-r.ctx.Done():
+		// 	break
 		case _, ok := <-r.kafka.Errors():
 			if ok {
 				// log.Println("error --- ", err)

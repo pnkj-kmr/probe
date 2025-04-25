@@ -10,11 +10,7 @@ type ScheduleEngine struct {
 	process *safemap.SafeMap[int, *scheduleProcess]
 }
 
-func newScheduleEngine(poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, error) {
-	e, err := actor.NewEngine(actor.NewEngineConfig())
-	if err != nil {
-		return nil, err
-	}
+func newScheduleEngine(e *actor.Engine, poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, error) {
 	engine := &ScheduleEngine{
 		engine:  e,
 		process: safemap.New[int, *scheduleProcess](),
@@ -29,7 +25,7 @@ func newScheduleEngine(poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, erro
 		if !ok {
 			return nil, ErrPOLLER
 		}
-		sch, err := newScheduleProcess(ICMP, "icmp", e, options.interval, options.maxRestarts, c)
+		sch, err := newScheduleProcess(ICMP, "schedule/icmp", e, options.interval, options.maxRestarts, c)
 		if err != nil {
 			return nil, err
 		}
@@ -40,7 +36,7 @@ func newScheduleEngine(poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, erro
 		if !ok {
 			return nil, ErrPOLLER
 		}
-		sch, err := newScheduleProcess(SNMP, "snmp", e, options.interval, options.maxRestarts, c)
+		sch, err := newScheduleProcess(SNMP, "schedule/snmp", e, options.interval, options.maxRestarts, c)
 		if err != nil {
 			return nil, err
 		}

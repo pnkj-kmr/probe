@@ -14,6 +14,7 @@ func (api *Server) apiRouter() *chi.Mux {
 
 	r.Get("/", h.Ping)
 	r.Post("/icmp", h.PaylodICMP)
+	r.Get("/icmp", h.PaylodICMP)
 	return r
 }
 
