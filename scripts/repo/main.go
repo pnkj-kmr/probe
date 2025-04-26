@@ -13,7 +13,7 @@ func main() {
 		log.Println(err)
 	}
 
-	val := M.InICMP{IP: "127.0.0.1", Cid: "12345"}
+	val := M.ICMPReq{IP: "127.0.0.1", Cid: "12345"}
 	d, _ := json.Marshal(val)
 	db.Create("127.0.0.1", d)
 

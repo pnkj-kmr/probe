@@ -25,7 +25,7 @@ func (h *handle) Ping(w http.ResponseWriter, r *http.Request) {
 
 func (h *handle) PaylodICMP(w http.ResponseWriter, r *http.Request) {
 
-	data := &M.InICMP{}
+	data := &M.ICMPReq{}
 	if err := render.Bind(r, data); err != nil {
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
@@ -39,7 +39,7 @@ func (h *handle) PaylodICMP(w http.ResponseWriter, r *http.Request) {
 
 func (h *handle) GetICMP(w http.ResponseWriter, r *http.Request) {
 
-	data := &M.InICMP{}
+	data := &M.ICMPReq{}
 	if err := render.Bind(r, data); err != nil {
 		render.Render(w, r, ErrInvalidRequest(err))
 		return

@@ -7,6 +7,7 @@ require (
 	github.com/anthdm/hollywood v1.0.5
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/render v1.0.3
+	github.com/gosnmp/gosnmp v1.40.0
 	github.com/prometheus-community/pro-bing v0.5.0
 	github.com/stretchr/testify v1.10.0
 	github.com/xdg-go/scram v1.1.2

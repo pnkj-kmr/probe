@@ -26,7 +26,7 @@ func (x *PingMock) Receive() <-chan []byte {
 func (x *PingMock) spin() {
 	for k := 1; k < 9; k++ {
 		if k == 4 {
-			i := M.OutICMP{
+			i := M.ICMPRes{
 				Cid:   "44444",
 				Stats: map[string][4]float64{"input": {1, 2, 3, 4}},
 			}
@@ -34,21 +34,21 @@ func (x *PingMock) spin() {
 			x.ch <- d
 		}
 		if k == 3 {
-			i := M.OutICMP{
+			i := M.ICMPRes{
 				Cid: "12345",
 			}
 			d, _ := json.Marshal(i)
 			x.ch <- d
 		}
 		if k == 2 {
-			i := M.InICMP{
+			i := M.ICMPReq{
 				IP: "127.0.0.2",
 			}
 			d, _ := json.Marshal(i)
 			x.ch <- d
 		}
 		if k == 1 {
-			i := M.InICMP{
+			i := M.ICMPReq{
 				IP: "127.0.0.1",
 			}
 			d, _ := json.Marshal(i)

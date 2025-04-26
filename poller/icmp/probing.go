@@ -7,8 +7,8 @@ import (
 	probing "github.com/prometheus-community/pro-bing"
 )
 
-func ping(c M.InICMP) (out M.OutICMP, err error) {
-	out = M.OutICMP{Cid: c.Cid, Params: c.Params}
+func ping(c M.ICMPReq) (out M.ICMPRes, err error) {
+	out = M.ICMPRes{Cid: c.Cid, Params: c.Params}
 	pinger, err := probing.NewPinger(c.IP)
 	if err != nil {
 		return

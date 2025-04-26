@@ -39,7 +39,7 @@ func (p *dbProcess) Receive(ctx *actor.Context) {
 		log.Println("[DB] process started", p.name)
 	case actor.Stopped:
 		log.Println("[DB] process stopped", p.name)
-	case *M.InICMP:
+	case *M.ICMPReq:
 		log.Println("==== ping record received ---", msg)
 		d, err := json.Marshal(msg)
 		if err != nil {

@@ -18,20 +18,20 @@ func TestScanner(t *testing.T) {
 }
 
 func TestScanner_Scan(t *testing.T) {
-	var ping = func(c M.InICMP) (out M.OutICMP, err error) {
-		out = M.OutICMP{Params: c.Params, Cid: c.Cid}
+	var ping = func(c M.ICMPReq) (out M.ICMPRes, err error) {
+		out = M.ICMPRes{Params: c.Params, Cid: c.Cid}
 		return
 	}
 	var cp = mockdata.NewPingMock()
 	scanner := icmp.NewScanner(cp, cp, poller.WithWorkers(2), poller.WithTimeout(2*time.Second))
-	i := M.InICMP{
+	i := M.ICMPReq{
 		IP: "127.0.0.1",
 	}
 	icmp.Ping = ping
 	out, err := scanner.Scan(i)
 	assert.Nil(t, err)
 	assert.NotNil(t, out)
-	assert.Equal(t, i.Cid, out.(M.OutICMP).Cid)
+	assert.Equal(t, i.Cid, out.(M.ICMPRes).Cid)
 
 	out, err = scanner.Scan([]byte(""))
 	assert.Nil(t, out)
@@ -39,8 +39,8 @@ func TestScanner_Scan(t *testing.T) {
 }
 
 func TestPoller_Poll(t *testing.T) {
-	var ping = func(c M.InICMP) (out M.OutICMP, err error) {
-		out = M.OutICMP{Params: c.Params, Cid: c.Cid}
+	var ping = func(c M.ICMPReq) (out M.ICMPRes, err error) {
+		out = M.ICMPRes{Params: c.Params, Cid: c.Cid}
 		return
 	}
 	icmp.Ping = ping
@@ -50,7 +50,7 @@ func TestPoller_Poll(t *testing.T) {
 	err := p.Poll()
 	assert.Nil(t, err)
 
-	var ping2 = func(c M.InICMP) (out M.OutICMP, err error) {
+	var ping2 = func(c M.ICMPReq) (out M.ICMPRes, err error) {
 		return out, icmp.ErrICMP
 	}
 	icmp.Ping = ping2

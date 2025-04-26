@@ -54,7 +54,7 @@ func (p *exportProcess) Receive(ctx *actor.Context) {
 			p.exporter.Close()
 		}
 		log.Println("[EXPORT] process stopped", p.name)
-	case M.OutICMP:
+	case M.ICMPRes:
 		// log.Println("========> exportProcess message received========>")
 		// TODO - need to group x message gourp
 		// send into bulk
@@ -123,9 +123,9 @@ func (p *exportProcess) getParititionId(d string) int {
 }
 
 func (p *exportProcess) getExportMsg(partitionId int, data any) M.ExportMsg {
-	// var newData []M.OutICMP
+	// var newData []M.ICMPRes
 	// switch d := data.(type) {
-	// case M.OutICMP:
+	// case M.ICMPRes:
 	// 	newData = append(newData, d)
 	// }
 	return M.ExportMsg{

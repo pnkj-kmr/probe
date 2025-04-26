@@ -23,14 +23,14 @@ type Poller struct {
 }
 
 func NewPoller(c M.Receiver[<-chan []byte], p M.Sender[any], opts ...poller.OptFunc) M.Poller {
-	return newICMP(c, p, opts...)
+	return newICMPPoller(c, p, opts...)
 }
 
 func NewScanner(c M.Receiver[<-chan []byte], p M.Sender[any], opts ...poller.OptFunc) M.Scanner {
-	return newICMP(c, p, opts...)
+	return newICMPPoller(c, p, opts...)
 }
 
-func newICMP(c M.Receiver[<-chan []byte], p M.Sender[any], opts ...poller.OptFunc) *Poller {
+func newICMPPoller(c M.Receiver[<-chan []byte], p M.Sender[any], opts ...poller.OptFunc) *Poller {
 	options := poller.DefaultOpts()
 	for _, opt := range opts {
 		opt(&options)
@@ -43,28 +43,27 @@ func (p *Poller) Poll() error {
 	c := make(chan M.None, p.workers)
 	var err error
 	for data := range p.in.Receive() {
-		var icmp M.InICMP
+		var icmp M.ICMPReq
 		err = json.Unmarshal(data, &icmp)
 		if err != nil {
 			p.out.Send(err)
-		} else {
-			wg.Add(1)
-			c <- M.None{}
-			go func(i M.InICMP) {
-				defer func() { wg.Done(); <-c }()
-				if i.Params.Timeout == 0 {
-					i.Params.Timeout = p.timeout
-				}
-				out, err := Ping(i)
-				if err != nil {
-					out.Err = err.Error()
-				}
-				log.Println("ICMP output -- ", out)
-				p.out.Send(out)
-			}(icmp)
-			log.Println("ICMP -- ", icmp)
+			continue
 		}
-
+		wg.Add(1)
+		c <- M.None{}
+		go func(i M.ICMPReq) {
+			defer func() { wg.Done(); <-c }()
+			if i.Params.Timeout == 0 {
+				i.Params.Timeout = p.timeout
+			}
+			out, err := Ping(i)
+			if err != nil {
+				out.Err = err.Error()
+			}
+			log.Println("ICMP output -- ", out)
+			p.out.Send(out)
+		}(icmp)
+		log.Println("ICMP -- ", icmp)
 	}
 	wg.Wait()
 	return nil
@@ -72,7 +71,7 @@ func (p *Poller) Poll() error {
 
 func (p *Poller) Scan(c any) (o any, err error) {
 	switch v := c.(type) {
-	case M.InICMP:
+	case M.ICMPReq:
 		o, err = Ping(v)
 	default:
 		err = ErrICMP

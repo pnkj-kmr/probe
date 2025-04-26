@@ -42,7 +42,7 @@ func (p *apiProcess) Receive(ctx *actor.Context) {
 		log.Println("[API] process started", p.name)
 	case actor.Stopped:
 		log.Println("[API] process stopped", p.name)
-	case *M.InICMP:
+	case *M.ICMPReq:
 		db, ok := p.db.GetProcess(ICMP)
 		if ok {
 			db.Send(msg)

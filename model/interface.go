@@ -29,3 +29,7 @@ type Receiver[T StreamType] interface {
 type Sender[T StreamType] interface {
 	Send(T) error
 }
+
+type Finder interface {
+	Find(string) ([]byte, error)
+}

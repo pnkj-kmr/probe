@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	var ping = func(c M.InICMP) (out M.OutICMP, err error) {
-		out = M.OutICMP{Cid: c.Cid, Params: c.Params}
+	var ping = func(c M.ICMPReq) (out M.ICMPRes, err error) {
+		out = M.ICMPRes{Cid: c.Cid, Params: c.Params}
 		return
 	}
 	icmp.Ping = ping
