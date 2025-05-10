@@ -13,7 +13,7 @@ import (
 func main() {
 	st := time.Now()
 	c := 1000
-	db, err := repository.New(fmt.Sprintf("icmp_%d", c), 0)
+	db, err := repository.New(0, fmt.Sprintf("icmp_%d", c), "")
 	if err != nil {
 		log.Println(err)
 	}

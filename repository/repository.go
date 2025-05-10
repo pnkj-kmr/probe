@@ -3,9 +3,13 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"path/filepath"
 
 	"probe/repository/boltdb"
 )
+
+const DEFAULT_DIRECTORY string = "data"
 
 // Repository which returns the DB
 type Repository struct {
@@ -21,12 +25,18 @@ type Repository struct {
 	db *boltdb.DB
 }
 
-func New(name string, id int) (*Repository, error) {
-	db, err := boltdb.NewDB(context.Background(), "data", fmt.Sprintf("%s.db", name))
+func New(id int, name, directory string) (*Repository, error) {
+	if directory != "" {
+		directory = filepath.Join(DEFAULT_DIRECTORY, directory)
+	} else {
+		directory = DEFAULT_DIRECTORY
+	}
+	slog.Info("creating new db", "directory", directory, "name", name)
+	db, err := boltdb.NewDB(context.Background(), directory, fmt.Sprintf("%s.db", name))
 	if err != nil {
 		return nil, err
 	}
-	return &Repository{id: id, bucket: name, directory: "data", dbname: fmt.Sprintf("%s.db", name), db: db}, nil
+	return &Repository{id: id, bucket: name, directory: directory, dbname: fmt.Sprintf("%s.db", name), db: db}, nil
 }
 
 func (r *Repository) Receive() <-chan []byte {

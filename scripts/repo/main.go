@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	db, err := repository.New("icmp", 1)
+	db, err := repository.New(1, "icmp", "")
 	if err != nil {
 		log.Println(err)
 	}

@@ -43,9 +43,17 @@ func (p *apiProcess) Receive(ctx *actor.Context) {
 	case actor.Stopped:
 		log.Println("[API] process stopped", p.name)
 	case *M.ICMPReq:
-		db, ok := p.db.GetProcess(ICMP)
+		dbId := ICMP + msg.Params.PollPeriod
+		db, ok := p.db.GetProcess(dbId)
 		if ok {
 			db.Send(msg)
+		} else {
+			// this condition will not occurs
+			// unless poll_period apart from 60 and 300 seconds
+			db, ok := p.db.GetProcess(INTERVAL_300 + ICMP)
+			if ok {
+				db.Send(msg)
+			}
 		}
 	default:
 		_ = msg

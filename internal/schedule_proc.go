@@ -2,7 +2,6 @@ package probe
 
 import (
 	M "probe/model"
-	"strconv"
 	"time"
 
 	"github.com/anthdm/hollywood/actor"
@@ -33,7 +32,7 @@ func (p *scheduleProcess) start() {
 	p.pid = p.engine.SpawnFunc(
 		p.receiver.Receive,
 		p.name,
-		actor.WithID(strconv.Itoa(p.id)),
+		// actor.WithID(strconv.Itoa(p.id)),
 		actor.WithMaxRestarts(p.maxRestarts),
 	)
 	p.repeater = p.engine.SendRepeat(

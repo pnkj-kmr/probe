@@ -56,13 +56,13 @@ func (p *dbProcess) Receive(ctx *actor.Context) {
 }
 
 func (p *dbProcess) start() {
-	// log.Println("[DB] process starting...")
+	log.Println("[DB] process starting...", p.name)
 	p.pid = p.engine.SpawnFunc(p.Receive, p.name, actor.WithID(strconv.Itoa(p.id)))
 }
 
 func (p *dbProcess) stop() error {
 	ctx := p.engine.Poison(p.pid)
 	<-ctx.Done()
-	// log.Println("[DB] process stopped")
+	log.Println("[DB] process stopped", p.name)
 	return nil
 }

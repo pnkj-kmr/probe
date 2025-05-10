@@ -31,6 +31,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		opt(&options)
 	}
 	p.ctx = newContext(options.context)
+	log.Println("setting... context")
 
 	// DB engine init
 	db, err := newDBEngine(p.enigne, opts...)
@@ -38,6 +39,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		return nil, err
 	}
 	p.ctx.WithDB(db)
+	log.Println("setting... db")
 
 	//Export engine init
 	// workers node
@@ -46,6 +48,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		return nil, err
 	}
 	p.ctx.WithExport(export)
+	log.Println("setting... export")
 
 	// Poller engine init
 	poll, err := newPollEngine(db, export, opts...)
@@ -53,6 +56,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		return nil, err
 	}
 	p.ctx.WithPoll(poll)
+	log.Println("setting... poll")
 
 	// Schedule engine init
 	schedule, err := newScheduleEngine(p.enigne, poll, opts...)
@@ -60,6 +64,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		return nil, err
 	}
 	p.ctx.WithSchdule(schedule)
+	log.Println("setting... schedule")
 
 	// API engine init
 	api, err := newAPIEngine(p.enigne, db, opts...)
@@ -67,6 +72,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		return nil, err
 	}
 	p.ctx.WithAPI(api)
+	log.Println("setting... api")
 
 	// Event engine init
 	event, err := newEventEngine(p.enigne, opts...)
@@ -74,6 +80,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		return nil, err
 	}
 	p.ctx.WithEvent(event)
+	log.Println("setting... event")
 
 	return p, nil
 }

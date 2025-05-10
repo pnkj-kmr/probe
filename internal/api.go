@@ -11,7 +11,7 @@ type APIEngine struct {
 }
 
 func newAPIEngine(e *actor.Engine, db *DBEngine, opts ...OptFunc) (*APIEngine, error) {
-	engine := &APIEngine{
+	apiEngine := &APIEngine{
 		engine:  e,
 		process: safemap.New[int, *apiProcess](),
 	}
@@ -25,10 +25,10 @@ func newAPIEngine(e *actor.Engine, db *DBEngine, opts ...OptFunc) (*APIEngine, e
 		if err != nil {
 			return nil, err
 		}
-		engine.process.Set(API, p)
+		apiEngine.process.Set(API, p)
 	}
 
-	return engine, nil
+	return apiEngine, nil
 }
 
 func (e *APIEngine) Get(id int) (*apiProcess, bool) {

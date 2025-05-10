@@ -1,6 +1,10 @@
 package probe
 
 import (
+	"fmt"
+	"log/slog"
+	M "probe/model"
+
 	"github.com/anthdm/hollywood/safemap"
 )
 
@@ -9,7 +13,7 @@ type PollEngine struct {
 }
 
 func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEngine, error) {
-	engine := &PollEngine{
+	pollEngine := &PollEngine{
 		process: safemap.New[int, *pollProcess](),
 	}
 	options := DefaultOpts()
@@ -18,30 +22,63 @@ func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEn
 	}
 
 	if options.icmp {
-		c, ok := db.GetDB(ICMP)
-		if !ok {
-			return nil, ErrDB
+		err := pollEngine.multiSetup(ICMP, "icmp", db, export, options)
+		if err != nil {
+			slog.Error("[POLL]", "err", err)
+			return nil, err
 		}
-		export, ok := export.Get(KAFKA)
-		if !ok {
-			return nil, ErrNoKAFKA
-		}
-		engine.process.Set(ICMP, newPollProcess(ICMP, "poll/icmp", c, options.workers, export))
 	}
 	if options.snmp {
-		c, ok := db.GetDB(SNMP)
-		if !ok {
-			return nil, ErrDB
+		err := pollEngine.multiSetup(SNMP, "snmp", db, export, options)
+		if err != nil {
+			slog.Error("[POLL]", "err", err)
+			return nil, err
 		}
-		export, ok := export.Get(KAFKA)
-		if !ok {
-			return nil, ErrNoKAFKA
-		}
-		engine.process.Set(SNMP, newPollProcess(SNMP, "poll/snmp", c, options.workers, export))
 	}
-	return engine, nil
+	return pollEngine, nil
 }
 
 func (e *PollEngine) Get(id int) (*pollProcess, bool) {
 	return e.process.Get(id)
+}
+
+func (e *PollEngine) setup(id int, name string, db *DBEngine, export *ExportEngine, options Opts) (err error) {
+	slog.Info("setting up poller", "name", name, "id", id)
+	c, ok := db.GetDB(id)
+	if !ok {
+		return ErrDB
+	}
+	var exporter *exportProcess
+	if options.kafka {
+		e, ok := export.Get(KAFKA)
+		if !ok {
+			return ErrNoKAFKA
+		}
+		exporter = e
+	}
+	var finder M.Finder = nil
+	if options.snmp {
+		f, ok := db.GetDB(AUTH_PROFILE)
+		if !ok {
+			return ErrNoAuth
+		}
+		finder = f
+	}
+	poller := newPollProcess(id, fmt.Sprintf("poll/%s/%d", name, id), c, options.workers, exporter, finder)
+	e.process.Set(id, poller)
+	return nil
+}
+
+func (e *PollEngine) multiSetup(id int, name string, db *DBEngine, export *ExportEngine, options Opts) (err error) {
+	// setting up for 60 seconds
+	err = e.setup(INTERVAL_60+id, name, db, export, options)
+	if err != nil {
+		return
+	}
+	// setting up for 300 seconds
+	err = e.setup(INTERVAL_300+id, name, db, export, options)
+	if err != nil {
+		return
+	}
+	return
 }

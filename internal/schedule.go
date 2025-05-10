@@ -1,6 +1,10 @@
 package probe
 
 import (
+	"fmt"
+	"log/slog"
+	"time"
+
 	"github.com/anthdm/hollywood/actor"
 	"github.com/anthdm/hollywood/safemap"
 )
@@ -11,7 +15,7 @@ type ScheduleEngine struct {
 }
 
 func newScheduleEngine(e *actor.Engine, poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, error) {
-	engine := &ScheduleEngine{
+	schEngine := &ScheduleEngine{
 		engine:  e,
 		process: safemap.New[int, *scheduleProcess](),
 	}
@@ -21,28 +25,20 @@ func newScheduleEngine(e *actor.Engine, poll *PollEngine, opts ...OptFunc) (*Sch
 	}
 
 	if options.icmp {
-		c, ok := poll.Get(ICMP)
-		if !ok {
-			return nil, ErrPOLLER
-		}
-		sch, err := newScheduleProcess(ICMP, "schedule/icmp", e, options.interval, options.maxRestarts, c)
+		err := schEngine.multiSetup(ICMP, "icmp", poll, options)
 		if err != nil {
+			slog.Error("[SCHEDULE]", "err", err)
 			return nil, err
 		}
-		engine.process.Set(ICMP, sch)
 	}
 	if options.snmp {
-		c, ok := poll.Get(SNMP)
-		if !ok {
-			return nil, ErrPOLLER
-		}
-		sch, err := newScheduleProcess(SNMP, "schedule/snmp", e, options.interval, options.maxRestarts, c)
+		err := schEngine.multiSetup(SNMP, "snmp", poll, options)
 		if err != nil {
+			slog.Error("[SCHEDULE]", "err", err)
 			return nil, err
 		}
-		engine.process.Set(SNMP, sch)
 	}
-	return engine, nil
+	return schEngine, nil
 }
 
 func (e *ScheduleEngine) Get(id int) (*scheduleProcess, bool) {
@@ -59,4 +55,32 @@ func (e *ScheduleEngine) Stop() {
 	e.process.ForEach(func(i int, s *scheduleProcess) {
 		s.stop()
 	})
+}
+
+func (e *ScheduleEngine) setup(id int, name string, poll *PollEngine, interval time.Duration, options Opts) (err error) {
+	slog.Info("setting up schedular", "name", name, "id", id)
+	c, ok := poll.Get(id)
+	if !ok {
+		return ErrPOLLER
+	}
+	sch, err := newScheduleProcess(id, fmt.Sprintf("schedule/%s/%d", name, id), e.engine, interval, options.maxRestarts, c)
+	if err != nil {
+		return err
+	}
+	e.process.Set(id, sch)
+	return nil
+}
+
+func (e *ScheduleEngine) multiSetup(id int, name string, poll *PollEngine, options Opts) (err error) {
+	// setting up for 60 seconds
+	err = e.setup(INTERVAL_60+id, name, poll, time.Second*time.Duration(INTERVAL_60), options)
+	if err != nil {
+		return
+	}
+	// setting up for 300 seconds
+	err = e.setup(INTERVAL_300+id, name, poll, time.Second*time.Duration(INTERVAL_300), options)
+	if err != nil {
+		return
+	}
+	return
 }

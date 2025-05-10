@@ -2,6 +2,8 @@
 run:
 	go run main.go
 
+air:
+	air
 
 test:
 	go run tmp/producer/main.go \

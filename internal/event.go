@@ -9,7 +9,7 @@ type EventEngine struct {
 
 func newEventEngine(e *actor.Engine, opts ...OptFunc) (*EventEngine, error) {
 
-	engine := &EventEngine{engine: e}
+	eventEngine := &EventEngine{engine: e}
 	options := DefaultOpts()
 	for _, opt := range opts {
 		opt(&options)
@@ -19,9 +19,9 @@ func newEventEngine(e *actor.Engine, opts ...OptFunc) (*EventEngine, error) {
 	if err != nil {
 		return nil, err
 	}
-	engine.process = process
+	eventEngine.process = process
 
-	return engine, nil
+	return eventEngine, nil
 }
 
 // func (e *EventEngine) Get(id int) (any, bool) {

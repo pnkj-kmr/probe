@@ -20,7 +20,7 @@ type Poller struct {
 	profile M.Finder
 	workers int
 
-	profileMap map[string]M.LoginProfile
+	profileMap map[string]M.AuthSNMP
 }
 
 func NewPoller(c M.Receiver[<-chan []byte], p M.Sender[any], f M.Finder, opts ...poller.OptFunc) M.Poller {
@@ -36,7 +36,7 @@ func newSNMPPoller(c M.Receiver[<-chan []byte], p M.Sender[any], f M.Finder, opt
 	for _, opt := range opts {
 		opt(&options)
 	}
-	profileMap := make(map[string]M.LoginProfile)
+	profileMap := make(map[string]M.AuthSNMP)
 	return &Poller{in: c, out: p, workers: options.Workers, profile: f, profileMap: profileMap}
 }
 
@@ -59,7 +59,7 @@ func (p *Poller) Poll() error {
 		}
 		wg.Add(1)
 		c <- M.None{}
-		go func(i M.SNMPReq, lp M.LoginProfile) {
+		go func(i M.SNMPReq, lp M.AuthSNMP) {
 			defer func() { wg.Done(); <-c }()
 			out, err := DoSNMP(i, lp)
 			if err != nil {
@@ -89,7 +89,7 @@ func (p *Poller) Scan(c any) (o any, err error) {
 	return
 }
 
-func (p *Poller) getFindProfile(name string) (profile M.LoginProfile, err error) {
+func (p *Poller) getFindProfile(name string) (profile M.AuthSNMP, err error) {
 	profile, ok := p.profileMap[name]
 	if !ok {
 		data, _err := p.profile.Find(name)

@@ -2,21 +2,20 @@ package probe
 
 import (
 	"context"
-	"time"
 )
 
 type Opts struct {
-	context     context.Context
-	port        int
-	api         bool
-	icmp        bool
-	snmp        bool
-	interval    time.Duration
-	maxRestarts int
-	workers     int
-	kafka       bool
-	bucketSize  int
-	partition   int
+	context context.Context
+	port    int
+	api     bool
+	icmp    bool
+	snmp    bool
+	// interval    time.Duration
+	maxRestarts     int
+	workers         int
+	kafka           bool
+	maxBucketSize   int
+	totalPartitions int
 }
 
 type OptFunc func(*Opts)
@@ -24,16 +23,16 @@ type OptFunc func(*Opts)
 // DefaultOpts returns default options.
 func DefaultOpts() Opts {
 	return Opts{
-		context:     context.Background(),
-		port:        8080,
-		api:         true,
-		kafka:       true,
-		interval:    time.Second * 10,
+		context: context.Background(),
+		port:    8080,
+		api:     true,
+		kafka:   true,
+		// interval:    time.Second * 10,
 		maxRestarts: 3,
 		workers:     100,
 		// TODO - need to take from app.yml
-		bucketSize: 2,
-		partition:  2,
+		maxBucketSize:   2,
+		totalPartitions: 2,
 	}
 }
 
@@ -57,7 +56,7 @@ func WithKafka() OptFunc {
 
 func WithBucketSize(t int) OptFunc {
 	return func(opts *Opts) {
-		opts.bucketSize = t
+		opts.maxBucketSize = t
 	}
 }
 
@@ -67,11 +66,11 @@ func WithSNMP() OptFunc {
 	}
 }
 
-func WithInterval(t time.Duration) OptFunc {
-	return func(opts *Opts) {
-		opts.interval = t
-	}
-}
+// func WithInterval(t time.Duration) OptFunc {
+// 	return func(opts *Opts) {
+// 		opts.interval = t
+// 	}
+// }
 
 func WithMaxRestarts(t int) OptFunc {
 	return func(opts *Opts) {

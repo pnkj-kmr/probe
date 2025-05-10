@@ -1,6 +1,9 @@
 package probe
 
 import (
+	"fmt"
+	"log/slog"
+
 	"github.com/anthdm/hollywood/actor"
 	"github.com/anthdm/hollywood/safemap"
 )
@@ -12,7 +15,7 @@ type ExportEngine struct {
 }
 
 func newExportEngine(e *actor.Engine, opts ...OptFunc) (*ExportEngine, error) {
-	engine := &ExportEngine{
+	exportEngine := &ExportEngine{
 		engine:  e,
 		process: safemap.New[int, *exportProcess](),
 	}
@@ -23,15 +26,15 @@ func newExportEngine(e *actor.Engine, opts ...OptFunc) (*ExportEngine, error) {
 	// assigning the export engine
 	// TODO - need to create multi exporter as per poller count of other point
 	if options.kafka {
-		exprt, err := newExportProcess(options.context, KAFKA, "export/kafka", e, options.bucketSize, options.partition)
+		err := exportEngine.setup(KAFKA, "kafka", options)
 		if err != nil {
+			slog.Error("[EXPORT]", "err", err)
 			return nil, err
 		}
-		engine.process.Set(KAFKA, exprt)
 	}
 	// add a webhook exportProcess if needed
 
-	return engine, nil
+	return exportEngine, nil
 }
 
 func (e *ExportEngine) Get(id int) (*exportProcess, bool) {
@@ -48,4 +51,14 @@ func (e *ExportEngine) Stop() {
 	e.process.ForEach(func(i int, e *exportProcess) {
 		e.Stop()
 	})
+}
+
+func (e *ExportEngine) setup(id int, name string, options Opts) (err error) {
+	slog.Info("setting up exporter", "name", name, "id", id)
+	exprt, err := newExportProcess(options.context, id, fmt.Sprintf("export/%s/%d", name, id), e.engine, options.maxBucketSize, options.totalPartitions)
+	if err != nil {
+		return err
+	}
+	e.process.Set(id, exprt)
+	return nil
 }

@@ -4,12 +4,22 @@ package probe
 const (
 	_ = iota
 	API
+	KAFKA
+	WEBHOOK
+	RMQ
+	CONFIG
+	AUTH_PROFILE
+	ENV
 	ICMP
 	SNMP
 	HTTP
 	SSH
 	TELNET
-	KAFKA
-	RMQ
-	WEBHOOK
+)
+
+// interval related constants
+// db, poll, schedule etc
+const (
+	INTERVAL_60  int = 5  //60		// added for testing as 5 seconds
+	INTERVAL_300 int = 15 //300
 )

@@ -13,7 +13,7 @@ import (
 	g "github.com/gosnmp/gosnmp"
 )
 
-func doSNMP(i M.SNMPReq, p M.LoginProfile) (out M.SNMPRes, err error) {
+func doSNMP(i M.SNMPReq, p M.AuthSNMP) (out M.SNMPRes, err error) {
 	out.Cid = i.Cid
 	out.Params = i.Params
 
@@ -53,7 +53,7 @@ func doSNMP(i M.SNMPReq, p M.LoginProfile) (out M.SNMPRes, err error) {
 	return
 }
 
-func getSNMPInstance(p M.LoginProfile) *g.GoSNMP {
+func getSNMPInstance(p M.AuthSNMP) *g.GoSNMP {
 	//
 	//	snmpwalk -v 1 <target> <oid (i.e. 1.3.6.1.2.1.1.3.0)>
 	//	snmpwalk -v 2c -c <community> <target> <oid (i.e. 1.3.6.1.2.1.1.3.0)>
@@ -76,6 +76,16 @@ func getSNMPInstance(p M.LoginProfile) *g.GoSNMP {
 	if msgFlag == "" {
 		msgFlag = "AuthPriv"
 	}
+	// we are not allowing more than 3 retries of a IP
+	// helps to reducs the poll cycle
+	var retries = p.Retries
+	if retries > 3 {
+		retries = 3
+	}
+	var maxOids = 60
+	if p.MaxOids > maxOids {
+		maxOids = p.MaxOids
+	}
 
 	version := getVersion(p.Version)
 
@@ -83,9 +93,9 @@ func getSNMPInstance(p M.LoginProfile) *g.GoSNMP {
 
 	_snmp.Target = ""
 	_snmp.Port = _port
-	_snmp.Retries = p.Retries
+	_snmp.Retries = retries
 	_snmp.Timeout = time.Duration(timeout) * time.Second
-	_snmp.MaxOids = 60 // change is need
+	_snmp.MaxOids = maxOids
 	_snmp.ExponentialTimeout = true
 	_snmp.Version = version
 
@@ -186,12 +196,20 @@ func parseData(d g.SnmpPDU, oidMap map[string]string, customType string) (data M
 	case g.Integer, g.Counter32, g.Gauge32, g.TimeTicks, g.Counter64, g.Uinteger32:
 		data = M.OutputStat{Dn: dn, Oid: d.Name, Value: g.ToBigInt(d.Value), Type: pduTypeToString(d.Type)}
 	case g.OctetString:
-		b := d.Value.([]byte)
+		b, ok := d.Value.([]byte)
+		if !ok || b == nil {
+			data = M.OutputStat{Dn: dn, Oid: d.Name, Value: "", Type: "STRING"}
+			break
+		}
 		value, new_type := parseOctetString(b, customType)
 		data = M.OutputStat{Dn: dn, Oid: d.Name, Value: value, Type: new_type}
 	default:
 		// default value should be string and type should be specified
-		data = M.OutputStat{Dn: dn, Oid: d.Name, Value: d.Value.(string), Type: pduTypeToString(d.Type)}
+		strVal, ok := d.Value.(string)
+		if !ok {
+			strVal = fmt.Sprintf("%v", d.Value)
+		}
+		data = M.OutputStat{Dn: dn, Oid: d.Name, Value: strVal, Type: pduTypeToString(d.Type)}
 	}
 	return
 }

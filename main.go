@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	_ "embed"
-	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -16,7 +15,7 @@ import (
 var appVersion string
 
 func main() {
-	fmt.Println("app version", appVersion)
+	log.Println("app version", appVersion)
 	signalChan := shutdownSignal()
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -24,6 +23,7 @@ func main() {
 
 	probe, err := probe.NewProbeWithContext(ctx, probe.WithICMP())
 	// probe, err := probe.NewProbeWithContext(ctx)
+	log.Println("probe declration -->", probe)
 	if err != nil {
 		slog.Error("err found")
 		log.Fatalln(err)
