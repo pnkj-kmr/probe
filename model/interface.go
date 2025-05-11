@@ -33,3 +33,14 @@ type Sender[T StreamType] interface {
 type Finder interface {
 	Find(string) ([]byte, error)
 }
+
+type DB interface {
+	Finder
+
+	Receive() <-chan []byte
+	Count() uint64
+	Create(string, []byte) error
+	Update(string, []byte) error
+	Delete(string) error
+	DeleteAll() error
+}

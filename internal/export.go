@@ -3,9 +3,11 @@ package probe
 import (
 	"fmt"
 	"log/slog"
+	M "probe/model"
+
+	"probe/safemap"
 
 	"github.com/anthdm/hollywood/actor"
-	"github.com/anthdm/hollywood/safemap"
 )
 
 type ExportEngine struct {
@@ -26,7 +28,7 @@ func newExportEngine(e *actor.Engine, opts ...OptFunc) (*ExportEngine, error) {
 	// assigning the export engine
 	// TODO - need to create multi exporter as per poller count of other point
 	if options.kafka {
-		err := exportEngine.setup(KAFKA, "kafka", options)
+		err := exportEngine.setup(M.KAFKA, "kafka", options)
 		if err != nil {
 			slog.Error("[EXPORT]", "err", err)
 			return nil, err

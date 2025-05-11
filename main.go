@@ -21,8 +21,8 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	probe, err := probe.NewProbeWithContext(ctx, probe.WithICMP())
-	// probe, err := probe.NewProbeWithContext(ctx)
+	// probe, err := probe.NewProbeWithContext(ctx, probe.WithICMP())
+	probe, err := probe.NewProbeWithContext(ctx)
 	log.Println("probe declration -->", probe)
 	if err != nil {
 		slog.Error("err found")

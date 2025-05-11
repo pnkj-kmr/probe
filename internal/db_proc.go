@@ -1,9 +1,7 @@
 package probe
 
 import (
-	"encoding/json"
 	"log"
-	M "probe/model"
 	"probe/repository"
 	"strconv"
 
@@ -39,15 +37,15 @@ func (p *dbProcess) Receive(ctx *actor.Context) {
 		log.Println("[DB] process started", p.name)
 	case actor.Stopped:
 		log.Println("[DB] process stopped", p.name)
-	case *M.ICMPReq:
-		log.Println("==== ping record received ---", msg)
-		d, err := json.Marshal(msg)
-		if err != nil {
-			// todo - need to handle the below case
-			log.Println("[ERROR] ============ ", err)
-		}
-		err = p.db.Create(msg.IP, d)
-		log.Println("[DB SAVED] ============ ", d, err)
+	// case *M.ICMPReq:
+	// 	log.Println("==== ping record received ---", msg)
+	// 	d, err := json.Marshal(msg)
+	// 	if err != nil {
+	// 		// todo - need to handle the below case
+	// 		log.Println("[ERROR] ============ ", err)
+	// 	}
+	// 	err = p.db.Create(msg.Cid, d)
+	// 	log.Println("[DB SAVED] ============ ", msg, d, err, msg.IP)
 
 	default:
 		_ = msg

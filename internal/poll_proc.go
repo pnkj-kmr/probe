@@ -28,14 +28,14 @@ func newPollProcess(id int, name string, db M.Receiver[<-chan []byte], workers i
 func (p *pollProcess) setPoller() {
 	var _pollType int
 	if strings.Contains(p.name, "icmp") {
-		_pollType = ICMP
+		_pollType = M.ICMP
 	} else if strings.Contains(p.name, "snmp") {
-		_pollType = SNMP
+		_pollType = M.SNMP
 	}
 	switch _pollType {
-	case ICMP:
+	case M.ICMP:
 		p.poller = icmp.NewPoller(p.db, p.exporter, poller.WithWorkers(p.workers))
-	case SNMP:
+	case M.SNMP:
 		p.poller = snmp.NewPoller(p.db, p.exporter, p.finder, poller.WithWorkers(p.workers))
 	}
 }

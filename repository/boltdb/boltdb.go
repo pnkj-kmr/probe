@@ -148,6 +148,18 @@ func (d *DB) CreateBulk(bucket string, data map[string][]byte) (total int, err e
 	return
 }
 
+func (d *DB) DeleteAll(bucket string) (err error) {
+	err = d.db.Update(func(tx *bolt.Tx) error {
+		err := tx.DeleteBucket([]byte(bucket))
+		if err != nil && err != bolt.ErrBucketNotFound {
+			return err
+		}
+		_, err = tx.CreateBucket([]byte(bucket))
+		return err
+	})
+	return err
+}
+
 // func (d *DB) CreateWith(bucket string, data <-chan M.Record) (total int, err error) {
 // 	err = d.db.Update(func(tx *bolt.Tx) error {
 // 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))

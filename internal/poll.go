@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	M "probe/model"
 
-	"github.com/anthdm/hollywood/safemap"
+	"probe/safemap"
 )
 
 type PollEngine struct {
@@ -22,14 +22,14 @@ func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEn
 	}
 
 	if options.icmp {
-		err := pollEngine.multiSetup(ICMP, "icmp", db, export, options)
+		err := pollEngine.multiSetup(M.ICMP, "icmp", db, export, options)
 		if err != nil {
 			slog.Error("[POLL]", "err", err)
 			return nil, err
 		}
 	}
 	if options.snmp {
-		err := pollEngine.multiSetup(SNMP, "snmp", db, export, options)
+		err := pollEngine.multiSetup(M.SNMP, "snmp", db, export, options)
 		if err != nil {
 			slog.Error("[POLL]", "err", err)
 			return nil, err
@@ -50,7 +50,7 @@ func (e *PollEngine) setup(id int, name string, db *DBEngine, export *ExportEngi
 	}
 	var exporter *exportProcess
 	if options.kafka {
-		e, ok := export.Get(KAFKA)
+		e, ok := export.Get(M.KAFKA)
 		if !ok {
 			return ErrNoKAFKA
 		}
@@ -58,7 +58,7 @@ func (e *PollEngine) setup(id int, name string, db *DBEngine, export *ExportEngi
 	}
 	var finder M.Finder = nil
 	if options.snmp {
-		f, ok := db.GetDB(AUTH_PROFILE)
+		f, ok := db.GetDB(M.AUTH_PROFILE)
 		if !ok {
 			return ErrNoAuth
 		}
@@ -71,12 +71,12 @@ func (e *PollEngine) setup(id int, name string, db *DBEngine, export *ExportEngi
 
 func (e *PollEngine) multiSetup(id int, name string, db *DBEngine, export *ExportEngine, options Opts) (err error) {
 	// setting up for 60 seconds
-	err = e.setup(INTERVAL_60+id, name, db, export, options)
+	err = e.setup(M.INTERVAL_60+id, name, db, export, options)
 	if err != nil {
 		return
 	}
 	// setting up for 300 seconds
-	err = e.setup(INTERVAL_300+id, name, db, export, options)
+	err = e.setup(M.INTERVAL_300+id, name, db, export, options)
 	if err != nil {
 		return
 	}

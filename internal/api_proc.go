@@ -2,8 +2,11 @@ package probe
 
 import (
 	"log"
+	"log/slog"
 	api "probe/apiserver"
 	M "probe/model"
+	"probe/repository"
+	"probe/safemap"
 	"strconv"
 
 	"github.com/anthdm/hollywood/actor"
@@ -24,7 +27,7 @@ func newApiProcess(id int, name string, e *actor.Engine, db *DBEngine) (*apiProc
 }
 
 func (p *apiProcess) Send(data any) error {
-	log.Println("[API] produce a message")
+	slog.Info("[API] produce a message")
 	p.engine.Send(p.pid, data)
 	return nil
 }
@@ -32,29 +35,33 @@ func (p *apiProcess) Send(data any) error {
 func (p *apiProcess) Receive(ctx *actor.Context) {
 	switch msg := ctx.Message().(type) {
 	case actor.Initialized:
-		if p.id == API {
-			p.server = api.New(p)
+		if p.id == M.API {
+			var db = safemap.New[int, M.DB]()
+			p.db.db.ForEach(func(i int, r *repository.Repository) {
+				db.Set(i, r)
+			})
+			p.server = api.New(p, db)
 		}
-		log.Println("[API] process initialized...", p.name)
+		slog.Info("[API] process initialized...", "name", p.name)
 	case actor.Started:
 		// running API chi server here
 		go p.server.Run()
-		log.Println("[API] process started", p.name)
+		slog.Info("[API] process started", "name", p.name)
 	case actor.Stopped:
-		log.Println("[API] process stopped", p.name)
-	case *M.ICMPReq:
-		dbId := ICMP + msg.Params.PollPeriod
-		db, ok := p.db.GetProcess(dbId)
-		if ok {
-			db.Send(msg)
-		} else {
-			// this condition will not occurs
-			// unless poll_period apart from 60 and 300 seconds
-			db, ok := p.db.GetProcess(INTERVAL_300 + ICMP)
-			if ok {
-				db.Send(msg)
-			}
-		}
+		slog.Info("[API] process stopped", "name", p.name)
+	// case *M.ICMPReq:
+	// 	dbId := M.ICMP + msg.Params.PollPeriod
+	// 	db, ok := p.db.GetProcess(dbId)
+	// 	if ok {
+	// 		db.Send(msg)
+	// 	} else {
+	// 		// this condition will not occurs
+	// 		// unless poll_period apart from 60 and 300 seconds
+	// 		db, ok := p.db.GetProcess(M.INTERVAL_300 + M.ICMP)
+	// 		if ok {
+	// 			db.Send(msg)
+	// 		}
+	// 	}
 	default:
 		_ = msg
 		log.Println("[API] default message")
@@ -62,13 +69,13 @@ func (p *apiProcess) Receive(ctx *actor.Context) {
 }
 
 func (p *apiProcess) start() {
-	// log.Println("[API] process starting...")
+	slog.Info("[API] process starting...", "name", p.name)
 	p.pid = p.engine.SpawnFunc(p.Receive, p.name, actor.WithID(strconv.Itoa(p.id)))
 }
 
 func (p *apiProcess) stop() error {
 	ctx := p.engine.Poison(p.pid)
 	<-ctx.Done()
-	// log.Println("[API] process stopped")
+	slog.Info("[API] process stopped", "name", p.name)
 	return nil
 }

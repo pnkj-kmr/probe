@@ -63,6 +63,10 @@ func (r *Repository) Delete(key string) error {
 	return r.db.Delete(r.bucket, key)
 }
 
+func (r *Repository) DeleteAll() error {
+	return r.db.DeleteAll(r.bucket)
+}
+
 func (r *Repository) Find(key string) (out []byte, err error) {
 	return r.db.Find(r.bucket, key)
 }

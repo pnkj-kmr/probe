@@ -7,8 +7,9 @@ import (
 	M "probe/model"
 	"strconv"
 
+	"probe/safemap"
+
 	"github.com/anthdm/hollywood/actor"
-	"github.com/anthdm/hollywood/safemap"
 )
 
 type exportProcess struct {
@@ -132,7 +133,7 @@ func (p *exportProcess) getExportMsg(partitionId int, data any) M.ExportMsg {
 
 func (p *exportProcess) setExporter() {
 	switch p.id {
-	case KAFKA:
+	case M.KAFKA:
 		exporter, err := exporter.New(p.ctx, p.id, p.name)
 		if err != nil {
 			p.exporter = nil

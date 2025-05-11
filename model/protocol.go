@@ -3,17 +3,6 @@ package M
 // LoginProfile help to describe the connection detail about
 // SNMP/ SSH / HTTP etc.
 
-type ProtocolType string
-
-const (
-	SNMP   ProtocolType = "snmp"
-	HTTP   ProtocolType = "http"
-	HTTPS  ProtocolType = "https"
-	SSH    ProtocolType = "ssh"
-	SFTP   ProtocolType = "sftp"
-	TELNET ProtocolType = "telnet"
-)
-
 type LinkedProfile struct {
 	Protocol       ProtocolType `json:"protocol_type"`
 	LoginProfileId string       `json:"login_profileid"`

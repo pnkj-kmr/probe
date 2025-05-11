@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"log/slog"
 	"path/filepath"
+	M "probe/model"
 	"probe/repository"
+	"probe/safemap"
 	"strconv"
 
 	"github.com/anthdm/hollywood/actor"
-	"github.com/anthdm/hollywood/safemap"
 )
 
 type DBEngine struct {
@@ -29,31 +30,29 @@ func newDBEngine(e *actor.Engine, opts ...OptFunc) (*DBEngine, error) {
 	}
 
 	// initialising db
-	err := dbEngine.setup(AUTH_PROFILE, "auth", "")
+	var err error
+
+	err = dbEngine.setup(M.AUTH_PROFILE, "auth", "")
 	if err != nil {
 		return nil, err
 	}
-	err = dbEngine.setup(CONFIG, "config", "")
+	err = dbEngine.setup(M.CONFIG, "config", "")
 	if err != nil {
 		return nil, err
 	}
-	err = dbEngine.setup(ENV, "env", "")
+	err = dbEngine.setup(M.ENV, "env", "")
+	if err != nil {
+		return nil, err
+	}
+	err = dbEngine.multiSetup(M.ICMP, "icmp")
+	if err != nil {
+		return nil, err
+	}
+	err = dbEngine.multiSetup(M.SNMP, "snmp")
 	if err != nil {
 		return nil, err
 	}
 
-	if options.icmp {
-		err := dbEngine.multiSetup(ICMP, "icmp")
-		if err != nil {
-			return nil, err
-		}
-	}
-	if options.snmp {
-		err := dbEngine.multiSetup(SNMP, "snmp")
-		if err != nil {
-			return nil, err
-		}
-	}
 	return dbEngine, nil
 }
 
@@ -97,12 +96,12 @@ func (e *DBEngine) setup(id int, name, directory string) (err error) {
 
 func (e *DBEngine) multiSetup(id int, name string) (err error) {
 	// setting up for 60 seconds
-	err = e.setup(INTERVAL_60+id, strconv.Itoa(INTERVAL_60), name)
+	err = e.setup(M.INTERVAL_60+id, strconv.Itoa(M.INTERVAL_60), name)
 	if err != nil {
 		return
 	}
 	// setting up for 300 seconds
-	err = e.setup(INTERVAL_300+id, strconv.Itoa(INTERVAL_300), name)
+	err = e.setup(M.INTERVAL_300+id, strconv.Itoa(M.INTERVAL_300), name)
 	if err != nil {
 		return
 	}

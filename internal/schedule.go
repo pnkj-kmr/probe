@@ -3,10 +3,12 @@ package probe
 import (
 	"fmt"
 	"log/slog"
+	M "probe/model"
 	"time"
 
+	"probe/safemap"
+
 	"github.com/anthdm/hollywood/actor"
-	"github.com/anthdm/hollywood/safemap"
 )
 
 type ScheduleEngine struct {
@@ -25,14 +27,14 @@ func newScheduleEngine(e *actor.Engine, poll *PollEngine, opts ...OptFunc) (*Sch
 	}
 
 	if options.icmp {
-		err := schEngine.multiSetup(ICMP, "icmp", poll, options)
+		err := schEngine.multiSetup(M.ICMP, "icmp", poll, options)
 		if err != nil {
 			slog.Error("[SCHEDULE]", "err", err)
 			return nil, err
 		}
 	}
 	if options.snmp {
-		err := schEngine.multiSetup(SNMP, "snmp", poll, options)
+		err := schEngine.multiSetup(M.SNMP, "snmp", poll, options)
 		if err != nil {
 			slog.Error("[SCHEDULE]", "err", err)
 			return nil, err
@@ -73,12 +75,12 @@ func (e *ScheduleEngine) setup(id int, name string, poll *PollEngine, interval t
 
 func (e *ScheduleEngine) multiSetup(id int, name string, poll *PollEngine, options Opts) (err error) {
 	// setting up for 60 seconds
-	err = e.setup(INTERVAL_60+id, name, poll, time.Second*time.Duration(INTERVAL_60), options)
+	err = e.setup(M.INTERVAL_60+id, name, poll, time.Second*time.Duration(M.INTERVAL_60), options)
 	if err != nil {
 		return
 	}
 	// setting up for 300 seconds
-	err = e.setup(INTERVAL_300+id, name, poll, time.Second*time.Duration(INTERVAL_300), options)
+	err = e.setup(M.INTERVAL_300+id, name, poll, time.Second*time.Duration(M.INTERVAL_300), options)
 	if err != nil {
 		return
 	}

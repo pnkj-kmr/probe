@@ -1,8 +1,10 @@
 package probe
 
 import (
+	M "probe/model"
+	"probe/safemap"
+
 	"github.com/anthdm/hollywood/actor"
-	"github.com/anthdm/hollywood/safemap"
 )
 
 type APIEngine struct {
@@ -21,11 +23,11 @@ func newAPIEngine(e *actor.Engine, db *DBEngine, opts ...OptFunc) (*APIEngine, e
 	}
 
 	if options.api {
-		p, err := newApiProcess(API, "api", e, db)
+		p, err := newApiProcess(M.API, "api", e, db)
 		if err != nil {
 			return nil, err
 		}
-		apiEngine.process.Set(API, p)
+		apiEngine.process.Set(M.API, p)
 	}
 
 	return apiEngine, nil

@@ -1,12 +1,11 @@
 package M
 
 import (
-	"net/http"
 	"time"
 )
 
 type PINGParams struct {
-	PollPeriod int           `json:"poll_period"`
+	PollPeriod int           `json:"poll_period" validate:"required,oneof=60 300 15"`
 	PollType   string        `json:"poll_type"`
 	PCid       string        `json:"parent_ci_id"`
 	MibProfile string        `json:"mib_profile"`
@@ -29,8 +28,4 @@ type ICMPRes struct {
 	T      string                `json:"t,omitempty"`
 	Stats  map[string][4]float64 `json:"stats"`
 	Err    string                `json:"error"`
-}
-
-func (a *ICMPReq) Bind(r *http.Request) error {
-	return nil
 }
