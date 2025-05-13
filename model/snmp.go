@@ -14,8 +14,8 @@ const (
 )
 
 type SNMPParams struct {
-	PollPeriod int      `json:"poll_period"`
-	PollType   string   `json:"poll_type"`
+	PollPeriod int      `json:"poll_period" validate:"required,oneof=60 300"`
+	PollType   string   `json:"poll_type" validate:"required,oneof=snmp"`
 	PCid       string   `json:"parent_ci_id"`
 	MibProfile string   `json:"mib_profile"`
 	IP         string   `json:"poll_addr"`
@@ -30,11 +30,11 @@ type SNMPParams struct {
 }
 
 type SNMPReq struct {
-	IP             string      `json:"poll_addr"`
-	Cid            string      `json:"ci_id"`
+	IP             string      `json:"poll_addr" validate:"required"`
+	Cid            string      `json:"ci_id" validate:"required"`
 	Params         SNMPParams  `json:"params,omitempty"`
 	InputStats     []InputStat `json:"input_stats,omitempty"`
-	LoginProfileID string      `json:"login_profileid"`
+	LoginProfileID string      `json:"login_profileid" validate:"required,isValidAuth"`
 }
 
 type SNMPRes struct {

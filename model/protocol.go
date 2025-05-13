@@ -4,15 +4,15 @@ package M
 // SNMP/ SSH / HTTP etc.
 
 type LinkedProfile struct {
-	Protocol       ProtocolType `json:"protocol_type"`
-	LoginProfileId string       `json:"login_profileid"`
+	Protocol       ProtocolType `json:"protocol_type" validate:"required"`
+	LoginProfileId string       `json:"login_profileid" validate:"required"`
 }
 
 type AuthSNMP struct {
-	Name            string        `json:"name"`
-	Protocol        ProtocolType  `json:"protocol_type"`
-	Version         SNMPVersion   `json:"version"`
-	LoginProfileId  string        `json:"login_profileid"`
+	Name            string        `json:"name" validate:"required"`
+	Protocol        ProtocolType  `json:"protocol_type" validate:"required,oneof=snmp"`
+	Version         SNMPVersion   `json:"version" validate:"required"`
+	LoginProfileId  string        `json:"login_profileid" validate:"required"`
 	Community       string        `json:"community,omitempty"`
 	Port            int           `json:"port,omitempty"`
 	Retries         int           `json:"retries,omitempty"`
@@ -31,9 +31,9 @@ type AuthSNMP struct {
 }
 
 type AuthHTTP struct {
-	Name           string       `json:"name"`
-	Protocol       ProtocolType `json:"protocol_type"`
-	LoginProfileId string       `json:"login_profileid"`
+	Name           string       `json:"name" validate:"required"`
+	Protocol       ProtocolType `json:"protocol_type" validate:"required,oneof=http https"`
+	LoginProfileId string       `json:"login_profileid" validate:"required"`
 	Url            string       `json:"url,omitempty"`
 	Type           string       `json:"type,omitempty"`
 	Host           string       `json:"host,omitempty"`
@@ -47,9 +47,9 @@ type AuthHTTP struct {
 }
 
 type AuthSFTP struct {
-	Name           string       `json:"name"`
-	Protocol       ProtocolType `json:"protocol_type"`
-	LoginProfileId string       `json:"login_profileid"`
+	Name           string       `json:"name" validate:"required"`
+	Protocol       ProtocolType `json:"protocol_type" validate:"required,oneof=sftp"`
+	LoginProfileId string       `json:"login_profileid" validate:"required"`
 	Port           string       `json:"port,omitempty"`
 	Retries        int          `json:"retries,omitempty"`
 	Timeout        int          `json:"timeout,omitempty"`
@@ -59,9 +59,9 @@ type AuthSFTP struct {
 }
 
 type AuthSSH struct {
-	Name           string          `json:"name"`
-	Protocol       ProtocolType    `json:"protocol_type"`
-	LoginProfileId string          `json:"login_profileid"`
+	Name           string          `json:"name" validate:"required"`
+	Protocol       ProtocolType    `json:"protocol_type" validate:"required,oneof=ssh"`
+	LoginProfileId string          `json:"login_profileid" validate:"required"`
 	Port           string          `json:"port,omitempty"`
 	Retries        int             `json:"retries,omitempty"`
 	Timeout        int             `json:"timeout,omitempty"`
@@ -72,9 +72,9 @@ type AuthSSH struct {
 }
 
 type AuthTELNET struct {
-	Name           string          `json:"name"`
-	Protocol       ProtocolType    `json:"protocol_type"`
-	LoginProfileId string          `json:"login_profileid"`
+	Name           string          `json:"name" validate:"required"`
+	Protocol       ProtocolType    `json:"protocol_type" validate:"required,oneof=telnet"`
+	LoginProfileId string          `json:"login_profileid" validate:"required"`
 	Port           string          `json:"port,omitempty"`
 	Retries        int             `json:"retries,omitempty"`
 	Timeout        int             `json:"timeout,omitempty"`

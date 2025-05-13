@@ -5,8 +5,8 @@ import (
 )
 
 type PINGParams struct {
-	PollPeriod int           `json:"poll_period" validate:"required,oneof=60 300 15"`
-	PollType   string        `json:"poll_type"`
+	PollPeriod int           `json:"poll_period" validate:"required,oneof=60 300"`
+	PollType   string        `json:"poll_type" validate:"required,oneof=ping"`
 	PCid       string        `json:"parent_ci_id"`
 	MibProfile string        `json:"mib_profile"`
 	IP         string        `json:"poll_addr"`
@@ -16,8 +16,8 @@ type PINGParams struct {
 }
 
 type ICMPReq struct {
-	IP         string      `json:"poll_addr"`
-	Cid        string      `json:"ci_id"`
+	IP         string      `json:"poll_addr" validate:"required"`
+	Cid        string      `json:"ci_id" validate:"required"`
 	Params     PINGParams  `json:"params,omitempty"`
 	InputStats []InputStat `json:"input_stats,omitempty"`
 }

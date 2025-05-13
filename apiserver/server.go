@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"probe/apiserver/handler/auth"
 	"probe/apiserver/handler/poll"
 	M "probe/model"
 	"probe/safemap"
@@ -45,11 +46,21 @@ func (server *Server) newRouter() *chi.Mux {
 	// Group: /api
 	r.Route("/api", func(api chi.Router) {
 
-		// Group: /api/icmp
-		api.Mount("/icmp", poll.NewRouter(M.ICMP, server.db).Mux())
+		// Group: /api/poll
+		api.Route("/poll", func(api2 chi.Router) {
+			api2.Mount("/icmp", poll.NewRouter(M.ICMP, server.db).Mux())
+			api2.Mount("/snmp", poll.NewRouter(M.SNMP, server.db).Mux())
+		})
 
-		// // Group: /api/snmp
-		api.Mount("/snmp", poll.NewRouter(M.SNMP, server.db).Mux())
+		// Group: /api/auth
+		api.Route("/auth", func(api2 chi.Router) {
+			authDB, _ := server.db.Get(M.AUTH_PROFILE)
+			api2.Mount("/snmp", auth.NewRouter(M.SNMPType, authDB).Mux())
+			api2.Mount("/ssh", auth.NewRouter(M.SSHType, authDB).Mux())
+			api2.Mount("/telnet", auth.NewRouter(M.TELNETType, authDB).Mux())
+			api2.Mount("/http", auth.NewRouter(M.HTTPType, authDB).Mux())
+			api2.Mount("/sftp", auth.NewRouter(M.SFTPType, authDB).Mux())
+		})
 
 	})
 
