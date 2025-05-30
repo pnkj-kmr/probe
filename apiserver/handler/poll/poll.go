@@ -27,7 +27,6 @@ func NewRouter(id int, db *safemap.SafeMap[int, M.DB]) *_router {
 }
 
 func (api *_router) Mux() *chi.Mux {
-	// related routers
 	api.mux.Post("/", api.save)
 	api.mux.Get("/{pollPeriod}/{id}", api.get)
 	api.mux.Delete("/{pollPeriod}/{id}", api.delete)

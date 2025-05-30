@@ -1,4 +1,22 @@
 
+
+# // @Summary Get user by ID
+# // @Description Get user information by user ID
+# // @Tags users
+# // @Accept json
+# // @Produce json
+# // @Param id path string true "User ID"
+# // @Param verbose query bool false "Verbose mode"
+# // @Param input body UserRequest true "User request body"
+# // @Success 200 {object} UserResponse
+# // @Failure 400 {object} ErrorResponse
+# // @Router /users/{id} [get]
+
+# IncludeDetails bool `json:"includeDetails" example:"true"`
+
+docgen:
+	/Users/pankaj/Workspace/golang/bin/swag init
+
 run:
 	go run main.go
 

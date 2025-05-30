@@ -1,0 +1,173 @@
+basePath: /api/
+definitions:
+  M.ICMPReq:
+    properties:
+      ci_id:
+        type: string
+      input_stats:
+        items:
+          $ref: '#/definitions/M.InputStat'
+        type: array
+      params:
+        $ref: '#/definitions/M.PINGParams'
+      poll_addr:
+        type: string
+    required:
+    - ci_id
+    - poll_addr
+    type: object
+  M.InputStat:
+    properties:
+      dn:
+        type: string
+      oid:
+        type: string
+    type: object
+  M.PINGParams:
+    properties:
+      mib_profile:
+        type: string
+      packsiz:
+        type: integer
+      parent_ci_id:
+        type: string
+      poll_addr:
+        type: string
+      poll_addr_list:
+        items:
+          type: string
+        type: array
+      poll_period:
+        enum:
+        - 5
+        - 60
+        - 300
+        type: integer
+      poll_type:
+        enum:
+        - ping
+        type: string
+    required:
+    - poll_period
+    - poll_type
+    type: object
+  M.SNMPParams:
+    properties:
+      ci_category:
+        type: string
+      ci_name:
+        type: string
+      custom_type:
+        description: OidIndex   string `json:"oidIndex"`
+        type: string
+      memory_size:
+        type: integer
+      mib_profile:
+        type: string
+      parent_ci_id:
+        type: string
+      poll_addr:
+        type: string
+      poll_addr_list:
+        items:
+          type: string
+        type: array
+      poll_period:
+        enum:
+        - 60
+        - 300
+        type: integer
+      poll_type:
+        enum:
+        - snmp
+        type: string
+      speed:
+        type: integer
+    required:
+    - poll_period
+    - poll_type
+    type: object
+  M.SNMPReq:
+    properties:
+      ci_id:
+        type: string
+      input_stats:
+        items:
+          $ref: '#/definitions/M.InputStat'
+        type: array
+      login_profileid:
+        type: string
+      params:
+        $ref: '#/definitions/M.SNMPParams'
+      poll_addr:
+        type: string
+    required:
+    - ci_id
+    - login_profileid
+    - poll_addr
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: support@example.com
+    name: Pankaj Kumar
+    url: https://example.com/support
+  description: agent
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://example.com/terms/
+  title: Probe
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Responds with pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Ping
+      tags:
+      - Health
+  /api/poll/icmp:
+    post:
+      consumes:
+      - application/json
+      description: APIs helps to write poll parameter into db
+      parameters:
+      - description: ICMP Request body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.ICMPReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.ICMPReq'
+      summary: Polling Status update
+      tags:
+      - Poll
+  /api/poll/snmp:
+    post:
+      consumes:
+      - application/json
+      description: APIs helps to write poll parameter into db
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/M.SNMPReq'
+      summary: Polling Status update
+      tags:
+      - Poll
+swagger: "2.0"

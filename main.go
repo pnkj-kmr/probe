@@ -14,6 +14,21 @@ import (
 //go:embed version.txt
 var appVersion string
 
+// @title Probe
+// @version 1.0
+// @description agent
+// @termsOfService https://example.com/terms/
+
+// @contact.name Pankaj Kumar
+// @contact.url https://example.com/support
+// @contact.email support@example.com
+
+// @license.name MIT License
+// @license.url https://opensource.org/licenses/MIT
+
+// @host localhost:3000
+// @BasePath /api/
+
 func main() {
 	log.Println("app version", appVersion)
 	signalChan := shutdownSignal()

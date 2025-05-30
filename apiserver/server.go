@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"probe/apiserver/handler/auth"
 	"probe/apiserver/handler/poll"
+	_ "probe/docs"
 	M "probe/model"
 	"probe/safemap"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -43,6 +46,9 @@ func (server *Server) newRouter() *chi.Mux {
 	// Group: /
 	r.Get("/", server.Ping)
 
+	// Swagger UI
+	r.Get("/docs/*", httpSwagger.WrapHandler)
+
 	// Group: /api
 	r.Route("/api", func(api chi.Router) {
 
@@ -52,8 +58,8 @@ func (server *Server) newRouter() *chi.Mux {
 			api2.Mount("/snmp", poll.NewRouter(M.SNMP, server.db).Mux())
 		})
 
-		// Group: /api/auth
-		api.Route("/auth", func(api2 chi.Router) {
+		// Group: /api/profile
+		api.Route("/profile", func(api2 chi.Router) {
 			authDB, _ := server.db.Get(M.AUTH_PROFILE)
 			api2.Mount("/snmp", auth.NewRouter(M.SNMPType, authDB).Mux())
 			api2.Mount("/ssh", auth.NewRouter(M.SSHType, authDB).Mux())
@@ -67,6 +73,13 @@ func (server *Server) newRouter() *chi.Mux {
 	return r
 }
 
+// PingHandler godoc
+// @Summary      Ping
+// @Description  Responds with pong
+// @Tags         Health
+// @Produce      json
+// @Success      200  {string}  string "pong"
+// @Router       / [get]
 func (server *Server) Ping(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World!"))
+	w.Write([]byte("pong"))
 }
