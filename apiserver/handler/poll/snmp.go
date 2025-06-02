@@ -49,6 +49,6 @@ func (api *_router) save_snmp(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	w.Write([]byte(d))
 	render.Status(r, http.StatusCreated)
+	w.Write([]byte(d))
 }

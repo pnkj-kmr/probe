@@ -17,6 +17,9 @@
 docgen:
 	/Users/pankaj/Workspace/golang/bin/swag init
 
+docgen:
+	/Users/pankaj/Workspace/golang/bin/goweight probe
+
 run:
 	go run main.go
 

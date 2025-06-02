@@ -15,13 +15,13 @@ import (
 var appVersion string
 
 // @title Probe
-// @version 1.0
+// @version 1.0.0
 // @description agent
-// @termsOfService https://example.com/terms/
+// @termsOfService https://github.com/pnkj-kmr/probe
 
 // @contact.name Pankaj Kumar
-// @contact.url https://example.com/support
-// @contact.email support@example.com
+// @contact.url https://github.com/pnkj-kmr
+// @contact.email pnkj3092@gmail.com
 
 // @license.name MIT License
 // @license.url https://opensource.org/licenses/MIT

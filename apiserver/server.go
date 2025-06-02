@@ -5,14 +5,14 @@ import (
 	"net/http"
 	"probe/apiserver/handler/auth"
 	"probe/apiserver/handler/poll"
+
 	_ "probe/docs"
 	M "probe/model"
 	"probe/safemap"
 
-	httpSwagger "github.com/swaggo/http-swagger"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 /**
@@ -48,6 +48,11 @@ func (server *Server) newRouter() *chi.Mux {
 
 	// Swagger UI
 	r.Get("/docs/*", httpSwagger.WrapHandler)
+	// r.Get("/docs/*", httpSwagger.WrapHandler(liteFiles.Handler))
+	// // Serve your swagger.json file (optional)
+	// r.Get("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./docs/swagger.json")
+	// })
 
 	// Group: /api
 	r.Route("/api", func(api chi.Router) {

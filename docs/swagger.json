@@ -3,17 +3,17 @@
     "info": {
         "description": "agent",
         "title": "Probe",
-        "termsOfService": "https://example.com/terms/",
+        "termsOfService": "https://github.com/pnkj-kmr",
         "contact": {
             "name": "Pankaj Kumar",
-            "url": "https://example.com/support",
-            "email": "support@example.com"
+            "url": "https://github.com/pnkj-kmr",
+            "email": "pnkj3092@gmail.com"
         },
         "license": {
             "name": "MIT License",
             "url": "https://opensource.org/licenses/MIT"
         },
-        "version": "1.0"
+        "version": "1.0.0"
     },
     "host": "localhost:3000",
     "basePath": "/api/",

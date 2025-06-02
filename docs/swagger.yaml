@@ -109,16 +109,16 @@ definitions:
 host: localhost:3000
 info:
   contact:
-    email: support@example.com
+    email: pnkj3092@gmail.com
     name: Pankaj Kumar
-    url: https://example.com/support
+    url: https://github.com/pnkj-kmr
   description: agent
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  termsOfService: https://example.com/terms/
+  termsOfService: https://github.com/pnkj-kmr
   title: Probe
-  version: "1.0"
+  version: 1.0.0
 paths:
   /:
     get:
