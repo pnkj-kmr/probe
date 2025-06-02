@@ -1,4 +1,4 @@
-package auth
+package credential
 
 import (
 	"encoding/json"
@@ -10,8 +10,8 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func (api *_router) save_http(w http.ResponseWriter, r *http.Request) {
-	data := &M.AuthHTTP{}
+func (api *_router) save_snmp(w http.ResponseWriter, r *http.Request) {
+	data := &M.AuthSNMP{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))

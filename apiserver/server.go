@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"probe/apiserver/handler/auth"
+	"probe/apiserver/handler/credential"
 	"probe/apiserver/handler/poll"
 
 	_ "probe/docs"
@@ -43,9 +43,6 @@ func (server *Server) newRouter() *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	// Group: /
-	r.Get("/", server.Ping)
-
 	// Swagger UI
 	r.Get("/docs/*", httpSwagger.WrapHandler)
 	// r.Get("/docs/*", httpSwagger.WrapHandler(liteFiles.Handler))
@@ -56,6 +53,8 @@ func (server *Server) newRouter() *chi.Mux {
 
 	// Group: /api
 	r.Route("/api", func(api chi.Router) {
+		// Group: /
+		api.Get("/", server.Ping)
 
 		// Group: /api/poll
 		api.Route("/poll", func(api2 chi.Router) {
@@ -65,12 +64,12 @@ func (server *Server) newRouter() *chi.Mux {
 
 		// Group: /api/profile
 		api.Route("/profile", func(api2 chi.Router) {
-			authDB, _ := server.db.Get(M.AUTH_PROFILE)
-			api2.Mount("/snmp", auth.NewRouter(M.SNMPType, authDB).Mux())
-			api2.Mount("/ssh", auth.NewRouter(M.SSHType, authDB).Mux())
-			api2.Mount("/telnet", auth.NewRouter(M.TELNETType, authDB).Mux())
-			api2.Mount("/http", auth.NewRouter(M.HTTPType, authDB).Mux())
-			api2.Mount("/sftp", auth.NewRouter(M.SFTPType, authDB).Mux())
+			credDB, _ := server.db.Get(M.AUTH_PROFILE)
+			api2.Mount("/snmp", credential.NewRouter(M.SNMPType, credDB).Mux())
+			api2.Mount("/ssh", credential.NewRouter(M.SSHType, credDB).Mux())
+			api2.Mount("/telnet", credential.NewRouter(M.TELNETType, credDB).Mux())
+			api2.Mount("/http", credential.NewRouter(M.HTTPType, credDB).Mux())
+			api2.Mount("/sftp", credential.NewRouter(M.SFTPType, credDB).Mux())
 		})
 
 	})
@@ -84,7 +83,7 @@ func (server *Server) newRouter() *chi.Mux {
 // @Tags         Health
 // @Produce      json
 // @Success      200  {string}  string "pong"
-// @Router       / [get]
+// @Router       /api/ [get]
 func (server *Server) Ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }

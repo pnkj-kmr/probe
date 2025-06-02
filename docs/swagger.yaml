@@ -1,4 +1,3 @@
-basePath: /api/
 definitions:
   M.ICMPReq:
     properties:
@@ -106,7 +105,6 @@ definitions:
     - login_profileid
     - poll_addr
     type: object
-host: localhost:3000
 info:
   contact:
     email: pnkj3092@gmail.com
@@ -116,11 +114,11 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  termsOfService: https://github.com/pnkj-kmr
+  termsOfService: https://github.com/pnkj-kmr/probe
   title: Probe
   version: 1.0.0
 paths:
-  /:
+  /api/:
     get:
       description: Responds with pong
       produces:
@@ -133,6 +131,118 @@ paths:
       summary: Ping
       tags:
       - Health
+  /api/poll/{type}/{pollPeriod}:
+    delete:
+      consumes:
+      - application/json
+      description: deleting the poll config records
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete All Poll Config
+      tags:
+      - Poll
+    get:
+      consumes:
+      - application/json
+      description: get totel record of poll config
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Poll Config Total Count
+      tags:
+      - Poll
+  /api/poll/{type}/{pollPeriod}/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete poll config
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      - description: CI ID of resource
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Poll Config Delete
+      tags:
+      - Poll
+    get:
+      consumes:
+      - application/json
+      description: get poll config data
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      - description: CI ID of resource
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: poll config
+          schema:
+            type: string
+      summary: Poll Config Get View
+      tags:
+      - Poll
   /api/poll/icmp:
     post:
       consumes:

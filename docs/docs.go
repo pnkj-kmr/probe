@@ -9,7 +9,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "https://github.com/pnkj-kmr",
+        "termsOfService": "https://github.com/pnkj-kmr/probe",
         "contact": {
             "name": "Pankaj Kumar",
             "url": "https://github.com/pnkj-kmr",
@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
+        "/api/": {
             "get": {
                 "description": "Responds with pong",
                 "produces": [
@@ -96,6 +96,172 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/M.SNMPReq"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/poll/{type}/{pollPeriod}": {
+            "get": {
+                "description": "get totel record of poll config",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Poll"
+                ],
+                "summary": "Poll Config Total Count",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: icmp / snmp",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Poll Period - like: 60/300",
+                        "name": "pollPeriod",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "deleting the poll config records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Poll"
+                ],
+                "summary": "Delete All Poll Config",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: icmp / snmp",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Poll Period - like: 60/300",
+                        "name": "pollPeriod",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/poll/{type}/{pollPeriod}/{id}": {
+            "get": {
+                "description": "get poll config data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Poll"
+                ],
+                "summary": "Poll Config Get View",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: icmp / snmp",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Poll Period - like: 60/300",
+                        "name": "pollPeriod",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "CI ID of resource",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "poll config",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete poll config",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Poll"
+                ],
+                "summary": "Poll Config Delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: icmp / snmp",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Poll Period - like: 60/300",
+                        "name": "pollPeriod",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "CI ID of resource",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -266,8 +432,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
-	Host:             "localhost:3000",
-	BasePath:         "/api/",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Probe",
 	Description:      "agent",

@@ -17,7 +17,7 @@
 docgen:
 	/Users/pankaj/Workspace/golang/bin/swag init
 
-docgen:
+docsize:
 	/Users/pankaj/Workspace/golang/bin/goweight probe
 
 run:

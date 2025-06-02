@@ -1,4 +1,4 @@
-package auth
+package credential
 
 import (
 	"encoding/json"

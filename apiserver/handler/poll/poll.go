@@ -47,6 +47,17 @@ func (api *_router) save(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeletePollConfig godoc
+// @Summary Poll Config Delete
+// @Description delete poll config
+// @Tags Poll
+// @Accept  json
+// @Produce  json
+// @Param type path string true "type: icmp / snmp"
+// @Param pollPeriod path string true "Poll Period - like: 60/300"
+// @Param id path string true "CI ID of resource"
+// @Success 200 {string} string "record"
+// @Router /api/poll/{type}/{pollPeriod}/{id} [delete]
 func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	pollPeriod := chi.URLParam(r, "pollPeriod")
@@ -63,6 +74,16 @@ func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusNoContent)
 }
 
+// DeleteAllPollCount godoc
+// @Summary Delete All Poll Config
+// @Description deleting the poll config records
+// @Tags Poll
+// @Accept  json
+// @Produce  json
+// @Param type path string true "type: icmp / snmp"
+// @Param pollPeriod path string true "Poll Period - like: 60/300"
+// @Success 200 {string} string "record"
+// @Router /api/poll/{type}/{pollPeriod} [delete]
 func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
 	pollPeriod := chi.URLParam(r, "pollPeriod")
 	db, err := api.getDB(pollPeriod)
@@ -78,6 +99,16 @@ func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusNoContent)
 }
 
+// GetTotalPollCount godoc
+// @Summary Poll Config Total Count
+// @Description get totel record of poll config
+// @Tags Poll
+// @Accept  json
+// @Produce  json
+// @Param type path string true "type: icmp / snmp"
+// @Param pollPeriod path string true "Poll Period - like: 60/300"
+// @Success 200 {string} string "record"
+// @Router /api/poll/{type}/{pollPeriod} [get]
 func (api *_router) count(w http.ResponseWriter, r *http.Request) {
 	pollPeriod := chi.URLParam(r, "pollPeriod")
 	db, err := api.getDB(pollPeriod)
@@ -96,6 +127,17 @@ func (api *_router) count(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusOK)
 }
 
+// GetPollConfig godoc
+// @Summary Poll Config Get View
+// @Description get poll config data
+// @Tags Poll
+// @Accept  json
+// @Produce  json
+// @Param type path string true "type: icmp / snmp"
+// @Param pollPeriod path string true "Poll Period - like: 60/300"
+// @Param id path string true "CI ID of resource"
+// @Success 200 {string} string "poll config"
+// @Router /api/poll/{type}/{pollPeriod}/{id} [get]
 func (api *_router) get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	pollPeriod := chi.URLParam(r, "pollPeriod")
