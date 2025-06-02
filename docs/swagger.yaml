@@ -1,4 +1,182 @@
 definitions:
+  M.AuthHTTP:
+    properties:
+      credentialtype:
+        type: string
+      host:
+        type: string
+      login_profileid:
+        type: string
+      name:
+        type: string
+      no_of_custom_pairs:
+        type: integer
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - http
+        - https
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      type:
+        type: string
+      url:
+        type: string
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
+  M.AuthSFTP:
+    properties:
+      credentialtype:
+        type: string
+      login_profileid:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - sftp
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
+  M.AuthSNMP:
+    properties:
+      auth_pass:
+        type: string
+      auth_type:
+        type: string
+      community:
+        type: string
+      context_engine_id:
+        type: string
+      context_name:
+        type: string
+      login_profileid:
+        type: string
+      max_oids:
+        type: integer
+      name:
+        type: string
+      port:
+        type: integer
+      priv_pass:
+        type: string
+      priv_type:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - snmp
+      request_type:
+        $ref: '#/definitions/M.SNMPOperation'
+      retries:
+        type: integer
+      security_level:
+        type: string
+      timeout:
+        type: integer
+      username:
+        type: string
+      version:
+        $ref: '#/definitions/M.SNMPVersion'
+      wcommunity:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    - version
+    type: object
+  M.AuthSSH:
+    properties:
+      credentialtype:
+        type: string
+      linked_profiles:
+        items:
+          $ref: '#/definitions/M.LinkedProfile'
+        type: array
+      login_profileid:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - ssh
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
+  M.AuthTELNET:
+    properties:
+      credentialtype:
+        type: string
+      linked_profiles:
+        items:
+          $ref: '#/definitions/M.LinkedProfile'
+        type: array
+      login_profileid:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - telnet
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
   M.ICMPReq:
     properties:
       ci_id:
@@ -21,6 +199,16 @@ definitions:
         type: string
       oid:
         type: string
+    type: object
+  M.LinkedProfile:
+    properties:
+      login_profileid:
+        type: string
+      protocol_type:
+        $ref: '#/definitions/M.ProtocolType'
+    required:
+    - login_profileid
+    - protocol_type
     type: object
   M.PINGParams:
     properties:
@@ -50,6 +238,32 @@ definitions:
     - poll_period
     - poll_type
     type: object
+  M.ProtocolType:
+    enum:
+    - snmp
+    - http
+    - https
+    - ssh
+    - sftp
+    - telnet
+    type: string
+    x-enum-varnames:
+    - SNMPType
+    - HTTPType
+    - HTTPSType
+    - SSHType
+    - SFTPType
+    - TELNETType
+  M.SNMPOperation:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - GET
+    - WALK
+    - BULKWALK
   M.SNMPParams:
     properties:
       ci_category:
@@ -105,6 +319,16 @@ definitions:
     - login_profileid
     - poll_addr
     type: object
+  M.SNMPVersion:
+    enum:
+    - "1"
+    - 2c
+    - "3"
+    type: string
+    x-enum-varnames:
+    - VERSION1
+    - VERSION2C
+    - VERSION3
 info:
   contact:
     email: pnkj3092@gmail.com
@@ -280,4 +504,206 @@ paths:
       summary: Polling Status update
       tags:
       - Poll
+  /api/profile/{credential_type}/:
+    delete:
+      consumes:
+      - application/json
+      description: delete all
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete all credentials for profile
+      tags:
+      - Credential
+    get:
+      consumes:
+      - application/json
+      description: total count
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Total records of credential
+      tags:
+      - Credential
+  /api/profile/{credential_type}/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete one
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      - description: credential id (login/device profile id)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete credential for profile id
+      tags:
+      - Credential
+    get:
+      consumes:
+      - application/json
+      description: creential profile view
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      - description: credential id (login/device profile id)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Get credential record
+      tags:
+      - Credential
+  /api/profile/http:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthHTTP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthHTTP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/profile/sftp:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSFTP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSFTP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/profile/snmp:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSNMP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSNMP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/profile/ssh:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSSH'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSSH'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/profile/telnet:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthTELNET'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthTELNET'
+      summary: Save Login Credential
+      tags:
+      - Credential
 swagger: "2.0"

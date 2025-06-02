@@ -10,6 +10,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// SSHCredentialHandler godoc
+// @Summary      Save Login Credential
+// @Description  help to save login profile or device profile creds
+// @Tags         Credential
+// @Accept       json
+// @Produce      json
+// @Param input body M.AuthSSH true "Request payload"
+// @Success      201  {object}  M.AuthSSH
+// @Router       /api/profile/ssh [post]
 func (api *_router) save_ssh(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSSH{}
 	err := json.NewDecoder(r.Body).Decode(&data)

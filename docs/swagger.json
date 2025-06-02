@@ -258,9 +258,593 @@
                     }
                 }
             }
+        },
+        "/api/profile/http": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/sftp": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSFTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSFTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/snmp": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSNMP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSNMP"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/ssh": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSSH"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSSH"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/telnet": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthTELNET"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthTELNET"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/{credential_type}/": {
+            "get": {
+                "description": "total count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Total records of credential",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete all",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Delete all credentials for profile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/{credential_type}/{id}": {
+            "get": {
+                "description": "creential profile view",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Get credential record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "credential id (login/device profile id)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete one",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Delete credential for profile id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "credential id (login/device profile id)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "M.AuthHTTP": {
+            "type": "object",
+            "required": [
+                "login_profileid",
+                "name",
+                "protocol_type"
+            ],
+            "properties": {
+                "credentialtype": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "login_profileid": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "no_of_custom_pairs": {
+                    "type": "integer"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "protocol_type": {
+                    "enum": [
+                        "http",
+                        "https"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/M.ProtocolType"
+                        }
+                    ]
+                },
+                "retries": {
+                    "type": "integer"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "M.AuthSFTP": {
+            "type": "object",
+            "required": [
+                "login_profileid",
+                "name",
+                "protocol_type"
+            ],
+            "properties": {
+                "credentialtype": {
+                    "type": "string"
+                },
+                "login_profileid": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "protocol_type": {
+                    "enum": [
+                        "sftp"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/M.ProtocolType"
+                        }
+                    ]
+                },
+                "retries": {
+                    "type": "integer"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "M.AuthSNMP": {
+            "type": "object",
+            "required": [
+                "login_profileid",
+                "name",
+                "protocol_type",
+                "version"
+            ],
+            "properties": {
+                "auth_pass": {
+                    "type": "string"
+                },
+                "auth_type": {
+                    "type": "string"
+                },
+                "community": {
+                    "type": "string"
+                },
+                "context_engine_id": {
+                    "type": "string"
+                },
+                "context_name": {
+                    "type": "string"
+                },
+                "login_profileid": {
+                    "type": "string"
+                },
+                "max_oids": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "priv_pass": {
+                    "type": "string"
+                },
+                "priv_type": {
+                    "type": "string"
+                },
+                "protocol_type": {
+                    "enum": [
+                        "snmp"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/M.ProtocolType"
+                        }
+                    ]
+                },
+                "request_type": {
+                    "$ref": "#/definitions/M.SNMPOperation"
+                },
+                "retries": {
+                    "type": "integer"
+                },
+                "security_level": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "version": {
+                    "$ref": "#/definitions/M.SNMPVersion"
+                },
+                "wcommunity": {
+                    "type": "string"
+                }
+            }
+        },
+        "M.AuthSSH": {
+            "type": "object",
+            "required": [
+                "login_profileid",
+                "name",
+                "protocol_type"
+            ],
+            "properties": {
+                "credentialtype": {
+                    "type": "string"
+                },
+                "linked_profiles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/M.LinkedProfile"
+                    }
+                },
+                "login_profileid": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "protocol_type": {
+                    "enum": [
+                        "ssh"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/M.ProtocolType"
+                        }
+                    ]
+                },
+                "retries": {
+                    "type": "integer"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "M.AuthTELNET": {
+            "type": "object",
+            "required": [
+                "login_profileid",
+                "name",
+                "protocol_type"
+            ],
+            "properties": {
+                "credentialtype": {
+                    "type": "string"
+                },
+                "linked_profiles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/M.LinkedProfile"
+                    }
+                },
+                "login_profileid": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "protocol_type": {
+                    "enum": [
+                        "telnet"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/M.ProtocolType"
+                        }
+                    ]
+                },
+                "retries": {
+                    "type": "integer"
+                },
+                "timeout": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "M.ICMPReq": {
             "type": "object",
             "required": [
@@ -293,6 +877,21 @@
                 },
                 "oid": {
                     "type": "string"
+                }
+            }
+        },
+        "M.LinkedProfile": {
+            "type": "object",
+            "required": [
+                "login_profileid",
+                "protocol_type"
+            ],
+            "properties": {
+                "login_profileid": {
+                    "type": "string"
+                },
+                "protocol_type": {
+                    "$ref": "#/definitions/M.ProtocolType"
                 }
             }
         },
@@ -336,6 +935,38 @@
                     ]
                 }
             }
+        },
+        "M.ProtocolType": {
+            "type": "string",
+            "enum": [
+                "snmp",
+                "http",
+                "https",
+                "ssh",
+                "sftp",
+                "telnet"
+            ],
+            "x-enum-varnames": [
+                "SNMPType",
+                "HTTPType",
+                "HTTPSType",
+                "SSHType",
+                "SFTPType",
+                "TELNETType"
+            ]
+        },
+        "M.SNMPOperation": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "GET",
+                "WALK",
+                "BULKWALK"
+            ]
         },
         "M.SNMPParams": {
             "type": "object",
@@ -417,6 +1048,19 @@
                     "type": "string"
                 }
             }
+        },
+        "M.SNMPVersion": {
+            "type": "string",
+            "enum": [
+                "1",
+                "2c",
+                "3"
+            ],
+            "x-enum-varnames": [
+                "VERSION1",
+                "VERSION2C",
+                "VERSION3"
+            ]
         }
     }
 }

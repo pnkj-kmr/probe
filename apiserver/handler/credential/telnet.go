@@ -10,6 +10,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// TelnetCredentialHandler godoc
+// @Summary      Save Login Credential
+// @Description  help to save login profile or device profile creds
+// @Tags         Credential
+// @Accept       json
+// @Produce      json
+// @Param input body M.AuthTELNET true "Request payload"
+// @Success      201  {object}  M.AuthTELNET
+// @Router       /api/profile/telnet [post]
 func (api *_router) save_telnet(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthTELNET{}
 	err := json.NewDecoder(r.Body).Decode(&data)

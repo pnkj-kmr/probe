@@ -10,6 +10,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// SNMPCredentialHandler godoc
+// @Summary      Save Login Credential
+// @Description  help to save login profile or device profile creds
+// @Tags         Credential
+// @Accept       json
+// @Produce      json
+// @Param input body M.AuthSNMP true "Request payload"
+// @Success      201  {object}  M.AuthSNMP
+// @Router       /api/profile/snmp [post]
 func (api *_router) save_snmp(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSNMP{}
 	err := json.NewDecoder(r.Body).Decode(&data)
@@ -34,6 +43,6 @@ func (api *_router) save_snmp(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	w.Write([]byte(d))
 	render.Status(r, http.StatusCreated)
+	w.Write([]byte(d))
 }

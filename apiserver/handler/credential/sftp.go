@@ -10,6 +10,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// SFTPCredentialHandler godoc
+// @Summary      Save Login Credential
+// @Description  help to save login profile or device profile creds
+// @Tags         Credential
+// @Accept       json
+// @Produce      json
+// @Param input body M.AuthSFTP true "Request payload"
+// @Success      201  {object}  M.AuthSFTP
+// @Router       /api/profile/sftp [post]
 func (api *_router) save_sftp(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSFTP{}
 	err := json.NewDecoder(r.Body).Decode(&data)

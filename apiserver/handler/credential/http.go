@@ -10,6 +10,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// HTTPCredentialHandler godoc
+// @Summary      Save Login Credential
+// @Description  help to save login profile or device profile creds
+// @Tags         Credential
+// @Accept       json
+// @Produce      json
+// @Param input body M.AuthHTTP true "Request payload"
+// @Success      201  {object}  M.AuthHTTP
+// @Router       /api/profile/http [post]
 func (api *_router) save_http(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthHTTP{}
 	err := json.NewDecoder(r.Body).Decode(&data)

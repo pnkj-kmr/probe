@@ -27,10 +27,10 @@ func NewRouter(authType M.ProtocolType, db M.DB) *_router {
 func (api *_router) Mux() *chi.Mux {
 	// related routers
 	api.mux.Post("/", api.save)
-	api.mux.Get("/count", api.count)
+	api.mux.Get("/", api.count)
+	api.mux.Delete("/", api.deleteAll)
 	api.mux.Get("/{id}", api.get)
 	api.mux.Delete("/{id}", api.delete)
-	api.mux.Delete("/", api.deleteAll)
 
 	return api.mux
 }
@@ -52,6 +52,16 @@ func (api *_router) save(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// DeleteCredentialByID godoc
+// @Summary Delete credential for profile id
+// @Description delete one
+// @Tags Credential
+// @Accept  json
+// @Produce  json
+// @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
+// @Param id path string true "credential id (login/device profile id)"
+// @Success 200 {string} string "record"
+// @Router /api/profile/{credential_type}/{id} [delete]
 func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	err := api.db.Delete(id)
@@ -62,6 +72,15 @@ func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusNoContent)
 }
 
+// DeleteCredentials godoc
+// @Summary Delete all credentials for profile
+// @Description delete all
+// @Tags Credential
+// @Accept  json
+// @Produce  json
+// @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
+// @Success 200 {string} string "record"
+// @Router /api/profile/{credential_type}/ [delete]
 func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
 	err := api.db.DeleteAll()
 	if err != nil {
@@ -71,6 +90,15 @@ func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusNoContent)
 }
 
+// GetCredentialTotalCount godoc
+// @Summary Total records of credential
+// @Description total count
+// @Tags Credential
+// @Accept  json
+// @Produce  json
+// @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
+// @Success 200 {string} string "record"
+// @Router /api/profile/{credential_type}/ [get]
 func (api *_router) count(w http.ResponseWriter, r *http.Request) {
 	count := api.db.Count()
 	// data, err := json.Marshal(struct{ count uint64 }{count: count})
@@ -83,6 +111,16 @@ func (api *_router) count(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusOK)
 }
 
+// GetCredentialByID godoc
+// @Summary Get credential record
+// @Description creential profile view
+// @Tags Credential
+// @Accept  json
+// @Produce  json
+// @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
+// @Param id path string true "credential id (login/device profile id)"
+// @Success 200 {string} string "record"
+// @Router /api/profile/{credential_type}/{id} [get]
 func (api *_router) get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	data, err := api.db.Find(id)
