@@ -123,8 +123,8 @@ func (api *_router) count(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	w.Write(data)
 	render.Status(r, http.StatusOK)
+	w.Write(data)
 }
 
 // GetPollConfig godoc

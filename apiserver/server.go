@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"probe/apiserver/handler/credential"
+	"probe/apiserver/handler/dashboard"
 	"probe/apiserver/handler/poll"
 
 	_ "probe/docs"
@@ -71,6 +72,12 @@ func (server *Server) newRouter() *chi.Mux {
 			api2.Mount("/http", credential.NewRouter(M.HTTPType, credDB).Mux())
 			api2.Mount("/sftp", credential.NewRouter(M.SFTPType, credDB).Mux())
 		})
+
+		// Group: /api/dashboard
+		api.Mount("/dashboard", dashboard.NewRouter(0, server.db).Mux())
+		// api.Route("/dashboard", func(api2 chi.Router) {
+		// 	api2.Mount("")
+		// })
 
 	})
 

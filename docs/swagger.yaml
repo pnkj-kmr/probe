@@ -355,6 +355,21 @@ paths:
       summary: Ping
       tags:
       - Health
+  /api/dashboard/system:
+    get:
+      consumes:
+      - application/json
+      description: cpu, memory and disk usage
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: system stats
+          schema:
+            type: string
+      summary: Get system stats
+      tags:
+      - Dashboard
   /api/poll/{type}/{pollPeriod}:
     delete:
       consumes:
