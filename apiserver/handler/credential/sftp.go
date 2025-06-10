@@ -19,7 +19,7 @@ import (
 // @Param input body M.AuthSFTP true "Request payload"
 // @Success      201  {object}  M.AuthSFTP
 // @Router       /api/profile/sftp [post]
-func (api *_router) save_sftp(w http.ResponseWriter, r *http.Request) {
+func (api *R) save_sftp(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSFTP{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -38,7 +38,7 @@ func (api *_router) save_sftp(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	err = api.db.Create(data.LoginProfileId, d)
+	err = api.DB.Create(data.LoginProfileId, d)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

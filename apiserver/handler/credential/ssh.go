@@ -19,7 +19,7 @@ import (
 // @Param input body M.AuthSSH true "Request payload"
 // @Success      201  {object}  M.AuthSSH
 // @Router       /api/profile/ssh [post]
-func (api *_router) save_ssh(w http.ResponseWriter, r *http.Request) {
+func (api *R) save_ssh(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSSH{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -38,7 +38,7 @@ func (api *_router) save_ssh(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	err = api.db.Create(data.LoginProfileId, d)
+	err = api.DB.Create(data.LoginProfileId, d)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

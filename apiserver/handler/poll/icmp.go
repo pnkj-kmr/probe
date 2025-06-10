@@ -21,7 +21,7 @@ import (
 // @Param input body M.ICMPReq true "ICMP Request body"
 // @Success      201  {object}  M.ICMPReq
 // @Router       /api/poll/icmp [post]
-func (api *_router) save_icmp(w http.ResponseWriter, r *http.Request) {
+func (api *R) save_icmp(w http.ResponseWriter, r *http.Request) {
 	data := &M.ICMPReq{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -37,7 +37,7 @@ func (api *_router) save_icmp(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	db, err := api.getDB(data.Params.PollPeriod)
+	db, err := api.GetDB(data.Params.PollPeriod)
 	if err != nil {
 		slog.Info("ICMP request db error", "err", err)
 		render.Render(w, r, handler.ErrInvalidRequest(err))

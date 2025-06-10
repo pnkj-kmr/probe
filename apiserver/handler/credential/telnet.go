@@ -19,7 +19,7 @@ import (
 // @Param input body M.AuthTELNET true "Request payload"
 // @Success      201  {object}  M.AuthTELNET
 // @Router       /api/profile/telnet [post]
-func (api *_router) save_telnet(w http.ResponseWriter, r *http.Request) {
+func (api *R) save_telnet(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthTELNET{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -38,7 +38,7 @@ func (api *_router) save_telnet(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	err = api.db.Create(data.LoginProfileId, d)
+	err = api.DB.Create(data.LoginProfileId, d)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

@@ -12,32 +12,33 @@ import (
 	"github.com/go-chi/render"
 )
 
-type _router struct {
-	id  int
+type R struct {
 	mux *chi.Mux
-	db  *safemap.SafeMap[int, M.DB]
+
+	ID int
+	DB *safemap.SafeMap[int, M.DB]
 }
 
-func NewRouter(id int, db *safemap.SafeMap[int, M.DB]) *_router {
-	return &_router{
-		id:  id,
+func NewRouter(id int, db *safemap.SafeMap[int, M.DB]) *R {
+	return &R{
 		mux: chi.NewRouter(),
-		db:  db,
+		ID:  id,
+		DB:  db,
 	}
 }
 
-func (api *_router) Mux() *chi.Mux {
-	api.mux.Post("/", api.save)
-	api.mux.Get("/{pollPeriod}/{id}", api.get)
-	api.mux.Delete("/{pollPeriod}/{id}", api.delete)
-	api.mux.Get("/{pollPeriod}", api.count)
-	api.mux.Delete("/{pollPeriod}", api.deleteAll)
+func (api *R) Mux() *chi.Mux {
+	api.mux.Post("/", api.Save)
+	api.mux.Get("/{pollPeriod}/{id}", api.Get)
+	api.mux.Delete("/{pollPeriod}/{id}", api.Delete)
+	api.mux.Get("/{pollPeriod}", api.Count)
+	api.mux.Delete("/{pollPeriod}", api.DeleteAll)
 
 	return api.mux
 }
 
-func (api *_router) save(w http.ResponseWriter, r *http.Request) {
-	switch api.id {
+func (api *R) Save(w http.ResponseWriter, r *http.Request) {
+	switch api.ID {
 	case M.ICMP:
 		api.save_icmp(w, r)
 	case M.SNMP:
@@ -58,10 +59,10 @@ func (api *_router) save(w http.ResponseWriter, r *http.Request) {
 // @Param id path string true "CI ID of resource"
 // @Success 200 {string} string "record"
 // @Router /api/poll/{type}/{pollPeriod}/{id} [delete]
-func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
+func (api *R) Delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	pollPeriod := chi.URLParam(r, "pollPeriod")
-	db, err := api.getDB(pollPeriod)
+	db, err := api.GetDB(pollPeriod)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
@@ -84,9 +85,9 @@ func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
 // @Param pollPeriod path string true "Poll Period - like: 60/300"
 // @Success 200 {string} string "record"
 // @Router /api/poll/{type}/{pollPeriod} [delete]
-func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
+func (api *R) DeleteAll(w http.ResponseWriter, r *http.Request) {
 	pollPeriod := chi.URLParam(r, "pollPeriod")
-	db, err := api.getDB(pollPeriod)
+	db, err := api.GetDB(pollPeriod)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
@@ -109,9 +110,9 @@ func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
 // @Param pollPeriod path string true "Poll Period - like: 60/300"
 // @Success 200 {string} string "record"
 // @Router /api/poll/{type}/{pollPeriod} [get]
-func (api *_router) count(w http.ResponseWriter, r *http.Request) {
+func (api *R) Count(w http.ResponseWriter, r *http.Request) {
 	pollPeriod := chi.URLParam(r, "pollPeriod")
-	db, err := api.getDB(pollPeriod)
+	db, err := api.GetDB(pollPeriod)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
@@ -138,10 +139,10 @@ func (api *_router) count(w http.ResponseWriter, r *http.Request) {
 // @Param id path string true "CI ID of resource"
 // @Success 200 {string} string "poll config"
 // @Router /api/poll/{type}/{pollPeriod}/{id} [get]
-func (api *_router) get(w http.ResponseWriter, r *http.Request) {
+func (api *R) Get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	pollPeriod := chi.URLParam(r, "pollPeriod")
-	db, err := api.getDB(pollPeriod)
+	db, err := api.GetDB(pollPeriod)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
@@ -160,20 +161,20 @@ func (api *_router) get(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusOK)
 }
 
-func (api *_router) getDB(pollPeriod any) (M.DB, error) {
+func (api *R) GetDB(pollPeriod any) (M.DB, error) {
 	var dbId int
 	switch x := pollPeriod.(type) {
 	case int:
-		dbId = api.id + x
+		dbId = api.ID + x
 	case string:
 		p, err := strconv.Atoi(x)
 		if err != nil {
 			p = M.INTERVAL_300
 		}
-		dbId = api.id + p
+		dbId = api.ID + p
 	}
 	// fmt.Println("dbId --->", dbId)
-	db, ok := api.db.Get(dbId)
+	db, ok := api.DB.Get(dbId)
 	if !ok {
 		return nil, handler.ErrDB
 	}

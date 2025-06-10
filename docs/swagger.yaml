@@ -329,6 +329,60 @@ definitions:
     - VERSION1
     - VERSION2C
     - VERSION3
+  dashboard.CPU:
+    properties:
+      cores:
+        type: integer
+      usage:
+        items:
+          type: number
+        type: array
+    type: object
+  dashboard.Disk:
+    properties:
+      total:
+        type: number
+      used:
+        type: number
+      used_percent:
+        type: number
+    type: object
+  dashboard.Memory:
+    properties:
+      total:
+        type: number
+      used:
+        type: number
+      used_percent:
+        type: number
+    type: object
+  dashboard.PollStat:
+    properties:
+      name:
+        type: string
+      polled:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dashboard.ResourceStats:
+    properties:
+      stats:
+        items:
+          $ref: '#/definitions/dashboard.PollStat'
+        type: array
+      total:
+        type: integer
+    type: object
+  dashboard.SystemStats:
+    properties:
+      cpu:
+        $ref: '#/definitions/dashboard.CPU'
+      disk:
+        $ref: '#/definitions/dashboard.Disk'
+      memory:
+        $ref: '#/definitions/dashboard.Memory'
+    type: object
 info:
   contact:
     email: pnkj3092@gmail.com
@@ -355,6 +409,38 @@ paths:
       summary: Ping
       tags:
       - Health
+  /api/dashboard/poll:
+    get:
+      consumes:
+      - application/json
+      description: helps to get the current polling status along with poll result
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dashboard.PollStat'
+            type: array
+      summary: Get polling stats
+      tags:
+      - Dashboard
+  /api/dashboard/resource:
+    get:
+      consumes:
+      - application/json
+      description: total resource which aligned to poll
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dashboard.ResourceStats'
+      summary: Get resource stats
+      tags:
+      - Dashboard
   /api/dashboard/system:
     get:
       consumes:
@@ -364,9 +450,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: system stats
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/dashboard.SystemStats'
       summary: Get system stats
       tags:
       - Dashboard

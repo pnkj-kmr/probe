@@ -11,26 +11,23 @@ import (
 	"github.com/go-chi/render"
 )
 
-type _router struct {
-	id  int
+type R struct {
 	mux *chi.Mux
-	db  *safemap.SafeMap[int, M.DB]
+
+	DB *safemap.SafeMap[int, M.DB]
 }
 
-func NewRouter(id int, db *safemap.SafeMap[int, M.DB]) *_router {
-	return &_router{
-		id:  id,
+func NewRouter(db *safemap.SafeMap[int, M.DB]) *R {
+	return &R{
 		mux: chi.NewRouter(),
-		db:  db,
+		DB:  db,
 	}
 }
 
-func (api *_router) Mux() *chi.Mux {
-	api.mux.Get("/system", api.systemStats)
-	api.mux.Get("/resource", api.resourceStats)
-	// api.mux.Delete("/{pollPeriod}/{id}", api.delete)
-	// api.mux.Get("/{pollPeriod}", api.count)
-	// api.mux.Delete("/{pollPeriod}", api.deleteAll)
+func (api *R) Mux() *chi.Mux {
+	api.mux.Get("/system", api.SystemStats)
+	api.mux.Get("/resource", api.ResourceStats)
+	api.mux.Get("/poll", api.PollStats)
 
 	return api.mux
 }
@@ -41,9 +38,9 @@ func (api *_router) Mux() *chi.Mux {
 // @Tags Dashboard
 // @Accept  json
 // @Produce  json
-// @Success 200 {string} string "system stats"
+// @Success 200 {object}  SystemStats
 // @Router /api/dashboard/system [get]
-func (api *_router) systemStats(w http.ResponseWriter, r *http.Request) {
+func (api *R) SystemStats(w http.ResponseWriter, r *http.Request) {
 	stats := getSystemStats()
 	data, err := json.Marshal(stats)
 	if err != nil {
@@ -60,15 +57,45 @@ func (api *_router) systemStats(w http.ResponseWriter, r *http.Request) {
 // @Tags Dashboard
 // @Accept  json
 // @Produce  json
-// @Success 200 {string} string "system stats"
+// @Success 200 {object}  ResourceStats
 // @Router /api/dashboard/resource [get]
-func (api *_router) resourceStats(w http.ResponseWriter, r *http.Request) {
-	var data []byte
+func (api *R) ResourceStats(w http.ResponseWriter, r *http.Request) {
+	var stats []PollStat
+	var total uint64
+
+	// getting icmp stats
+	t := api.resourceCount(M.ICMP)
+	stats = append(stats, PollStat{Name: "ICMP", Total: t})
+	total = total + t
+
+	t = api.resourceCount(M.SNMP)
+	stats = append(stats, PollStat{Name: "SNMP", Total: t})
+	total = total + t
 
 	// TODO
-	// need to group all poll type stats
-	//
+	// add more here
 
+	resourceStat := ResourceStats{
+		Stats: stats,
+		Total: total,
+	}
+	data, err := json.Marshal(resourceStat)
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
 	render.Status(r, http.StatusOK)
 	w.Write(data)
+}
+
+// PollStats godoc
+// @Summary Get polling stats
+// @Description helps to get the current polling status along with poll result
+// @Tags Dashboard
+// @Accept  json
+// @Produce  json
+// @Success 200 {object}  PollingStats
+// @Router /api/dashboard/poll [get]
+func (api *R) PollStats(w http.ResponseWriter, r *http.Request) {
+
 }

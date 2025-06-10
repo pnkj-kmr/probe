@@ -6,9 +6,9 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func (api *_router) validateAuthProfile(fl validator.FieldLevel) bool {
+func (api *R) validateAuthProfile(fl validator.FieldLevel) bool {
 	value := fl.Field().String()
-	db, ok := api.db.Get(M.AUTH_PROFILE)
+	db, ok := api.DB.Get(M.CRED)
 	// fmt.Println("---->", db)
 	if !ok {
 		return ok

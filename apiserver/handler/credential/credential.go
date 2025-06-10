@@ -10,21 +10,22 @@ import (
 	"github.com/go-chi/render"
 )
 
-type _router struct {
-	authType M.ProtocolType
-	mux      *chi.Mux
-	db       M.DB
+type R struct {
+	mux *chi.Mux
+
+	PType M.ProtocolType
+	DB    M.DB
 }
 
-func NewRouter(authType M.ProtocolType, db M.DB) *_router {
-	return &_router{
-		authType: authType,
-		mux:      chi.NewRouter(),
-		db:       db,
+func NewRouter(pType M.ProtocolType, db M.DB) *R {
+	return &R{
+		PType: pType,
+		mux:   chi.NewRouter(),
+		DB:    db,
 	}
 }
 
-func (api *_router) Mux() *chi.Mux {
+func (api *R) Mux() *chi.Mux {
 	// related routers
 	api.mux.Post("/", api.save)
 	api.mux.Get("/", api.count)
@@ -35,8 +36,8 @@ func (api *_router) Mux() *chi.Mux {
 	return api.mux
 }
 
-func (api *_router) save(w http.ResponseWriter, r *http.Request) {
-	switch api.authType {
+func (api *R) save(w http.ResponseWriter, r *http.Request) {
+	switch api.PType {
 	case M.SNMPType:
 		api.save_snmp(w, r)
 	case M.HTTPType, M.HTTPSType:
@@ -62,9 +63,9 @@ func (api *_router) save(w http.ResponseWriter, r *http.Request) {
 // @Param id path string true "credential id (login/device profile id)"
 // @Success 200 {string} string "record"
 // @Router /api/profile/{credential_type}/{id} [delete]
-func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
+func (api *R) delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	err := api.db.Delete(id)
+	err := api.DB.Delete(id)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
@@ -81,8 +82,8 @@ func (api *_router) delete(w http.ResponseWriter, r *http.Request) {
 // @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
 // @Success 200 {string} string "record"
 // @Router /api/profile/{credential_type}/ [delete]
-func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
-	err := api.db.DeleteAll()
+func (api *R) deleteAll(w http.ResponseWriter, r *http.Request) {
+	err := api.DB.DeleteAll()
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
@@ -99,8 +100,8 @@ func (api *_router) deleteAll(w http.ResponseWriter, r *http.Request) {
 // @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
 // @Success 200 {string} string "record"
 // @Router /api/profile/{credential_type}/ [get]
-func (api *_router) count(w http.ResponseWriter, r *http.Request) {
-	count := api.db.Count()
+func (api *R) count(w http.ResponseWriter, r *http.Request) {
+	count := api.DB.Count()
 	// data, err := json.Marshal(struct{ count uint64 }{count: count})
 	data, err := json.Marshal(count)
 	if err != nil {
@@ -121,9 +122,9 @@ func (api *_router) count(w http.ResponseWriter, r *http.Request) {
 // @Param id path string true "credential id (login/device profile id)"
 // @Success 200 {string} string "record"
 // @Router /api/profile/{credential_type}/{id} [get]
-func (api *_router) get(w http.ResponseWriter, r *http.Request) {
+func (api *R) get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	data, err := api.db.Find(id)
+	data, err := api.DB.Find(id)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

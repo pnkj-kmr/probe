@@ -19,7 +19,7 @@ import (
 // @Param input body M.AuthHTTP true "Request payload"
 // @Success      201  {object}  M.AuthHTTP
 // @Router       /api/profile/http [post]
-func (api *_router) save_http(w http.ResponseWriter, r *http.Request) {
+func (api *R) save_http(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthHTTP{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -38,7 +38,7 @@ func (api *_router) save_http(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	err = api.db.Create(data.LoginProfileId, d)
+	err = api.DB.Create(data.LoginProfileId, d)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

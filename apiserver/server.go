@@ -65,7 +65,7 @@ func (server *Server) newRouter() *chi.Mux {
 
 		// Group: /api/profile
 		api.Route("/profile", func(api2 chi.Router) {
-			credDB, _ := server.db.Get(M.AUTH_PROFILE)
+			credDB, _ := server.db.Get(M.CRED)
 			api2.Mount("/snmp", credential.NewRouter(M.SNMPType, credDB).Mux())
 			api2.Mount("/ssh", credential.NewRouter(M.SSHType, credDB).Mux())
 			api2.Mount("/telnet", credential.NewRouter(M.TELNETType, credDB).Mux())
@@ -74,10 +74,7 @@ func (server *Server) newRouter() *chi.Mux {
 		})
 
 		// Group: /api/dashboard
-		api.Mount("/dashboard", dashboard.NewRouter(0, server.db).Mux())
-		// api.Route("/dashboard", func(api2 chi.Router) {
-		// 	api2.Mount("")
-		// })
+		api.Mount("/dashboard", dashboard.NewRouter(server.db).Mux())
 
 	})
 

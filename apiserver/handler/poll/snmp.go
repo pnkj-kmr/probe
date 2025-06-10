@@ -19,7 +19,7 @@ import (
 // @Produce      json
 // @Success      200  {object}  M.SNMPReq
 // @Router       /api/poll/snmp [post]
-func (api *_router) save_snmp(w http.ResponseWriter, r *http.Request) {
+func (api *R) save_snmp(w http.ResponseWriter, r *http.Request) {
 	data := &M.SNMPReq{}
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -34,7 +34,7 @@ func (api *_router) save_snmp(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}
-	db, err := api.getDB(data.Params.PollPeriod)
+	db, err := api.GetDB(data.Params.PollPeriod)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

@@ -32,7 +32,7 @@ func newDBEngine(e *actor.Engine, opts ...OptFunc) (*DBEngine, error) {
 	// initialising db
 	var err error
 
-	err = dbEngine.setup(M.AUTH_PROFILE, "auth", "")
+	err = dbEngine.setup(M.CRED, "credential", "")
 	if err != nil {
 		return nil, err
 	}

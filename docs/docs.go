@@ -44,6 +44,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/dashboard/poll": {
+            "get": {
+                "description": "helps to get the current polling status along with poll result",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get polling stats",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dashboard.PollStat"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/dashboard/resource": {
+            "get": {
+                "description": "total resource which aligned to poll",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get resource stats",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dashboard.ResourceStats"
+                        }
+                    }
+                }
+            }
+        },
         "/api/dashboard/system": {
             "get": {
                 "description": "cpu, memory and disk usage",
@@ -59,9 +108,9 @@ const docTemplate = `{
                 "summary": "Get system stats",
                 "responses": {
                     "200": {
-                        "description": "system stats",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/dashboard.SystemStats"
                         }
                     }
                 }
@@ -1092,6 +1141,90 @@ const docTemplate = `{
                 "VERSION2C",
                 "VERSION3"
             ]
+        },
+        "dashboard.CPU": {
+            "type": "object",
+            "properties": {
+                "cores": {
+                    "type": "integer"
+                },
+                "usage": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                }
+            }
+        },
+        "dashboard.Disk": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "number"
+                },
+                "used": {
+                    "type": "number"
+                },
+                "used_percent": {
+                    "type": "number"
+                }
+            }
+        },
+        "dashboard.Memory": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "number"
+                },
+                "used": {
+                    "type": "number"
+                },
+                "used_percent": {
+                    "type": "number"
+                }
+            }
+        },
+        "dashboard.PollStat": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "polled": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dashboard.ResourceStats": {
+            "type": "object",
+            "properties": {
+                "stats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dashboard.PollStat"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dashboard.SystemStats": {
+            "type": "object",
+            "properties": {
+                "cpu": {
+                    "$ref": "#/definitions/dashboard.CPU"
+                },
+                "disk": {
+                    "$ref": "#/definitions/dashboard.Disk"
+                },
+                "memory": {
+                    "$ref": "#/definitions/dashboard.Memory"
+                }
+            }
         }
     }
 }`

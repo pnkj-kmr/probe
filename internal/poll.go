@@ -58,7 +58,7 @@ func (e *PollEngine) setup(id int, name string, db *DBEngine, export *ExportEngi
 	}
 	var finder M.Finder = nil
 	if options.snmp {
-		f, ok := db.GetDB(M.AUTH_PROFILE)
+		f, ok := db.GetDB(M.CRED)
 		if !ok {
 			return ErrNoAuth
 		}
