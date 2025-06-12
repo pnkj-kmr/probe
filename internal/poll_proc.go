@@ -50,7 +50,7 @@ func (p *pollProcess) Receive(ctx *actor.Context) {
 	case actor.Stopped:
 		slog.Info("[POLL] process stopped", "name", p.name)
 	case M.PollingBeat:
-		slog.Info("invoking poller....", "id", ctx.PID().ID, "name", p.name, "msg", msg.Name)
+		slog.Info("invoking poller....", "id", ctx.PID().ID, "name", p.name, "msg", msg.Name, "exporter", p.exporter)
 		// p.exporter.Send(M.Do{})
 		for _, sender := range p.exporter {
 			sender.Send(M.Do{})

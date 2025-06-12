@@ -3,6 +3,7 @@ package dbdump
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	M "probe/model"
 )
 
@@ -24,17 +25,23 @@ func (dd *DBDump) Close() error   { return nil }
 
 func (dd *DBDump) Export(data any) (err error) {
 	switch d := data.(type) {
-	case []M.ICMPRes:
+	case []any:
+		slog.Info("dbdump received --->", "total", len(d))
 		dump := make(map[string][]byte)
 		for _, x := range d {
 			rs, _ := json.Marshal(x) // TODO err case handling
-			dump[x.Cid] = rs
+			switch p := x.(type) {
+			case M.ICMPRes:
+				dump[p.Cid] = rs
+			case M.SNMPRes:
+				dump[p.Cid] = rs
+			}
 		}
 		if len(dump) > 0 {
 			dd.db.CreateBulk(dump)
 		}
 	default:
-		fmt.Println("UNKNOWN MESSAGE RECEIVED")
+		fmt.Println("UNKNOWN DATA RECEIVED")
 	}
 	return
 }

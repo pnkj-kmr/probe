@@ -73,7 +73,7 @@ func (e *ExportEngine) setup(name, purpose string, options Opts) (err error) {
 	slog.Info("setting up exporter", "name", name, "purpose", purpose)
 	var exporterName string
 	if purpose != "" {
-		exporterName = name + "/" + purpose
+		exporterName = fmt.Sprintf("%s/%s", name, purpose)
 	} else {
 		exporterName = name
 	}
@@ -89,7 +89,7 @@ func (e *ExportEngine) setup(name, purpose string, options Opts) (err error) {
 	}
 
 	exprt, err := newExportProcess(
-		options.context, fmt.Sprintf("export/%s", exporterName), e.engine, db,
+		options.context, exporterName, e.engine, db,
 		options.maxBucketSize, options.totalPartitions,
 	)
 	if err != nil {

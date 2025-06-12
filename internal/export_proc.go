@@ -8,6 +8,7 @@ import (
 	M "probe/model"
 	"probe/repository"
 	"strconv"
+	"strings"
 
 	"probe/safemap"
 
@@ -18,6 +19,7 @@ import (
 
 type exportProcess struct {
 	ctx      context.Context
+	pType    M.ProbeType
 	name     string
 	engine   *actor.Engine
 	pid      *actor.PID
@@ -30,8 +32,15 @@ type exportProcess struct {
 }
 
 func newExportProcess(ctx context.Context, name string, e *actor.Engine, db *repository.Repository, bucketSize int, partitions int) (*exportProcess, error) {
+	var _pType M.ProbeType
+	if strings.Contains(name, string(M.KAFKA)) {
+		_pType = M.KAFKA
+	} else if strings.Contains(name, string(M.DBDUMP)) {
+		_pType = M.DBDUMP
+	}
+
 	return &exportProcess{
-		ctx: ctx, name: name, engine: e, db: db,
+		ctx: ctx, pType: _pType, name: name, engine: e, db: db,
 		bucketSize: bucketSize,
 		partitions: partitions,
 		bucket:     safemap.New[int, []any](),
@@ -58,10 +67,11 @@ func (p *exportProcess) Receive(ctx *actor.Context) {
 		}
 		slog.Info("[EXPORT] process stopped", "name", p.name)
 	case M.ICMPRes:
+		slog.Info("[EXPORT] data ----====>", "name", p.name, "exporter", p.exporter)
 		paritionId := p.getParititionId(msg.Cid)
 		p.addToBucket(paritionId, msg)
 	case M.Do:
-		slog.Info("[EXPORT] polling --> DO")
+		slog.Info("[EXPORT] polling --> DO", "name", p.name, "exporter", p.exporter)
 		if p.exporter == nil {
 			p.setExporter()
 		}
@@ -90,9 +100,9 @@ func (p *exportProcess) addToBucket(paritionId int, data any) {
 		slog.Info("[EXPORT] bucket full, next interation invoked", "bucket", len(bucket))
 		if p.exporter != nil {
 			slog.Info("[EXPORT] exporting now ===>", "bucket", len(bucket), "parition_id", paritionId)
-			if p.name == string(M.KAFKA) {
+			if p.pType == M.KAFKA {
 				p.exporter.Push() <- p.getExportMsg(paritionId, bucket)
-			} else if p.name == string(M.DBDUMP) {
+			} else if p.pType == M.DBDUMP {
 				p.exporter.Export(bucket)
 			}
 		}
@@ -109,9 +119,9 @@ func (p *exportProcess) flushBucket() {
 		slog.Info("[EXPORT] +++++ FLUSHING +++++", "bucket", len(bucket), "i", i)
 		if len(bucket) > 0 {
 			if p.exporter != nil {
-				if p.name == string(M.KAFKA) {
+				if p.pType == M.KAFKA {
 					p.exporter.Push() <- p.getExportMsg(i, bucket)
-				} else if p.name == string(M.DBDUMP) {
+				} else if p.pType == M.DBDUMP {
 					p.exporter.Export(bucket)
 				}
 			}
@@ -143,7 +153,7 @@ func (p *exportProcess) getExportMsg(partitionId int, data any) M.ExportMsg {
 }
 
 func (p *exportProcess) setExporter() {
-	switch M.ProbeType(p.name) {
+	switch p.pType {
 	case M.KAFKA:
 		exporter, err := exporter.New(p.ctx, M.ProbeType(p.name))
 		if err != nil {
@@ -153,10 +163,12 @@ func (p *exportProcess) setExporter() {
 		} else {
 			p.exporter = exporter
 			p.exporter.Spin()
+			slog.Info("[EXPORT] initialing export --", "name", p.name, "exporter", p.exporter)
 		}
 	case M.DBDUMP:
 		exporter := dbdump.NewDBDumpExporter(p.name, p.db)
 		p.exporter = exporter
+		slog.Info("[EXPORT] initialing export --", "name", p.name, "exporter", p.exporter)
 	}
 }
 

@@ -165,9 +165,9 @@ func (api *R) GetDB(pollPeriod any) (M.DB, error) {
 	var dbId string
 	switch x := pollPeriod.(type) {
 	case int:
-		dbId = api.ID + strconv.Itoa(x)
+		dbId = api.ID + "/" + strconv.Itoa(x)
 	case string:
-		dbId = api.ID + x
+		dbId = api.ID + "/" + x
 	}
 	// fmt.Println("dbId --->", dbId)
 	db, ok := api.DB.Get(dbId)

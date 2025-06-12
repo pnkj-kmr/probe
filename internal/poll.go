@@ -57,7 +57,7 @@ func (e *PollEngine) setup(name string, db *DBEngine, export *ExportEngine, opti
 		exporter = append(exporter, e)
 	}
 	// checking db dump export if any
-	ex, ok := export.Get(name)
+	ex, ok := export.Get(fmt.Sprintf("%s/%s_stat", M.DBDUMP, name))
 	if ok {
 		exporter = append(exporter, ex)
 	}

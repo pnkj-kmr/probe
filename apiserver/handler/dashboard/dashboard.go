@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"probe/apiserver/handler"
 	M "probe/model"
@@ -97,5 +98,30 @@ func (api *R) ResourceStats(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object}  PollingStats
 // @Router /api/dashboard/poll [get]
 func (api *R) PollStats(w http.ResponseWriter, r *http.Request) {
+	var stats []PollStat
+	var t, t2 uint64
 
+	// icmp stats
+	t = api.resCount(fmt.Sprintf("%s/%d", M.ICMP, M.INTERVAL_60))
+	t2 = api.resCount(fmt.Sprintf("%s/%d_stat", M.ICMP, M.INTERVAL_60))
+	stats = append(stats, PollStat{Name: "ICMP_60", Total: t, Polled: t2})
+	t = api.resCount(fmt.Sprintf("%s/%d", M.ICMP, M.INTERVAL_300))
+	t2 = api.resCount(fmt.Sprintf("%s/%d_stat", M.ICMP, M.INTERVAL_300))
+	stats = append(stats, PollStat{Name: "ICMP_300", Total: t, Polled: t2})
+
+	// snmp stats
+	t = api.resCount(fmt.Sprintf("%s/%d", M.SNMP, M.INTERVAL_60))
+	t2 = api.resCount(fmt.Sprintf("%s/%d_stat", M.SNMP, M.INTERVAL_60))
+	stats = append(stats, PollStat{Name: "SNMP_60", Total: t, Polled: t2})
+	t = api.resCount(fmt.Sprintf("%s/%d", M.SNMP, M.INTERVAL_300))
+	t2 = api.resCount(fmt.Sprintf("%s/%d_stat", M.SNMP, M.INTERVAL_300))
+	stats = append(stats, PollStat{Name: "SNMP_300", Total: t, Polled: t2})
+
+	data, err := json.Marshal(stats)
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+	render.Status(r, http.StatusOK)
+	w.Write(data)
 }

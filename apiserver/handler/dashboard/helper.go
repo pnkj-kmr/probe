@@ -5,18 +5,20 @@ import (
 	M "probe/model"
 )
 
+func (api *R) resCount(k string) (t uint64) {
+	if db, ok := api.DB.Get(k); ok {
+		total := db.Count()
+		t = t + total
+	}
+	return t
+}
+
 func (api *R) resourceCount(protocol M.ProbeType) (t uint64) {
 	p60 := fmt.Sprintf("%s/%d", protocol, M.INTERVAL_60)
-	if db, ok := api.DB.Get(p60); ok {
-		total := db.Count()
-		t = t + total
-	}
+	t = t + api.resCount(p60)
 
 	p300 := fmt.Sprintf("%s/%d", protocol, M.INTERVAL_300)
-	if db, ok := api.DB.Get(p300); ok {
-		total := db.Count()
-		t = t + total
-	}
+	t = t + api.resCount(p300)
 
 	return
 }
