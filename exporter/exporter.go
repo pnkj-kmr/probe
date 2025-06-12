@@ -56,13 +56,19 @@ func (r *Exporter) Spin() {
 	go r.loop2()
 }
 
-func (r *Exporter) Close() {
+func (r *Exporter) Export(any) error {
+	// dummpy func make exporter interface
+	return nil
+}
+
+func (r *Exporter) Close() error {
 	if r.kafka != nil {
 		r.kafka.AsyncClose()
 	}
+	return nil
 }
 
-func (r *Exporter) Send() (data chan any) {
+func (r *Exporter) Push() (data chan any) {
 	// in case of kafka
 	// - need to group the extra metadata into message
 	// - multi message should be group together to push to kafka

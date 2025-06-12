@@ -65,7 +65,7 @@ func (e *ScheduleEngine) setup(name string, poll *PollEngine, interval time.Dura
 	if !ok {
 		return ErrPOLLER
 	}
-	sch, err := newScheduleProcess(fmt.Sprintf("schedule/%s/", name), e.engine, interval, options.maxRestarts, c)
+	sch, err := newScheduleProcess(fmt.Sprintf("schedule/%s", name), e.engine, interval, options.maxRestarts, c)
 	if err != nil {
 		return err
 	}

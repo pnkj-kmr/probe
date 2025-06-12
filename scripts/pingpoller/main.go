@@ -16,7 +16,7 @@ func main() {
 	icmp.Ping = ping
 	var cp = mockdata.NewPingMock()
 
-	poller := icmp.NewPoller(cp, cp, poller.WithWorkers(2), poller.WithTimeout(2*time.Second))
+	poller := icmp.NewPoller(cp[0], nil, poller.WithWorkers(2), poller.WithTimeout(2*time.Second))
 	poller.Poll()
 
 	// fmt.Println("last error --", err)

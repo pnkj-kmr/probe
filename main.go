@@ -35,7 +35,7 @@ func main() {
 	// probe, err := probe.NewProbeWithContext(ctx)
 	log.Println("probe declration -->", probe)
 	if err != nil {
-		slog.Error("err found")
+		slog.Error("", "err", err)
 		log.Fatalln(err)
 	}
 

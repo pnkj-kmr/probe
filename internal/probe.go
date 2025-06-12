@@ -43,7 +43,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 
 	//Export engine init
 	// workers node
-	export, err := newExportEngine(p.enigne, opts...)
+	export, err := newExportEngine(p.enigne, db, opts...)
 	if err != nil {
 		return nil, err
 	}

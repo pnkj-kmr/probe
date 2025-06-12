@@ -97,8 +97,17 @@ func (e *DBEngine) multiSetup(name string) (err error) {
 	if err != nil {
 		return
 	}
+	err = e.setup(fmt.Sprintf("%s/%d_stat", name, M.INTERVAL_60), "")
+	if err != nil {
+		return
+	}
+
 	// setting up for 300 seconds
 	err = e.setup(fmt.Sprintf("%s/%d", name, M.INTERVAL_300), "")
+	if err != nil {
+		return
+	}
+	err = e.setup(fmt.Sprintf("%s/%d_stat", name, M.INTERVAL_300), "")
 	if err != nil {
 		return
 	}

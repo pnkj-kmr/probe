@@ -13,9 +13,11 @@ type PingMock struct {
 	ch    chan []byte
 }
 
-func NewPingMock() *PingMock {
-	p := &PingMock{ch: make(chan []byte)}
-	go p.spin()
+func NewPingMock() []*PingMock {
+	p := []*PingMock{{ch: make(chan []byte)}}
+	for _, pp := range p {
+		go pp.spin()
+	}
 	return p
 }
 

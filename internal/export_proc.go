@@ -4,7 +4,9 @@ import (
 	"context"
 	"log/slog"
 	"probe/exporter"
+	"probe/exporter/dbdump"
 	M "probe/model"
+	"probe/repository"
 	"strconv"
 
 	"probe/safemap"
@@ -12,21 +14,24 @@ import (
 	"github.com/anthdm/hollywood/actor"
 )
 
+// exporter *exporter.Exporter // M.Sender - need to make
+
 type exportProcess struct {
 	ctx      context.Context
 	name     string
 	engine   *actor.Engine
 	pid      *actor.PID
-	exporter *exporter.Exporter // M.Sender - need to make
+	exporter M.Exporter[chan any, any]
+	db       *repository.Repository
 
 	bucketSize int
 	partitions int
 	bucket     *safemap.SafeMap[int, []any]
 }
 
-func newExportProcess(ctx context.Context, name string, e *actor.Engine, bucketSize int, partitions int) (*exportProcess, error) {
+func newExportProcess(ctx context.Context, name string, e *actor.Engine, db *repository.Repository, bucketSize int, partitions int) (*exportProcess, error) {
 	return &exportProcess{
-		ctx: ctx, name: name, engine: e,
+		ctx: ctx, name: name, engine: e, db: db,
 		bucketSize: bucketSize,
 		partitions: partitions,
 		bucket:     safemap.New[int, []any](),
@@ -85,7 +90,11 @@ func (p *exportProcess) addToBucket(paritionId int, data any) {
 		slog.Info("[EXPORT] bucket full, next interation invoked", "bucket", len(bucket))
 		if p.exporter != nil {
 			slog.Info("[EXPORT] exporting now ===>", "bucket", len(bucket), "parition_id", paritionId)
-			p.exporter.Send() <- p.getExportMsg(paritionId, bucket)
+			if p.name == string(M.KAFKA) {
+				p.exporter.Push() <- p.getExportMsg(paritionId, bucket)
+			} else if p.name == string(M.DBDUMP) {
+				p.exporter.Export(bucket)
+			}
 		}
 		slog.Info("[EXPORT] reset bucket", "parition_id", paritionId)
 		p.bucket.Set(paritionId, []any{})
@@ -100,7 +109,11 @@ func (p *exportProcess) flushBucket() {
 		slog.Info("[EXPORT] +++++ FLUSHING +++++", "bucket", len(bucket), "i", i)
 		if len(bucket) > 0 {
 			if p.exporter != nil {
-				p.exporter.Send() <- p.getExportMsg(i, bucket)
+				if p.name == string(M.KAFKA) {
+					p.exporter.Push() <- p.getExportMsg(i, bucket)
+				} else if p.name == string(M.DBDUMP) {
+					p.exporter.Export(bucket)
+				}
 			}
 		}
 	})
@@ -141,6 +154,9 @@ func (p *exportProcess) setExporter() {
 			p.exporter = exporter
 			p.exporter.Spin()
 		}
+	case M.DBDUMP:
+		exporter := dbdump.NewDBDumpExporter(p.name, p.db)
+		p.exporter = exporter
 	}
 }
 

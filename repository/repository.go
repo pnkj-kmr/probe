@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"probe/repository/boltdb"
 )
@@ -23,6 +24,11 @@ type Repository struct {
 }
 
 func New(name, directory string) (*Repository, error) {
+	pathList := strings.Split(name, "/")
+	if len(pathList) > 1 {
+		name = pathList[len(pathList)-1]
+		directory = filepath.Join(pathList[:len(pathList)-1]...)
+	}
 	if directory != "" {
 		directory = filepath.Join(DEFAULT_DIRECTORY, directory)
 	} else {
@@ -66,4 +72,8 @@ func (r *Repository) DeleteAll() error {
 
 func (r *Repository) Find(key string) (out []byte, err error) {
 	return r.db.Find(r.bucket, key)
+}
+
+func (r *Repository) CreateBulk(data map[string][]byte) (total int, err error) {
+	return r.db.CreateBulk(r.bucket, data)
 }

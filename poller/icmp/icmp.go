@@ -17,20 +17,20 @@ var (
 
 type Poller struct {
 	in      M.Receiver[<-chan []byte]
-	out     M.Sender[any]
+	out     []M.Sender[any]
 	workers int
 	timeout time.Duration
 }
 
-func NewPoller(c M.Receiver[<-chan []byte], p M.Sender[any], opts ...poller.OptFunc) M.Poller {
+func NewPoller(c M.Receiver[<-chan []byte], p []M.Sender[any], opts ...poller.OptFunc) M.Poller {
 	return newICMPPoller(c, p, opts...)
 }
 
-func NewScanner(c M.Receiver[<-chan []byte], p M.Sender[any], opts ...poller.OptFunc) M.Scanner {
+func NewScanner(c M.Receiver[<-chan []byte], p []M.Sender[any], opts ...poller.OptFunc) M.Scanner {
 	return newICMPPoller(c, p, opts...)
 }
 
-func newICMPPoller(c M.Receiver[<-chan []byte], p M.Sender[any], opts ...poller.OptFunc) *Poller {
+func newICMPPoller(c M.Receiver[<-chan []byte], p []M.Sender[any], opts ...poller.OptFunc) *Poller {
 	options := poller.DefaultOpts()
 	for _, opt := range opts {
 		opt(&options)
@@ -46,7 +46,9 @@ func (p *Poller) Poll() error {
 		var icmp M.ICMPReq
 		err = json.Unmarshal(data, &icmp)
 		if err != nil {
-			p.out.Send(err)
+			for _, sender := range p.out {
+				sender.Send(err)
+			}
 			continue
 		}
 		wg.Add(1)
@@ -61,7 +63,10 @@ func (p *Poller) Poll() error {
 				out.Err = err.Error()
 			}
 			log.Println("ICMP output -- ", out)
-			p.out.Send(out)
+			// p.out.Send(out)
+			for _, sender := range p.out {
+				sender.Send(out)
+			}
 		}(icmp)
 		log.Println("ICMP -- ", icmp)
 	}

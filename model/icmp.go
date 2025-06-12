@@ -5,7 +5,7 @@ import (
 )
 
 type PINGParams struct {
-	PollPeriod int           `json:"poll_period" validate:"required,oneof=5 60 300"`
+	PollPeriod int           `json:"poll_period" validate:"required,oneof=60 300"`
 	PollType   string        `json:"poll_type" validate:"required,oneof=ping"`
 	PCid       string        `json:"parent_ci_id"`
 	MibProfile string        `json:"mib_profile"`

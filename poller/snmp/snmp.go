@@ -16,22 +16,22 @@ var (
 
 type Poller struct {
 	in      M.Receiver[<-chan []byte]
-	out     M.Sender[any]
+	out     []M.Sender[any]
 	profile M.Finder
 	workers int
 
 	profileMap map[string]M.AuthSNMP
 }
 
-func NewPoller(c M.Receiver[<-chan []byte], p M.Sender[any], f M.Finder, opts ...poller.OptFunc) M.Poller {
+func NewPoller(c M.Receiver[<-chan []byte], p []M.Sender[any], f M.Finder, opts ...poller.OptFunc) M.Poller {
 	return newSNMPPoller(c, p, f, opts...)
 }
 
-func NewScanner(c M.Receiver[<-chan []byte], p M.Sender[any], f M.Finder, opts ...poller.OptFunc) M.Scanner {
+func NewScanner(c M.Receiver[<-chan []byte], p []M.Sender[any], f M.Finder, opts ...poller.OptFunc) M.Scanner {
 	return newSNMPPoller(c, p, f, opts...)
 }
 
-func newSNMPPoller(c M.Receiver[<-chan []byte], p M.Sender[any], f M.Finder, opts ...poller.OptFunc) *Poller {
+func newSNMPPoller(c M.Receiver[<-chan []byte], p []M.Sender[any], f M.Finder, opts ...poller.OptFunc) *Poller {
 	options := poller.DefaultOpts()
 	for _, opt := range opts {
 		opt(&options)
@@ -48,13 +48,17 @@ func (p *Poller) Poll() error {
 		var snmp M.SNMPReq
 		err = json.Unmarshal(data, &snmp)
 		if err != nil {
-			p.out.Send(err)
+			for _, sender := range p.out {
+				sender.Send(err)
+			}
 			continue
 		}
 		// getting profile
 		lp, err := p.getFindProfile(snmp.LoginProfileID)
 		if err != nil {
-			p.out.Send(err)
+			for _, sender := range p.out {
+				sender.Send(err)
+			}
 			continue
 		}
 		wg.Add(1)
@@ -66,7 +70,10 @@ func (p *Poller) Poll() error {
 				out.Err = err.Error()
 			}
 			log.Println("SNMP output -- ", out)
-			p.out.Send(out)
+			// p.out.Send(out)
+			for _, sender := range p.out {
+				sender.Send(out)
+			}
 		}(snmp, lp)
 		log.Println("SNMP -- ", snmp)
 	}

@@ -14,13 +14,13 @@ import (
 type pollProcess struct {
 	name     string
 	db       M.Receiver[<-chan []byte]
-	exporter M.Sender[any]
+	exporter []M.Sender[any]
 	finder   M.Finder
 	poller   M.Poller
 	workers  int
 }
 
-func newPollProcess(name string, db M.Receiver[<-chan []byte], workers int, exporter M.Sender[any], finder M.Finder) *pollProcess {
+func newPollProcess(name string, db M.Receiver[<-chan []byte], workers int, exporter []M.Sender[any], finder M.Finder) *pollProcess {
 	return &pollProcess{name: name, db: db, workers: workers, exporter: exporter, finder: finder}
 }
 
@@ -51,13 +51,19 @@ func (p *pollProcess) Receive(ctx *actor.Context) {
 		slog.Info("[POLL] process stopped", "name", p.name)
 	case M.PollingBeat:
 		slog.Info("invoking poller....", "id", ctx.PID().ID, "name", p.name, "msg", msg.Name)
-		p.exporter.Send(M.Do{})
+		// p.exporter.Send(M.Do{})
+		for _, sender := range p.exporter {
+			sender.Send(M.Do{})
+		}
 		if p.poller != nil {
 			p.poller.Poll()
 		} else {
 			slog.Warn("No poller found", "poller", p.poller)
 		}
-		p.exporter.Send(M.Done{})
+		// p.exporter.Send(M.Done{})
+		for _, sender := range p.exporter {
+			sender.Send(M.Done{})
+		}
 	default:
 		slog.Info("[POLL] default poll process message")
 		_ = msg

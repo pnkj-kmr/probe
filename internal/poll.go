@@ -48,14 +48,20 @@ func (e *PollEngine) setup(name string, db *DBEngine, export *ExportEngine, opti
 	if !ok {
 		return ErrDB
 	}
-	var exporter *exportProcess
+	var exporter []M.Sender[any]
 	if options.kafka {
 		e, ok := export.Get(string(M.KAFKA))
 		if !ok {
 			return ErrNoKAFKA
 		}
-		exporter = e
+		exporter = append(exporter, e)
 	}
+	// checking db dump export if any
+	ex, ok := export.Get(name)
+	if ok {
+		exporter = append(exporter, ex)
+	}
+
 	var finder M.Finder = nil
 	if options.snmp {
 		f, ok := db.GetDB(string(M.CRED))
