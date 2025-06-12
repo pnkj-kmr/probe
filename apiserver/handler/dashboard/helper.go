@@ -1,15 +1,18 @@
 package dashboard
 
-import M "probe/model"
+import (
+	"fmt"
+	M "probe/model"
+)
 
-func (api *R) resourceCount(protocol int) (t uint64) {
-	p60 := protocol + M.INTERVAL_60
+func (api *R) resourceCount(protocol M.ProbeType) (t uint64) {
+	p60 := fmt.Sprintf("%s/%d", protocol, M.INTERVAL_60)
 	if db, ok := api.DB.Get(p60); ok {
 		total := db.Count()
 		t = t + total
 	}
 
-	p300 := protocol + M.INTERVAL_300
+	p300 := fmt.Sprintf("%s/%d", protocol, M.INTERVAL_300)
 	if db, ok := api.DB.Get(p300); ok {
 		total := db.Count()
 		t = t + total

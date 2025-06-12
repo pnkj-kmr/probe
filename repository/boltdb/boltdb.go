@@ -31,7 +31,6 @@ func NewDB(ctx context.Context, directory, db_name string) (*DB, error) {
 		db_name = DBName
 	}
 	path := filepath.Join(directory, db_name)
-	// slog.Info("creating new db", "path", path)
 	db, err := bolt.Open(path, 0600, &bolt.Options{Timeout: 10 * time.Second})
 	if err != nil {
 		return nil, err

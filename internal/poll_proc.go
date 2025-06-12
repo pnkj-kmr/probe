@@ -12,7 +12,6 @@ import (
 )
 
 type pollProcess struct {
-	id       int
 	name     string
 	db       M.Receiver[<-chan []byte]
 	exporter M.Sender[any]
@@ -21,12 +20,12 @@ type pollProcess struct {
 	workers  int
 }
 
-func newPollProcess(id int, name string, db M.Receiver[<-chan []byte], workers int, exporter M.Sender[any], finder M.Finder) *pollProcess {
-	return &pollProcess{id: id, name: name, db: db, workers: workers, exporter: exporter, finder: finder}
+func newPollProcess(name string, db M.Receiver[<-chan []byte], workers int, exporter M.Sender[any], finder M.Finder) *pollProcess {
+	return &pollProcess{name: name, db: db, workers: workers, exporter: exporter, finder: finder}
 }
 
 func (p *pollProcess) setPoller() {
-	var _pollType int
+	var _pollType M.ProbeType
 	if strings.Contains(p.name, "icmp") {
 		_pollType = M.ICMP
 	} else if strings.Contains(p.name, "snmp") {

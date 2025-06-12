@@ -22,6 +22,8 @@ type OptFunc func(*Opts)
 
 // DefaultOpts returns default options.
 func DefaultOpts() Opts {
+	// TODO need to find default options from db
+	// env.db will hold all options with default values
 	return Opts{
 		context: context.Background(),
 		port:    8080,

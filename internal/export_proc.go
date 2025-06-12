@@ -14,7 +14,6 @@ import (
 
 type exportProcess struct {
 	ctx      context.Context
-	id       int
 	name     string
 	engine   *actor.Engine
 	pid      *actor.PID
@@ -25,10 +24,9 @@ type exportProcess struct {
 	bucket     *safemap.SafeMap[int, []any]
 }
 
-func newExportProcess(ctx context.Context, id int, name string, e *actor.Engine, bucketSize int, partitions int) (*exportProcess, error) {
+func newExportProcess(ctx context.Context, name string, e *actor.Engine, bucketSize int, partitions int) (*exportProcess, error) {
 	return &exportProcess{
-		ctx: ctx,
-		id:  id, name: name, engine: e,
+		ctx: ctx, name: name, engine: e,
 		bucketSize: bucketSize,
 		partitions: partitions,
 		bucket:     safemap.New[int, []any](),
@@ -74,7 +72,7 @@ func (p *exportProcess) Receive(ctx *actor.Context) {
 }
 
 func (p *exportProcess) initBucket() {
-	slog.Info("bucket init...")
+	// slog.Info("bucket init...")
 	for i := 0; i < p.partitions; i++ {
 		p.bucket.Set(i, []any{})
 	}
@@ -132,9 +130,9 @@ func (p *exportProcess) getExportMsg(partitionId int, data any) M.ExportMsg {
 }
 
 func (p *exportProcess) setExporter() {
-	switch p.id {
+	switch M.ProbeType(p.name) {
 	case M.KAFKA:
-		exporter, err := exporter.New(p.ctx, p.id, p.name)
+		exporter, err := exporter.New(p.ctx, M.ProbeType(p.name))
 		if err != nil {
 			p.exporter = nil
 			// TODO - need to generate the event on kafka failure
@@ -147,7 +145,7 @@ func (p *exportProcess) setExporter() {
 }
 
 func (p *exportProcess) Start() {
-	p.pid = p.engine.SpawnFunc(p.Receive, p.name, actor.WithID(strconv.Itoa(p.id)))
+	p.pid = p.engine.SpawnFunc(p.Receive, p.name)
 }
 
 func (p *exportProcess) Stop() error {

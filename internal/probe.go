@@ -95,7 +95,7 @@ func (p *Probe) Start() {
 	p.ctx.Schedule().Start()
 	p.ctx.Export().Start()
 	p.ctx.API().Start()
-	p.ctx.DB().Start()
+	// p.ctx.DB().Start()
 
 	<-p.ctx.context.Done()
 }
@@ -106,7 +106,7 @@ func (p *Probe) Stop() {
 	p.ctx.Schedule().Stop()
 	p.ctx.Export().Stop()
 	p.ctx.API().Stop()
-	p.ctx.DB().Stop()
+	// p.ctx.DB().Stop()
 
 	log.Println("[PROBE] gracefully shutdown")
 

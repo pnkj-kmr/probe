@@ -1,20 +1,25 @@
 package M
 
+type (
+	ProbeType    string
+	ProtocolType string
+)
+
 // declaring generic constraints
+
 const (
-	_ = iota
-	API
-	KAFKA
-	WEBHOOK
-	RMQ
-	CONFIG
-	CRED
-	ENV
-	ICMP
-	SNMP
-	HTTP
-	SSH
-	TELNET
+	API     ProbeType = "api"
+	KAFKA   ProbeType = "kafka"
+	WEBHOOK ProbeType = "webhook"
+	RMQ     ProbeType = "rmq"
+	CONFIG  ProbeType = "configuration"
+	CRED    ProbeType = "credential"
+	ENV     ProbeType = "environment"
+	ICMP    ProbeType = "icmp"
+	SNMP    ProbeType = "snmp"
+	HTTP    ProbeType = "http"
+	SSH     ProbeType = "ssh"
+	TELNET  ProbeType = "telnet"
 )
 
 // interval related constants
@@ -23,8 +28,6 @@ const (
 	INTERVAL_60  int = 5  //60		// added for testing as 5 seconds
 	INTERVAL_300 int = 15 //300
 )
-
-type ProtocolType string
 
 const (
 	SNMPType   ProtocolType = "snmp"

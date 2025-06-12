@@ -8,8 +8,7 @@ import (
 )
 
 type scheduleProcess struct {
-	id          int
-	name        string
+	name        M.ProbeType
 	pid         *actor.PID
 	repeater    actor.SendRepeater
 	engine      *actor.Engine
@@ -18,9 +17,9 @@ type scheduleProcess struct {
 	maxRestarts int
 }
 
-func newScheduleProcess(id int, name string, e *actor.Engine, t time.Duration, maxRestarts int, receiver *pollProcess) (*scheduleProcess, error) {
+func newScheduleProcess(name string, e *actor.Engine, t time.Duration, maxRestarts int, receiver *pollProcess) (*scheduleProcess, error) {
 	return &scheduleProcess{
-		id: id, name: name, engine: e,
+		name: M.ProbeType(name), engine: e,
 		interval:    t,
 		receiver:    receiver,
 		maxRestarts: maxRestarts,
@@ -31,13 +30,13 @@ func (p *scheduleProcess) start() {
 	// log.Println("[SCHEDULE] starting...", p.name)
 	p.pid = p.engine.SpawnFunc(
 		p.receiver.Receive,
-		p.name,
+		string(p.name),
 		// actor.WithID(strconv.Itoa(p.id)),
 		actor.WithMaxRestarts(p.maxRestarts),
 	)
 	p.repeater = p.engine.SendRepeat(
 		p.pid,
-		M.PollingBeat{Id: p.id, Name: p.name},
+		M.PollingBeat{Name: string(p.name)},
 		p.interval,
 	)
 }

@@ -15,11 +15,11 @@ import (
 type R struct {
 	mux *chi.Mux
 
-	ID int
-	DB *safemap.SafeMap[int, M.DB]
+	ID string
+	DB *safemap.SafeMap[string, M.DB]
 }
 
-func NewRouter(id int, db *safemap.SafeMap[int, M.DB]) *R {
+func NewRouter(id string, db *safemap.SafeMap[string, M.DB]) *R {
 	return &R{
 		mux: chi.NewRouter(),
 		ID:  id,
@@ -38,7 +38,7 @@ func (api *R) Mux() *chi.Mux {
 }
 
 func (api *R) Save(w http.ResponseWriter, r *http.Request) {
-	switch api.ID {
+	switch M.ProbeType(api.ID) {
 	case M.ICMP:
 		api.save_icmp(w, r)
 	case M.SNMP:
@@ -162,16 +162,12 @@ func (api *R) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *R) GetDB(pollPeriod any) (M.DB, error) {
-	var dbId int
+	var dbId string
 	switch x := pollPeriod.(type) {
 	case int:
-		dbId = api.ID + x
+		dbId = api.ID + strconv.Itoa(x)
 	case string:
-		p, err := strconv.Atoi(x)
-		if err != nil {
-			p = M.INTERVAL_300
-		}
-		dbId = api.ID + p
+		dbId = api.ID + x
 	}
 	// fmt.Println("dbId --->", dbId)
 	db, ok := api.DB.Get(dbId)

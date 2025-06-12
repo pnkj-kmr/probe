@@ -11,17 +11,17 @@ const text = `
 const items: CollapseProps['items'] = [
   {
     key: '1',
-    label: 'This is panel header 1',
+    label: 'Info',
     children: <p>{text}</p>,
   },
   {
     key: '2',
-    label: 'This is panel header 2',
+    label: 'Processes',
     children: <p>{text}</p>,
   },
   {
     key: '3',
-    label: 'This is panel header 3',
+    label: 'Environment Variables',
     children: <p>{text}</p>,
   },
 ];

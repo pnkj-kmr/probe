@@ -16,7 +16,6 @@ type Record struct {
 }
 
 type PollingBeat struct {
-	Id   int
 	Name string
 }
 

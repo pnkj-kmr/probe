@@ -9,13 +9,13 @@ import (
 
 type APIEngine struct {
 	engine  *actor.Engine
-	process *safemap.SafeMap[int, *apiProcess]
+	process *safemap.SafeMap[M.ProbeType, *apiProcess]
 }
 
 func newAPIEngine(e *actor.Engine, db *DBEngine, opts ...OptFunc) (*APIEngine, error) {
 	apiEngine := &APIEngine{
 		engine:  e,
-		process: safemap.New[int, *apiProcess](),
+		process: safemap.New[M.ProbeType, *apiProcess](),
 	}
 	options := DefaultOpts()
 	for _, opt := range opts {
@@ -23,7 +23,7 @@ func newAPIEngine(e *actor.Engine, db *DBEngine, opts ...OptFunc) (*APIEngine, e
 	}
 
 	if options.api {
-		p, err := newApiProcess(M.API, "api", e, db)
+		p, err := newApiProcess(M.API, e, db)
 		if err != nil {
 			return nil, err
 		}
@@ -33,18 +33,18 @@ func newAPIEngine(e *actor.Engine, db *DBEngine, opts ...OptFunc) (*APIEngine, e
 	return apiEngine, nil
 }
 
-func (e *APIEngine) Get(id int) (*apiProcess, bool) {
-	return e.process.Get(id)
+func (e *APIEngine) Get(k M.ProbeType) (*apiProcess, bool) {
+	return e.process.Get(k)
 }
 
 func (e *APIEngine) Start() {
-	e.process.ForEach(func(i int, s *apiProcess) {
+	e.process.ForEach(func(i M.ProbeType, s *apiProcess) {
 		s.start()
 	})
 }
 
 func (e *APIEngine) Stop() {
-	e.process.ForEach(func(i int, s *apiProcess) {
+	e.process.ForEach(func(i M.ProbeType, s *apiProcess) {
 		s.stop()
 	})
 }

@@ -19,28 +19,26 @@ var (
 type Exporter struct {
 	ctx         context.Context
 	input       chan any
-	id          int
-	name        string
+	name        M.ProbeType
 	kafka       sarama.AsyncProducer
 	kfTopic     string
 	kfPartition int32
 }
 
-func New(ctx context.Context, id int, name string) (*Exporter, error) {
+func New(ctx context.Context, name M.ProbeType) (*Exporter, error) {
 	//
 	/*
 		TODO
 		KAFKA CONFIGURATION UPDATE
 	*/
 	switch name {
-	case "kafka":
+	case M.KAFKA:
 		kf, err := kafka.NewProducer([]string{"pankaj.local:9092"})
 		if err != nil {
 			return nil, err
 		}
 		e := &Exporter{
 			ctx:         ctx,
-			id:          id,
 			name:        name,
 			input:       make(chan any),
 			kafka:       kf,
@@ -78,7 +76,7 @@ func (r *Exporter) loop() {
 	// TODO loop and loop2 need to be exist gracefully
 	//
 	switch r.name {
-	case "kafka":
+	case M.KAFKA:
 		for d := range r.input {
 			log.Println("loop1 running.....")
 			// if r.kafka == nil {

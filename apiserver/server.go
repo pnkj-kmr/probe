@@ -23,10 +23,10 @@ API Server
 type Server struct {
 	port   int
 	sender M.Sender[any]
-	db     *safemap.SafeMap[int, M.DB]
+	db     *safemap.SafeMap[string, M.DB]
 }
 
-func New(sender M.Sender[any], db *safemap.SafeMap[int, M.DB]) *Server {
+func New(sender M.Sender[any], db *safemap.SafeMap[string, M.DB]) *Server {
 	return &Server{
 		port:   3000,
 		sender: sender,
@@ -59,13 +59,13 @@ func (server *Server) newRouter() *chi.Mux {
 
 		// Group: /api/poll
 		api.Route("/poll", func(api2 chi.Router) {
-			api2.Mount("/icmp", poll.NewRouter(M.ICMP, server.db).Mux())
-			api2.Mount("/snmp", poll.NewRouter(M.SNMP, server.db).Mux())
+			api2.Mount("/icmp", poll.NewRouter(string(M.ICMP), server.db).Mux())
+			api2.Mount("/snmp", poll.NewRouter(string(M.SNMP), server.db).Mux())
 		})
 
 		// Group: /api/profile
 		api.Route("/profile", func(api2 chi.Router) {
-			credDB, _ := server.db.Get(M.CRED)
+			credDB, _ := server.db.Get(string(M.CRED))
 			api2.Mount("/snmp", credential.NewRouter(M.SNMPType, credDB).Mux())
 			api2.Mount("/ssh", credential.NewRouter(M.SSHType, credDB).Mux())
 			api2.Mount("/telnet", credential.NewRouter(M.TELNETType, credDB).Mux())

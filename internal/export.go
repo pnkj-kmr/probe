@@ -13,13 +13,13 @@ import (
 type ExportEngine struct {
 	// workers  int
 	engine  *actor.Engine
-	process *safemap.SafeMap[int, *exportProcess]
+	process *safemap.SafeMap[string, *exportProcess]
 }
 
 func newExportEngine(e *actor.Engine, opts ...OptFunc) (*ExportEngine, error) {
 	exportEngine := &ExportEngine{
 		engine:  e,
-		process: safemap.New[int, *exportProcess](),
+		process: safemap.New[string, *exportProcess](),
 	}
 	options := DefaultOpts()
 	for _, opt := range opts {
@@ -28,7 +28,7 @@ func newExportEngine(e *actor.Engine, opts ...OptFunc) (*ExportEngine, error) {
 	// assigning the export engine
 	// TODO - need to create multi exporter as per poller count of other point
 	if options.kafka {
-		err := exportEngine.setup(M.KAFKA, "kafka", options)
+		err := exportEngine.setup(string(M.KAFKA), options)
 		if err != nil {
 			slog.Error("[EXPORT]", "err", err)
 			return nil, err
@@ -39,28 +39,28 @@ func newExportEngine(e *actor.Engine, opts ...OptFunc) (*ExportEngine, error) {
 	return exportEngine, nil
 }
 
-func (e *ExportEngine) Get(id int) (*exportProcess, bool) {
-	return e.process.Get(id)
+func (e *ExportEngine) Get(k string) (*exportProcess, bool) {
+	return e.process.Get(k)
 }
 
 func (e *ExportEngine) Start() {
-	e.process.ForEach(func(i int, e *exportProcess) {
+	e.process.ForEach(func(i string, e *exportProcess) {
 		e.Start()
 	})
 }
 
 func (e *ExportEngine) Stop() {
-	e.process.ForEach(func(i int, e *exportProcess) {
+	e.process.ForEach(func(i string, e *exportProcess) {
 		e.Stop()
 	})
 }
 
-func (e *ExportEngine) setup(id int, name string, options Opts) (err error) {
-	slog.Info("setting up exporter", "name", name, "id", id)
-	exprt, err := newExportProcess(options.context, id, fmt.Sprintf("export/%s/%d", name, id), e.engine, options.maxBucketSize, options.totalPartitions)
+func (e *ExportEngine) setup(name string, options Opts) (err error) {
+	slog.Info("setting up exporter", "name", name)
+	exprt, err := newExportProcess(options.context, fmt.Sprintf("export/%s", name), e.engine, options.maxBucketSize, options.totalPartitions)
 	if err != nil {
 		return err
 	}
-	e.process.Set(id, exprt)
+	e.process.Set(name, exprt)
 	return nil
 }

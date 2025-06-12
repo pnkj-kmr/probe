@@ -14,10 +14,10 @@ import (
 type R struct {
 	mux *chi.Mux
 
-	DB *safemap.SafeMap[int, M.DB]
+	DB *safemap.SafeMap[string, M.DB]
 }
 
-func NewRouter(db *safemap.SafeMap[int, M.DB]) *R {
+func NewRouter(db *safemap.SafeMap[string, M.DB]) *R {
 	return &R{
 		mux: chi.NewRouter(),
 		DB:  db,

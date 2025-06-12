@@ -8,7 +8,7 @@ import (
 
 func (api *R) validateAuthProfile(fl validator.FieldLevel) bool {
 	value := fl.Field().String()
-	db, ok := api.DB.Get(M.CRED)
+	db, ok := api.DB.Get(string(M.CRED))
 	// fmt.Println("---->", db)
 	if !ok {
 		return ok
