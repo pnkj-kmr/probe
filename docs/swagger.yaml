@@ -226,7 +226,6 @@ definitions:
         type: array
       poll_period:
         enum:
-        - 5
         - 60
         - 300
         type: integer
@@ -409,6 +408,28 @@ paths:
       summary: Ping
       tags:
       - Health
+  /api/dashboard/data:
+    get:
+      consumes:
+      - application/json
+      description: helps to get the current save stats into system
+      parameters:
+      - description: ICMP collection table
+        in: query
+        name: table
+        type: string
+      - description: CI_ID to query
+        in: query
+        name: cid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get saved statistics params
+      tags:
+      - Dashboard
   /api/dashboard/poll:
     get:
       consumes:

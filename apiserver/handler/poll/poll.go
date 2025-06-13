@@ -2,11 +2,11 @@ package poll
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"probe/apiserver/handler"
 	M "probe/model"
 	"probe/safemap"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -162,13 +162,7 @@ func (api *R) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *R) GetDB(pollPeriod any) (M.DB, error) {
-	var dbId string
-	switch x := pollPeriod.(type) {
-	case int:
-		dbId = api.ID + "/" + strconv.Itoa(x)
-	case string:
-		dbId = api.ID + "/" + x
-	}
+	var dbId string = fmt.Sprintf("%s/%v", api.ID, pollPeriod)
 	// fmt.Println("dbId --->", dbId)
 	db, ok := api.DB.Get(dbId)
 	if !ok {

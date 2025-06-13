@@ -44,6 +44,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/dashboard/data": {
+            "get": {
+                "description": "helps to get the current save stats into system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get saved statistics params",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ICMP collection table",
+                        "name": "table",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "CI_ID to query",
+                        "name": "cid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/dashboard/poll": {
             "get": {
                 "description": "helps to get the current polling status along with poll result",
@@ -1003,7 +1037,6 @@ const docTemplate = `{
                 "poll_period": {
                     "type": "integer",
                     "enum": [
-                        5,
                         60,
                         300
                     ]

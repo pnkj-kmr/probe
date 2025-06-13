@@ -43,6 +43,7 @@ func (server *Server) Run() error {
 func (server *Server) newRouter() *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(AddDefaultHeader)
 
 	// Swagger UI
 	r.Get("/docs/*", httpSwagger.WrapHandler)
@@ -90,4 +91,11 @@ func (server *Server) newRouter() *chi.Mux {
 // @Router       /api/ [get]
 func (server *Server) Ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
+}
+
+func AddDefaultHeader(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
 }
