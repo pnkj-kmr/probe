@@ -6,6 +6,7 @@ import (
 	"probe/apiserver/handler/credential"
 	"probe/apiserver/handler/dashboard"
 	"probe/apiserver/handler/poll"
+	"probe/apiserver/handler/profile"
 
 	_ "probe/docs"
 	M "probe/model"
@@ -64,8 +65,8 @@ func (server *Server) newRouter() *chi.Mux {
 			api2.Mount("/snmp", poll.NewRouter(string(M.SNMP), server.db).Mux())
 		})
 
-		// Group: /api/profile
-		api.Route("/profile", func(api2 chi.Router) {
+		// Group: /api/credential
+		api.Route("/credential", func(api2 chi.Router) {
 			credDB, _ := server.db.Get(string(M.CRED))
 			api2.Mount("/snmp", credential.NewRouter(M.SNMPType, credDB).Mux())
 			api2.Mount("/ssh", credential.NewRouter(M.SSHType, credDB).Mux())
@@ -76,6 +77,9 @@ func (server *Server) newRouter() *chi.Mux {
 
 		// Group: /api/dashboard
 		api.Mount("/dashboard", dashboard.NewRouter(server.db).Mux())
+
+		// Group: /api/profile
+		api.Mount("/profile", profile.NewRouter(server.db).Mux())
 
 	})
 

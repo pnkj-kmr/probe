@@ -18,7 +18,7 @@ import (
 // @Produce      json
 // @Param input body M.AuthSFTP true "Request payload"
 // @Success      201  {object}  M.AuthSFTP
-// @Router       /api/profile/sftp [post]
+// @Router       /api/credential/sftp [post]
 func (api *R) save_sftp(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSFTP{}
 	err := json.NewDecoder(r.Body).Decode(&data)

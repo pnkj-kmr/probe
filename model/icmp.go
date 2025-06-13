@@ -1,6 +1,7 @@
 package M
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -22,10 +23,24 @@ type ICMPReq struct {
 	InputStats []InputStat `json:"input_stats,omitempty"`
 }
 
+func (p *ICMPReq) Marshal() ([]byte, error) {
+	return json.Marshal(p)
+}
+func (p *ICMPReq) Unmarshal(d []byte) error {
+	return json.Unmarshal(d, p)
+}
+
 type ICMPRes struct {
 	Cid    string                `json:"ci_id"`
 	Params PINGParams            `json:"params,omitempty"`
 	T      string                `json:"t,omitempty"`
 	Stats  map[string][4]float64 `json:"stats"`
 	Err    string                `json:"error"`
+}
+
+func (p *ICMPRes) Marshal() ([]byte, error) {
+	return json.Marshal(p)
+}
+func (p *ICMPRes) Unmarshal(d []byte) error {
+	return json.Unmarshal(d, p)
 }

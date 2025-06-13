@@ -382,6 +382,16 @@ definitions:
       memory:
         $ref: '#/definitions/dashboard.Memory'
     type: object
+  profile.TextPayload:
+    properties:
+      text:
+        type: string
+    type: object
+  profile.TokenPayload:
+    properties:
+      token:
+        type: string
+    type: object
 info:
   contact:
     email: pnkj3092@gmail.com
@@ -408,6 +418,208 @@ paths:
       summary: Ping
       tags:
       - Health
+  /api/credential/{credential_type}/:
+    delete:
+      consumes:
+      - application/json
+      description: delete all
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete all credentials for profile
+      tags:
+      - Credential
+    get:
+      consumes:
+      - application/json
+      description: total count
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Total records of credential
+      tags:
+      - Credential
+  /api/credential/{credential_type}/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete one
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      - description: credential id (login/device profile id)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete credential for profile id
+      tags:
+      - Credential
+    get:
+      consumes:
+      - application/json
+      description: creential profile view
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      - description: credential id (login/device profile id)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Get credential record
+      tags:
+      - Credential
+  /api/credential/http:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthHTTP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthHTTP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/sftp:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSFTP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSFTP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/snmp:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSNMP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSNMP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/ssh:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSSH'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSSH'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/telnet:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthTELNET'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthTELNET'
+      summary: Save Login Credential
+      tags:
+      - Credential
   /api/dashboard/data:
     get:
       consumes:
@@ -626,206 +838,83 @@ paths:
       summary: Polling Status update
       tags:
       - Poll
-  /api/profile/{credential_type}/:
-    delete:
-      consumes:
-      - application/json
-      description: delete all
-      parameters:
-      - description: 'type: snmp / ssh / telnet / sftp / http'
-        in: path
-        name: credential_type
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: record
-          schema:
-            type: string
-      summary: Delete all credentials for profile
-      tags:
-      - Credential
+  /api/profile/agent/info:
     get:
       consumes:
       - application/json
-      description: total count
-      parameters:
-      - description: 'type: snmp / ssh / telnet / sftp / http'
-        in: path
-        name: credential_type
-        required: true
-        type: string
+      description: Probe configuration detail
       produces:
       - application/json
       responses:
         "200":
-          description: record
-          schema:
-            type: string
-      summary: Total records of credential
+          description: OK
+      summary: Get Agent Info
       tags:
-      - Credential
-  /api/profile/{credential_type}/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: delete one
-      parameters:
-      - description: 'type: snmp / ssh / telnet / sftp / http'
-        in: path
-        name: credential_type
-        required: true
-        type: string
-      - description: credential id (login/device profile id)
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: record
-          schema:
-            type: string
-      summary: Delete credential for profile id
-      tags:
-      - Credential
-    get:
-      consumes:
-      - application/json
-      description: creential profile view
-      parameters:
-      - description: 'type: snmp / ssh / telnet / sftp / http'
-        in: path
-        name: credential_type
-        required: true
-        type: string
-      - description: credential id (login/device profile id)
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: record
-          schema:
-            type: string
-      summary: Get credential record
-      tags:
-      - Credential
-  /api/profile/http:
+      - Profile
+  /api/profile/agent/token:
     post:
       consumes:
       - application/json
-      description: help to save login profile or device profile creds
+      description: Probe configuration update
       parameters:
-      - description: Request payload
+      - description: Token Payload
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/M.AuthHTTP'
+          $ref: '#/definitions/profile.TokenPayload'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/M.AuthHTTP'
-      summary: Save Login Credential
+            $ref: '#/definitions/profile.TokenPayload'
+      summary: Update Agent Token
       tags:
-      - Credential
-  /api/profile/sftp:
+      - Profile
+  /api/profile/text/decrypt:
     post:
       consumes:
       - application/json
-      description: help to save login profile or device profile creds
+      description: decryption of payload
       parameters:
-      - description: Request payload
+      - description: Request Payload
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/M.AuthSFTP'
+          $ref: '#/definitions/profile.TextPayload'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/M.AuthSFTP'
-      summary: Save Login Credential
+            $ref: '#/definitions/profile.TextPayload'
+      summary: Decrypt a text
       tags:
-      - Credential
-  /api/profile/snmp:
+      - Profile
+  /api/profile/text/encrypt:
     post:
       consumes:
       - application/json
-      description: help to save login profile or device profile creds
+      description: encryption
       parameters:
-      - description: Request payload
+      - description: Request Payload
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/M.AuthSNMP'
+          $ref: '#/definitions/profile.TextPayload'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/M.AuthSNMP'
-      summary: Save Login Credential
+            $ref: '#/definitions/profile.TextPayload'
+      summary: Encryting the text
       tags:
-      - Credential
-  /api/profile/ssh:
-    post:
-      consumes:
-      - application/json
-      description: help to save login profile or device profile creds
-      parameters:
-      - description: Request payload
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/M.AuthSSH'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/M.AuthSSH'
-      summary: Save Login Credential
-      tags:
-      - Credential
-  /api/profile/telnet:
-    post:
-      consumes:
-      - application/json
-      description: help to save login profile or device profile creds
-      parameters:
-      - description: Request payload
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/M.AuthTELNET'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/M.AuthTELNET'
-      summary: Save Login Credential
-      tags:
-      - Credential
+      - Profile
 swagger: "2.0"

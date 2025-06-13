@@ -44,6 +44,314 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/credential/http": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthHTTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthHTTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/credential/sftp": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSFTP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSFTP"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/credential/snmp": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSNMP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSNMP"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/credential/ssh": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSSH"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthSSH"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/credential/telnet": {
+            "post": {
+                "description": "help to save login profile or device profile creds",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Save Login Credential",
+                "parameters": [
+                    {
+                        "description": "Request payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthTELNET"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.AuthTELNET"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/credential/{credential_type}/": {
+            "get": {
+                "description": "total count",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Total records of credential",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete all",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Delete all credentials for profile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/credential/{credential_type}/{id}": {
+            "get": {
+                "description": "creential profile view",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Get credential record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "credential id (login/device profile id)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete one",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Credential"
+                ],
+                "summary": "Delete credential for profile id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "type: snmp / ssh / telnet / sftp / http",
+                        "name": "credential_type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "credential id (login/device profile id)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/dashboard/data": {
             "get": {
                 "description": "helps to get the current save stats into system",
@@ -373,179 +681,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/profile/http": {
-            "post": {
-                "description": "help to save login profile or device profile creds",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Credential"
-                ],
-                "summary": "Save Login Credential",
-                "parameters": [
-                    {
-                        "description": "Request payload",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthHTTP"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthHTTP"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/profile/sftp": {
-            "post": {
-                "description": "help to save login profile or device profile creds",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Credential"
-                ],
-                "summary": "Save Login Credential",
-                "parameters": [
-                    {
-                        "description": "Request payload",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthSFTP"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthSFTP"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/profile/snmp": {
-            "post": {
-                "description": "help to save login profile or device profile creds",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Credential"
-                ],
-                "summary": "Save Login Credential",
-                "parameters": [
-                    {
-                        "description": "Request payload",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthSNMP"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthSNMP"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/profile/ssh": {
-            "post": {
-                "description": "help to save login profile or device profile creds",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Credential"
-                ],
-                "summary": "Save Login Credential",
-                "parameters": [
-                    {
-                        "description": "Request payload",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthSSH"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthSSH"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/profile/telnet": {
-            "post": {
-                "description": "help to save login profile or device profile creds",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Credential"
-                ],
-                "summary": "Save Login Credential",
-                "parameters": [
-                    {
-                        "description": "Request payload",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthTELNET"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/M.AuthTELNET"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/profile/{credential_type}/": {
+        "/api/profile/agent/info": {
             "get": {
-                "description": "total count",
+                "description": "Probe configuration detail",
                 "consumes": [
                     "application/json"
                 ],
@@ -553,29 +691,19 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Credential"
+                    "Profile"
                 ],
-                "summary": "Total records of credential",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "type: snmp / ssh / telnet / sftp / http",
-                        "name": "credential_type",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Get Agent Info",
                 "responses": {
                     "200": {
-                        "description": "record",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "description": "OK"
                     }
                 }
-            },
-            "delete": {
-                "description": "delete all",
+            }
+        },
+        "/api/profile/agent/token": {
+            "post": {
+                "description": "Probe configuration update",
                 "consumes": [
                     "application/json"
                 ],
@@ -583,31 +711,33 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Credential"
+                    "Profile"
                 ],
-                "summary": "Delete all credentials for profile",
+                "summary": "Update Agent Token",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "type: snmp / ssh / telnet / sftp / http",
-                        "name": "credential_type",
-                        "in": "path",
-                        "required": true
+                        "description": "Token Payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profile.TokenPayload"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "record",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/profile.TokenPayload"
                         }
                     }
                 }
             }
         },
-        "/api/profile/{credential_type}/{id}": {
-            "get": {
-                "description": "creential profile view",
+        "/api/profile/text/decrypt": {
+            "post": {
+                "description": "decryption of payload",
                 "consumes": [
                     "application/json"
                 ],
@@ -615,36 +745,33 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Credential"
+                    "Profile"
                 ],
-                "summary": "Get credential record",
+                "summary": "Decrypt a text",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "type: snmp / ssh / telnet / sftp / http",
-                        "name": "credential_type",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "credential id (login/device profile id)",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "Request Payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profile.TextPayload"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "record",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/profile.TextPayload"
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "delete one",
+            }
+        },
+        "/api/profile/text/encrypt": {
+            "post": {
+                "description": "encryption",
                 "consumes": [
                     "application/json"
                 ],
@@ -652,30 +779,25 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Credential"
+                    "Profile"
                 ],
-                "summary": "Delete credential for profile id",
+                "summary": "Encryting the text",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "type: snmp / ssh / telnet / sftp / http",
-                        "name": "credential_type",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "credential id (login/device profile id)",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "Request Payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profile.TextPayload"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "record",
+                    "201": {
+                        "description": "Created",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/profile.TextPayload"
                         }
                     }
                 }
@@ -1256,6 +1378,22 @@ const docTemplate = `{
                 },
                 "memory": {
                     "$ref": "#/definitions/dashboard.Memory"
+                }
+            }
+        },
+        "profile.TextPayload": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "profile.TokenPayload": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
                 }
             }
         }

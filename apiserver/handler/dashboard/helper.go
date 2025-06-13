@@ -1,7 +1,6 @@
 package dashboard
 
 import (
-	"encoding/json"
 	"fmt"
 	M "probe/model"
 )
@@ -27,12 +26,12 @@ func (api *R) resourceCount(protocol M.ProbeType) (t uint64) {
 func (api *R) getData(db string, data []byte) any {
 	switch db {
 	case "icmp/60", "icmp/300":
-		var d M.ICMPReq
-		json.Unmarshal(data, &d)
+		var d = &M.ICMPReq{}
+		d.Unmarshal(data)
 		return d
 	case "icmp/60_stat", "icmp/300_stat":
-		var d M.ICMPRes
-		json.Unmarshal(data, &d)
+		var d = &M.ICMPRes{}
+		d.Unmarshal(data)
 		return d
 	}
 	return nil

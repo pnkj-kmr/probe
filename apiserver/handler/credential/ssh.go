@@ -18,7 +18,7 @@ import (
 // @Produce      json
 // @Param input body M.AuthSSH true "Request payload"
 // @Success      201  {object}  M.AuthSSH
-// @Router       /api/profile/ssh [post]
+// @Router       /api/credential/ssh [post]
 func (api *R) save_ssh(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSSH{}
 	err := json.NewDecoder(r.Body).Decode(&data)

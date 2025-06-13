@@ -18,7 +18,7 @@ import (
 // @Produce      json
 // @Param input body M.AuthHTTP true "Request payload"
 // @Success      201  {object}  M.AuthHTTP
-// @Router       /api/profile/http [post]
+// @Router       /api/credential/http [post]
 func (api *R) save_http(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthHTTP{}
 	err := json.NewDecoder(r.Body).Decode(&data)

@@ -62,7 +62,7 @@ func (api *R) save(w http.ResponseWriter, r *http.Request) {
 // @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
 // @Param id path string true "credential id (login/device profile id)"
 // @Success 200 {string} string "record"
-// @Router /api/profile/{credential_type}/{id} [delete]
+// @Router /api/credential/{credential_type}/{id} [delete]
 func (api *R) delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	err := api.DB.Delete(id)
@@ -81,7 +81,7 @@ func (api *R) delete(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
 // @Success 200 {string} string "record"
-// @Router /api/profile/{credential_type}/ [delete]
+// @Router /api/credential/{credential_type}/ [delete]
 func (api *R) deleteAll(w http.ResponseWriter, r *http.Request) {
 	err := api.DB.DeleteAll()
 	if err != nil {
@@ -99,7 +99,7 @@ func (api *R) deleteAll(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
 // @Success 200 {string} string "record"
-// @Router /api/profile/{credential_type}/ [get]
+// @Router /api/credential/{credential_type}/ [get]
 func (api *R) count(w http.ResponseWriter, r *http.Request) {
 	count := api.DB.Count()
 	// data, err := json.Marshal(struct{ count uint64 }{count: count})
@@ -121,7 +121,7 @@ func (api *R) count(w http.ResponseWriter, r *http.Request) {
 // @Param credential_type path string true "type: snmp / ssh / telnet / sftp / http"
 // @Param id path string true "credential id (login/device profile id)"
 // @Success 200 {string} string "record"
-// @Router /api/profile/{credential_type}/{id} [get]
+// @Router /api/credential/{credential_type}/{id} [get]
 func (api *R) get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	data, err := api.DB.Find(id)

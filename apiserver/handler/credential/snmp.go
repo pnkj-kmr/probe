@@ -18,7 +18,7 @@ import (
 // @Produce      json
 // @Param input body M.AuthSNMP true "Request payload"
 // @Success      201  {object}  M.AuthSNMP
-// @Router       /api/profile/snmp [post]
+// @Router       /api/credential/snmp [post]
 func (api *R) save_snmp(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthSNMP{}
 	err := json.NewDecoder(r.Body).Decode(&data)

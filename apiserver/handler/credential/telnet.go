@@ -18,7 +18,7 @@ import (
 // @Produce      json
 // @Param input body M.AuthTELNET true "Request payload"
 // @Success      201  {object}  M.AuthTELNET
-// @Router       /api/profile/telnet [post]
+// @Router       /api/credential/telnet [post]
 func (api *R) save_telnet(w http.ResponseWriter, r *http.Request) {
 	data := &M.AuthTELNET{}
 	err := json.NewDecoder(r.Body).Decode(&data)

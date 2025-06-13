@@ -1,5 +1,7 @@
 package M
 
+import "encoding/json"
+
 type SNMPVersion string
 type SNMPOperation uint8
 
@@ -37,10 +39,24 @@ type SNMPReq struct {
 	LoginProfileID string      `json:"login_profileid" validate:"required,isValidAuth"`
 }
 
+func (p *SNMPReq) Marshal() ([]byte, error) {
+	return json.Marshal(p)
+}
+func (p *SNMPReq) Unmarshal(d []byte) error {
+	return json.Unmarshal(d, p)
+}
+
 type SNMPRes struct {
 	Cid    string       `json:"ci_id"`
 	Params SNMPParams   `json:"params,omitempty"`
 	T      string       `json:"t,omitempty"`
 	Stats  []OutputStat `json:"stats"`
 	Err    string       `json:"error"`
+}
+
+func (p *SNMPRes) Marshal() ([]byte, error) {
+	return json.Marshal(p)
+}
+func (p *SNMPRes) Unmarshal(d []byte) error {
+	return json.Unmarshal(d, p)
 }
