@@ -32,6 +32,9 @@ func (api *R) Mux() *chi.Mux {
 	api.mux.Post("/text/encrypt", api.TextEncrypt)
 	api.mux.Post("/text/decrypt", api.TextDecrypt)
 
+	api.mux.Get("/env", api.GetEnv)
+	api.mux.Post("/env", api.SaveEnv)
+
 	return api.mux
 }
 
@@ -158,5 +161,60 @@ func (api *R) TextDecrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	render.Status(r, http.StatusCreated)
+	w.Write(data)
+}
+
+// GetEnv godoc
+// @Summary Get Env Info
+// @Description Probe env detail
+// @Tags Profile
+// @Accept  json
+// @Produce  json
+// @Success 200 {object}  nil
+// @Router /api/profile/env [get]
+func (api *R) GetEnv(w http.ResponseWriter, r *http.Request) {
+	config, err := api.getEnvironmentVariable()
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+	data, err := json.Marshal(config)
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+	render.Status(r, http.StatusOK)
+	w.Write(data)
+}
+
+// SaveEnv godoc
+// @Summary Save Env Info
+// @Description Probe env detail
+// @Tags Profile
+// @Accept  json
+// @Produce  json
+// @Param input body M.Env true "Request Payload"
+// @Success 201 {object}  M.Env
+// @Router /api/profile/env [post]
+func (api *R) SaveEnv(w http.ResponseWriter, r *http.Request) {
+	payload := M.Env{}
+	err := json.NewDecoder(r.Body).Decode(&payload)
+	if err != nil {
+		slog.Info("env payload issue", "err", err)
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+
+	err = api.saveEnvironmentVariable(payload)
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+	data, err := json.Marshal(payload)
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+	render.Status(r, http.StatusOK)
 	w.Write(data)
 }

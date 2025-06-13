@@ -735,6 +735,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/profile/env": {
+            "get": {
+                "description": "Probe env detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Get Env Info",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "description": "Probe env detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Save Env Info",
+                "parameters": [
+                    {
+                        "description": "Request Payload",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/M.Env"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/M.Env"
+                        }
+                    }
+                }
+            }
+        },
         "/api/profile/text/decrypt": {
             "post": {
                 "description": "decryption of payload",
@@ -1078,6 +1130,55 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "M.Env": {
+            "type": "object",
+            "properties": {
+                "API_PORT": {
+                    "type": "integer"
+                },
+                "API_SERVER": {
+                    "description": "api server flag",
+                    "type": "boolean"
+                },
+                "DEBUG": {
+                    "description": "system parameter",
+                    "type": "boolean"
+                },
+                "EXPORTER_DBDUMP": {
+                    "type": "boolean"
+                },
+                "EXPORTER_KAFKA": {
+                    "type": "boolean"
+                },
+                "EXPORTER_WEBHOOK": {
+                    "description": "exporter flag",
+                    "type": "boolean"
+                },
+                "ICMP_POLLING": {
+                    "description": "poller flags",
+                    "type": "boolean"
+                },
+                "KAFAK_MAX_MESSAGE_SIZE": {
+                    "type": "integer"
+                },
+                "KAFAK_TOPIC_PARTITIONS": {
+                    "type": "integer"
+                },
+                "KAFKA_DEFAULT_TOPIC": {
+                    "description": "addition kafka flag",
+                    "type": "string"
+                },
+                "NO_WORKER_THREADS": {
+                    "type": "integer"
+                },
+                "PROCESS_MAX_RESTARTS": {
+                    "type": "integer"
+                },
+                "SNMP_POLLING": {
+                    "type": "boolean"
                 }
             }
         },

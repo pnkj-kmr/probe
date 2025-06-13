@@ -159,6 +159,20 @@ func (d *DB) DeleteAll(bucket string) (err error) {
 	return err
 }
 
+func (d *DB) FindAll(bucket string) (out map[string][]byte, err error) {
+	out = make(map[string][]byte)
+	err = d.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucket)) // Assume bucket exists and has keys
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			// fmt.Printf("key=%s, value=%s\n", k, v)
+			out[string(k)] = v
+		}
+		return nil
+	})
+	return
+}
+
 // func (d *DB) CreateWith(bucket string, data <-chan M.Record) (total int, err error) {
 // 	err = d.db.Update(func(tx *bolt.Tx) error {
 // 		b, err := tx.CreateBucketIfNotExists([]byte(bucket))
@@ -175,20 +189,6 @@ func (d *DB) DeleteAll(bucket string) (err error) {
 // 			}
 // 		}
 // 		return _err
-// 	})
-// 	return
-// }
-
-// func (d *DB) all(bucket string) (out [][]byte, err error) {
-// 	// var out [][]byte
-// 	err = d.db.View(func(tx *bolt.Tx) error {
-// 		b := tx.Bucket([]byte(bucket)) // Assume bucket exists and has keys
-// 		c := b.Cursor()
-// 		for k, v := c.First(); k != nil; k, v = c.Next() {
-// 			// fmt.Printf("key=%s, value=%s\n", k, v)
-// 			out = append(out, v)
-// 		}
-// 		return nil
 // 	})
 // 	return
 // }

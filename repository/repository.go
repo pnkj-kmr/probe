@@ -77,3 +77,7 @@ func (r *Repository) Find(key string) (out []byte, err error) {
 func (r *Repository) CreateBulk(data map[string][]byte) (total int, err error) {
 	return r.db.CreateBulk(r.bucket, data)
 }
+
+func (r *Repository) FindAll() (data map[string][]byte, err error) {
+	return r.db.FindAll(r.bucket)
+}
