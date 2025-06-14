@@ -1,6 +1,6 @@
-// src/App.tsx
-// import React from "react"
-import { Card } from "antd"
+import React, { useEffect, useState } from "react";
+import { getSystemData } from "@/services/api";
+import { Card } from "antd";
 import {
   BarChart,
   Bar,
@@ -10,29 +10,68 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   LabelList,
-} from "recharts"
+} from "recharts";
 
-// Sample data
-const data = [
-  { name: "CPU", usage: 20},
-  { name: "MEMORY", usage: 35},
-  { name: "DISK", usage: 57 },
-]
+export const PerfStat = () => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export function PerfStat() {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        getSystemData()
+          .then((response: any) => {
+            // console.log("--->response.data", response.data);
+            const res = response.data;
+            const data = [
+              {
+                name: "CPU",
+                display: `Cores: ${res["cpu"]["cores"]} | ${res["cpu"]["usage"]}%`,
+                usage: res["cpu"]["usage"],
+              },
+              {
+                name: "MEMORY",
+                display: `${res["memory"]["used"]}/${res["memory"]["total"]} | ${res["memory"]["used_percent"]}%`,
+                usage: res["memory"]["used_percent"],
+              },
+              {
+                name: "DISK",
+                display: `${res["disk"]["used"]}/${res["disk"]["total"]} | ${res["disk"]["used_percent"]}%`,
+                usage: res["disk"]["used_percent"],
+              },
+            ];
+            setData(data);
+          })
+          .catch((error) => setError(error.message))
+          .finally(() => setLoading(false));
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <div >
-      <Card title="Performace Stats" bordered={false} className="w-[100%] border-1">
+    <div>
+      <Card
+        title="System Performace"
+        bordered={false}
+        className="w-[100%] border-1"
+      >
         <ResponsiveContainer className="min-h-[220px] w-[100%]">
-          <BarChart 
+          <BarChart
             accessibilityLayer
-            layout="vertical" 
-            data={data} 
+            layout="vertical"
+            data={data}
             // margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
-             margin={{
-              right: 16,
+            margin={{
+              right: 30,
             }}
-        >
+          >
             {/* <CartesianGrid strokeDasharray="3 3" /> */}
             <CartesianGrid horizontal={false} />
             {/* <XAxis dataKey="name" /> */}
@@ -47,13 +86,17 @@ export function PerfStat() {
               tickFormatter={(value) => value.slice(0, 3)}
               hide
             />
-            <Tooltip />
+            {/* <Tooltip /> */}
+            <Tooltip
+              formatter={(v, n, x) => [`${JSON.stringify(x.payload?.display)}`]}
+              labelFormatter={(label) => label}
+            />
             {/* <Bar dataKey="sales" fill="#1890ff" barSize={40} /> */}
 
             <Bar
               dataKey="usage"
               layout="vertical"
-            //   fill="var(--color-usage)"
+              //   fill="var(--color-usage)"
               barSize={40}
               radius={4}
             >
@@ -76,7 +119,5 @@ export function PerfStat() {
         </ResponsiveContainer>
       </Card>
     </div>
-  )
-}
-
-// export default App
+  );
+};

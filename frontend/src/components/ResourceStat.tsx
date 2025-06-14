@@ -1,29 +1,50 @@
-// src/App.tsx
-// import React from "react"
-import { Card } from "antd"
+import React, { useEffect, useState } from "react";
+import { getResourceData } from "@/services/api";
+import { Card } from "antd";
 import {
   Label,
   PolarGrid,
   PolarRadiusAxis,
   RadialBar,
   RadialBarChart,
+  Tooltip,
   ResponsiveContainer,
-} from "recharts"
+} from "recharts";
 
+export const ResourceStat = () => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-// const chartData = [
-//   { name: "safari", count: 100000, fill: "var(--color-safari)" },
-// ]
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        getResourceData()
+          .then((response: any) => {
+            // console.log("--->response.data", response.data);
+            const res = response.data;
+            const data = [{ name: "Resources", count: res["total"] }];
+            setData(data);
+          })
+          .catch((error) => setError(error.message))
+          .finally(() => setLoading(false));
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+    fetchData();
+  }, []);
 
-// Sample data
-const data = [
-    {name: "Resources", count: 1000000}
-]
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
-export function PollingStat() {
   return (
-    <div >
-      <Card title="Performace Stats" bordered={false} className="w-[100%] border-1">
+    <div>
+      <Card
+        title="Resource Statistics"
+        bordered={false}
+        className="w-[100%] border-1"
+      >
         <ResponsiveContainer className="min-h-[220px] w-[100%]">
           <RadialBarChart
             data={data}
@@ -40,6 +61,7 @@ export function PollingStat() {
               polarRadius={[86, 74]}
             />
             <RadialBar dataKey="count" background />
+            <Tooltip />
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label
                 content={({ viewBox }) => {
@@ -66,7 +88,7 @@ export function PollingStat() {
                           Resources
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -75,7 +97,5 @@ export function PollingStat() {
         </ResponsiveContainer>
       </Card>
     </div>
-  )
-}
-
-// export default App
+  );
+};

@@ -1,19 +1,19 @@
 package dashboard
 
 type CPU struct {
-	Usage []float64 `json:"usage"`
-	Cores int       `json:"cores"`
+	Usage float64 `json:"usage"`
+	Cores int     `json:"cores"`
 }
 
 type Memory struct {
-	Total       float64 `json:"total"`
-	Used        float64 `json:"used"`
+	Total       string  `json:"total"`
+	Used        string  `json:"used"`
 	UsedPercent float64 `json:"used_percent"`
 }
 
 type Disk struct {
-	Total       float64 `json:"total"`
-	Used        float64 `json:"used"`
+	Total       string  `json:"total"`
+	Used        string  `json:"used"`
 	UsedPercent float64 `json:"used_percent"`
 }
 
