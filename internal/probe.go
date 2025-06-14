@@ -32,7 +32,7 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 	}
 	// logger init
 	// // TODO -need to set logging deom options
-	// logger.Initiate(slog.LevelDebug)
+	// util.InitLogger(slog.LevelDebug)
 
 	p.ctx = newContext(options.context)
 	p.ctx.WithEngine(p.enigne)

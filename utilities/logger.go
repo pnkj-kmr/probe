@@ -1,4 +1,4 @@
-package logger
+package util
 
 import (
 	"log/slog"
@@ -7,7 +7,8 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-func Initiate(level slog.Level) {
+// InitLogger help to setup the slog logger for application
+func InitLogger(level slog.Level) {
 	// Setup lumberjack for log rotation
 	rotatingFile := &lumberjack.Logger{
 		Filename:   filepath.Join("log", "probe.log"), // Log file path
