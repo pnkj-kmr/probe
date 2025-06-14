@@ -274,6 +274,25 @@ definitions:
     - poll_period
     - poll_type
     type: object
+  M.ProcessBeat:
+    properties:
+      counter:
+        type: integer
+      error:
+        type: string
+      et:
+        type: string
+      given:
+        type: integer
+      name:
+        type: string
+      polled:
+        type: integer
+      st:
+        type: string
+      t:
+        type: string
+    type: object
   M.ProtocolType:
     enum:
     - snmp
@@ -954,6 +973,10 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            items:
+              $ref: '#/definitions/M.ProcessBeat'
+            type: array
       summary: Get Processes Info
       tags:
       - Profile

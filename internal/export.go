@@ -7,22 +7,18 @@ import (
 	"probe/repository"
 
 	"probe/safemap"
-
-	"github.com/anthdm/hollywood/actor"
 )
 
 type ExportEngine struct {
 	// workers  int
 	ctx     *Context
 	db      *DBEngine
-	engine  *actor.Engine
 	process *safemap.SafeMap[string, *exportProcess]
 }
 
 func newExportEngine(ctx *Context, opts Opts) (err error) {
 	exportEngine := &ExportEngine{
-		ctx:    ctx,
-		engine: ctx.Engine(), db: ctx.DB(),
+		ctx: ctx, db: ctx.DB(),
 		process: safemap.New[string, *exportProcess](),
 	}
 

@@ -14,7 +14,7 @@ type StreamType interface {
 // <-chan any | iter.Seq[any]
 
 type Poller interface {
-	Poll() error
+	Poll() (int, int, error)
 }
 
 type Scanner interface {

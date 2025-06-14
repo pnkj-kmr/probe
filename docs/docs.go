@@ -802,7 +802,13 @@ const docTemplate = `{
                 "summary": "Get Processes Info",
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/M.ProcessBeat"
+                            }
+                        }
                     }
                 }
             }
@@ -1293,6 +1299,35 @@ const docTemplate = `{
                     "enum": [
                         "ping"
                     ]
+                }
+            }
+        },
+        "M.ProcessBeat": {
+            "type": "object",
+            "properties": {
+                "counter": {
+                    "type": "integer"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "et": {
+                    "type": "string"
+                },
+                "given": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "polled": {
+                    "type": "integer"
+                },
+                "st": {
+                    "type": "string"
+                },
+                "t": {
+                    "type": "string"
                 }
             }
         },

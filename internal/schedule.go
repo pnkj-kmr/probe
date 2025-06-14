@@ -13,13 +13,13 @@ import (
 
 type ScheduleEngine struct {
 	engine  *actor.Engine
-	process *safemap.SafeMap[M.ProbeType, *scheduleProcess]
+	process *safemap.SafeMap[string, *scheduleProcess]
 }
 
 func newScheduleEngine(ctx *Context, options Opts) (err error) {
 	schEngine := &ScheduleEngine{
 		engine:  ctx.Engine(),
-		process: safemap.New[M.ProbeType, *scheduleProcess](),
+		process: safemap.New[string, *scheduleProcess](),
 	}
 
 	if options.icmp {
@@ -41,25 +41,25 @@ func newScheduleEngine(ctx *Context, options Opts) (err error) {
 	return nil
 }
 
-func (e *ScheduleEngine) Get(name M.ProbeType) (*scheduleProcess, bool) {
+func (e *ScheduleEngine) Get(name string) (*scheduleProcess, bool) {
 	return e.process.Get(name)
 }
 
 func (e *ScheduleEngine) Start() {
-	e.process.ForEach(func(i M.ProbeType, s *scheduleProcess) {
+	e.process.ForEach(func(i string, s *scheduleProcess) {
 		s.start()
 	})
 }
 
 func (e *ScheduleEngine) Stop() {
-	e.process.ForEach(func(i M.ProbeType, s *scheduleProcess) {
+	e.process.ForEach(func(i string, s *scheduleProcess) {
 		s.stop()
 	})
 }
 
 func (e *ScheduleEngine) setup(name string, poll *PollEngine, interval time.Duration, options Opts) (err error) {
 	slog.Info("setting up schedular", "name", name)
-	c, ok := poll.Get(M.ProbeType(name))
+	c, ok := poll.Get(name)
 	if !ok {
 		return ErrPOLLER
 	}
@@ -67,7 +67,7 @@ func (e *ScheduleEngine) setup(name string, poll *PollEngine, interval time.Dura
 	if err != nil {
 		return err
 	}
-	e.process.Set(M.ProbeType(name), sch)
+	e.process.Set(name, sch)
 	return nil
 }
 

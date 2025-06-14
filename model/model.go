@@ -21,12 +21,14 @@ type (
 	}
 
 	ProcessBeat struct {
-		Name   string `json:"name"`
-		St     string `json:"st"`
-		Et     string `json:"et"`
-		T      string `json:"t"`
-		Total  int    `json:"total"`
-		Polled int    `json:"polled"`
+		Counter uint64 `json:"counter"`
+		Name    string `json:"name"`
+		St      string `json:"st"`
+		Et      string `json:"et"`
+		T       string `json:"t"`
+		Given   int    `json:"given"`
+		Polled  int    `json:"polled"`
+		Error   string `json:"error"`
 	}
 )
 type ExportMsg struct {

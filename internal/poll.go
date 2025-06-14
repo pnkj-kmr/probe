@@ -9,23 +9,25 @@ import (
 )
 
 type PollEngine struct {
-	process *safemap.SafeMap[M.ProbeType, *pollProcess]
+	ctx     *Context
+	process *safemap.SafeMap[string, *pollProcess]
 }
 
 func newPollEngine(ctx *Context, options Opts) (err error) {
 	pollEngine := &PollEngine{
-		process: safemap.New[M.ProbeType, *pollProcess](),
+		ctx:     ctx,
+		process: safemap.New[string, *pollProcess](),
 	}
 
 	if options.icmp {
-		err := pollEngine.multiSetup(M.ICMP, ctx.DB(), ctx.Export(), options)
+		err := pollEngine.multiSetup(M.ICMP, options)
 		if err != nil {
 			slog.Error("[POLL] icmp", "err", err)
 			return err
 		}
 	}
 	if options.snmp {
-		err := pollEngine.multiSetup(M.SNMP, ctx.DB(), ctx.Export(), options)
+		err := pollEngine.multiSetup(M.SNMP, options)
 		if err != nil {
 			slog.Error("[POLL] snmp", "err", err)
 			return err
@@ -35,16 +37,20 @@ func newPollEngine(ctx *Context, options Opts) (err error) {
 	return nil
 }
 
-func (e *PollEngine) Get(id M.ProbeType) (*pollProcess, bool) {
-	return e.process.Get(id)
+func (e *PollEngine) Get(key string) (*pollProcess, bool) {
+	return e.process.Get(key)
 }
 
-func (e *PollEngine) setup(name string, db *DBEngine, export *ExportEngine, options Opts) (err error) {
+func (e *PollEngine) setup(name string, options Opts) (err error) {
 	slog.Info("setting up poller", "name", name)
+	db, export, event := e.ctx.DB(), e.ctx.Export(), e.ctx.Event()
+
 	c, ok := db.GetDB(name)
 	if !ok {
 		return ErrDB
 	}
+	monitor, _ := event.Get(string(M.PROCESS))
+
 	var exporter []M.Sender[any]
 	if options.kafka {
 		e, ok := export.Get(string(M.KAFKA))
@@ -67,19 +73,19 @@ func (e *PollEngine) setup(name string, db *DBEngine, export *ExportEngine, opti
 		}
 		finder = f
 	}
-	poller := newPollProcess(fmt.Sprintf("poll/%s", name), c, options.workers, exporter, finder)
-	e.process.Set(M.ProbeType(name), poller)
+	poller := newPollProcess(fmt.Sprintf("poll/%s", name), c, options.workers, exporter, finder, monitor)
+	e.process.Set(name, poller)
 	return nil
 }
 
-func (e *PollEngine) multiSetup(name M.ProbeType, db *DBEngine, export *ExportEngine, options Opts) (err error) {
+func (e *PollEngine) multiSetup(name M.ProbeType, options Opts) (err error) {
 	// setting up for 60 seconds
-	err = e.setup(fmt.Sprintf("%s/%d", name, M.INTERVAL_60), db, export, options)
+	err = e.setup(fmt.Sprintf("%s/%d", name, M.INTERVAL_60), options)
 	if err != nil {
 		return
 	}
 	// setting up for 300 seconds
-	err = e.setup(fmt.Sprintf("%s/%d", name, M.INTERVAL_300), db, export, options)
+	err = e.setup(fmt.Sprintf("%s/%d", name, M.INTERVAL_300), options)
 	if err != nil {
 		return
 	}

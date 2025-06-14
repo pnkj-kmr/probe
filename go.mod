@@ -16,6 +16,7 @@ require (
 	github.com/swaggo/swag v1.8.1
 	github.com/xdg-go/scram v1.1.2
 	go.etcd.io/bbolt v1.3.11
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
 require (

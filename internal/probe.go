@@ -30,6 +30,10 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 	for _, opt := range opts {
 		opt(&options)
 	}
+	// logger init
+	// // TODO -need to set logging deom options
+	// logger.Initiate(slog.LevelDebug)
+
 	p.ctx = newContext(options.context)
 	p.ctx.WithEngine(p.enigne)
 	log.Println("setting... context")
@@ -40,6 +44,13 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 		return nil, err
 	}
 	log.Println("setting... db")
+
+	// Event engine init
+	err = newEventEngine(p.ctx, options)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("setting... event")
 
 	//Export engine init
 	// workers node
@@ -70,13 +81,6 @@ func NewProbe(opts ...OptFunc) (*Probe, error) {
 	}
 	log.Println("setting... api")
 
-	// Event engine init
-	err = newEventEngine(p.ctx, options)
-	if err != nil {
-		return nil, err
-	}
-	log.Println("setting... event")
-
 	return p, nil
 }
 
@@ -90,6 +94,7 @@ func (p *Probe) Start() {
 	p.ctx.Schedule().Start()
 	p.ctx.Export().Start()
 	p.ctx.API().Start()
+	p.ctx.Event().Start()
 
 	<-p.ctx.Context().Done()
 }
@@ -100,6 +105,7 @@ func (p *Probe) Stop() {
 	p.ctx.Schedule().Stop()
 	p.ctx.Export().Stop()
 	p.ctx.API().Stop()
+	p.ctx.Event().Stop()
 
 	log.Println("[PROBE] gracefully shutdown")
 

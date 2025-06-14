@@ -16,6 +16,7 @@ const (
 	DBDUMP  ProbeType = "dbdump"
 	RMQ     ProbeType = "rmq"
 	// db related variables
+	EVENT   ProbeType = "events"
 	PROCESS ProbeType = "processes"
 	CONFIG  ProbeType = "configuration"
 	CRED    ProbeType = "credential"

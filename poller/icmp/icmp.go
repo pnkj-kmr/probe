@@ -38,11 +38,11 @@ func newICMPPoller(c M.Receiver[<-chan []byte], p []M.Sender[any], opts ...polle
 	return &Poller{in: c, out: p, workers: options.Workers, timeout: options.Timeout}
 }
 
-func (p *Poller) Poll() error {
+func (p *Poller) Poll() (given int, polled int, err error) {
 	var wg sync.WaitGroup
 	c := make(chan M.None, p.workers)
-	var err error
 	for data := range p.in.Receive() {
+		given += 1
 		var icmp M.ICMPReq
 		err = json.Unmarshal(data, &icmp)
 		if err != nil {
@@ -63,6 +63,7 @@ func (p *Poller) Poll() error {
 				out.Err = err.Error()
 			}
 			log.Println("ICMP output -- ", out)
+			polled += 1
 			// p.out.Send(out)
 			for _, sender := range p.out {
 				sender.Send(out)
@@ -71,7 +72,7 @@ func (p *Poller) Poll() error {
 		log.Println("ICMP -- ", icmp)
 	}
 	wg.Wait()
-	return nil
+	return
 }
 
 func (p *Poller) Scan(c any) (o any, err error) {

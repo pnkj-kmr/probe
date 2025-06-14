@@ -236,7 +236,7 @@ func (api *R) SaveEnv(w http.ResponseWriter, r *http.Request) {
 // @Tags Profile
 // @Accept  json
 // @Produce  json
-// @Success 200 {object}  nil
+// @Success 200 {array}  M.ProcessBeat
 // @Router /api/profile/process/status [get]
 func (api *R) GetProcessStatus(w http.ResponseWriter, r *http.Request) {
 	detail, err := api.getProcessStatus()
