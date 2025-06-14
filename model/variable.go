@@ -16,9 +16,10 @@ const (
 	DBDUMP  ProbeType = "dbdump"
 	RMQ     ProbeType = "rmq"
 	// db related variables
-	CONFIG ProbeType = "configuration"
-	CRED   ProbeType = "credential"
-	ENV    ProbeType = "environment"
+	PROCESS ProbeType = "processes"
+	CONFIG  ProbeType = "configuration"
+	CRED    ProbeType = "credential"
+	ENV     ProbeType = "environment"
 	// db and polling related variables
 	ICMP   ProbeType = "icmp"
 	SNMP   ProbeType = "snmp"

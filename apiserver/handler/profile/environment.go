@@ -19,7 +19,7 @@ func (api *R) saveEnvironmentVariable(env M.Env) (err error) {
 	// fmt.Println("--->env", env)
 	// fmt.Println("----->envMap", envMap)
 	for k, v := range envMap {
-		dd, err := json.Marshal(v)
+		dd, err := json.Marshal(M.Record{K: k, V: v})
 		if err == nil {
 			err = db.Create(k, dd)
 			if err != nil {
@@ -44,20 +44,20 @@ func (api *R) saveEnvironmentVariable(env M.Env) (err error) {
 	return
 }
 
-func (api *R) getEnvironmentVariable() (data map[string]string, err error) {
+func (api *R) getEnvironmentVariable() (data map[string]any, err error) {
 	db, ok := api.DB.Get(string(M.ENV))
 	if !ok {
 		return data, fmt.Errorf("NO_ENV_VARIABLE")
 	}
 
-	r, err := db.FindAll()
-	if err != nil {
-		return data, err
-	}
-
-	data = make(map[string]string)
-	for k, v := range r {
-		data[k] = string(v)
+	var record M.Record
+	data = make(map[string]any)
+	for v := range db.Receive() {
+		err := json.Unmarshal(v, &record)
+		if err != nil {
+			return data, err
+		}
+		data[record.K] = record.V
 	}
 	return
 }

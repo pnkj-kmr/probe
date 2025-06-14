@@ -4,21 +4,31 @@ import (
 	"encoding/json"
 )
 
-type None struct{}
+type (
+	None struct{}
 
-// process start/end aknowledge types
-type Do struct{}
-type Done struct{}
+	// process start/end aknowledge types
+	Do   struct{}
+	Done struct{}
 
-type Record struct {
-	Key   []byte
-	Value []byte
-}
+	Record struct {
+		K string
+		V any
+	}
 
-type PollingBeat struct {
-	Name string
-}
+	PollingBeat struct {
+		Name string
+	}
 
+	ProcessBeat struct {
+		Name   string `json:"name"`
+		St     string `json:"st"`
+		Et     string `json:"et"`
+		T      string `json:"t"`
+		Total  int    `json:"total"`
+		Polled int    `json:"polled"`
+	}
+)
 type ExportMsg struct {
 	Data        any
 	Agent       string

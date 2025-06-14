@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/go-playground/validator/v10"
 )
 
 type R struct {
@@ -201,6 +202,14 @@ func (api *R) SaveEnv(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		slog.Info("env payload issue", "err", err)
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+
+	v := validator.New()
+	err = v.Struct(payload)
+	if err != nil {
+		slog.Info("envronment validation", "err", err)
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return
 	}

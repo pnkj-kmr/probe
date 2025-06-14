@@ -2,13 +2,13 @@ package M
 
 type Env struct {
 	// system parameter
-	DEBUG                bool `json:"DEBUG" db:"DEBUG"`
-	NO_WORKER_THREADS    int  `json:"NO_WORKER_THREADS" db:"NO_WORKER_THREADS"`
-	PROCESS_MAX_RESTARTS int  `json:"PROCESS_MAX_RESTARTS" db:"PROCESS_MAX_RESTARTS"`
+	DEBUG                bool `json:"DEBUG"  db:"DEBUG"`
+	NO_WORKER_THREADS    int  `json:"NO_WORKER_THREADS" validate:"required" db:"NO_WORKER_THREADS"`
+	PROCESS_MAX_RESTARTS int  `json:"PROCESS_MAX_RESTARTS"  db:"PROCESS_MAX_RESTARTS"`
 
 	// api server flag
 	API_SERVER bool `json:"API_SERVER" db:"API_SERVER"`
-	API_PORT   int  `json:"API_PORT" db:"API_PORT"`
+	API_PORT   int  `json:"API_PORT" validate:"required" db:"API_PORT"`
 
 	// poller flags
 	ICMP_POLLING bool `json:"ICMP_POLLING" db:"ICMP_POLLING"`

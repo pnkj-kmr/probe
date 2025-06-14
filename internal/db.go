@@ -41,6 +41,10 @@ func newDBEngine(e *actor.Engine, opts ...OptFunc) (*DBEngine, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = dbEngine.setup(string(M.PROCESS), "")
+	if err != nil {
+		return nil, err
+	}
 	err = dbEngine.multiSetup(string(M.ICMP))
 	if err != nil {
 		return nil, err

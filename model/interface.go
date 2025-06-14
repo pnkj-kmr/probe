@@ -50,5 +50,4 @@ type DB interface {
 	Update(string, []byte) error
 	Delete(string) error
 	DeleteAll() error
-	FindAll() (map[string][]byte, error)
 }
