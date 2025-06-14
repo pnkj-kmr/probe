@@ -31,7 +31,7 @@ type exportProcess struct {
 	bucket     *safemap.SafeMap[int, []any]
 }
 
-func newExportProcess(ctx context.Context, name string, e *actor.Engine, db *repository.Repository, bucketSize int, partitions int) (*exportProcess, error) {
+func newExportProcess(ctx *Context, name string, db *repository.Repository, opts Opts) (*exportProcess, error) {
 	var _pType M.ProbeType
 	if strings.Contains(name, string(M.KAFKA)) {
 		_pType = M.KAFKA
@@ -40,9 +40,9 @@ func newExportProcess(ctx context.Context, name string, e *actor.Engine, db *rep
 	}
 
 	return &exportProcess{
-		ctx: ctx, pType: _pType, name: name, engine: e, db: db,
-		bucketSize: bucketSize,
-		partitions: partitions,
+		ctx: ctx.Context(), pType: _pType, name: name, engine: ctx.Engine(), db: db,
+		bucketSize: opts.maxBucketSize,
+		partitions: opts.totalPartitions,
 		bucket:     safemap.New[int, []any](),
 	}, nil
 }

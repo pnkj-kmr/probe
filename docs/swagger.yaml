@@ -210,6 +210,9 @@ definitions:
         type: integer
       SNMP_POLLING:
         type: boolean
+    required:
+    - API_PORT
+    - NO_WORKER_THREADS
     type: object
   M.ICMPReq:
     properties:
@@ -939,6 +942,19 @@ paths:
           schema:
             $ref: '#/definitions/M.Env'
       summary: Save Env Info
+      tags:
+      - Profile
+  /api/profile/process/status:
+    get:
+      consumes:
+      - application/json
+      description: Probe thread process detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get Processes Info
       tags:
       - Profile
   /api/profile/text/decrypt:

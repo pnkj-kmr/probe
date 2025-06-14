@@ -12,30 +12,27 @@ type PollEngine struct {
 	process *safemap.SafeMap[M.ProbeType, *pollProcess]
 }
 
-func newPollEngine(db *DBEngine, export *ExportEngine, opts ...OptFunc) (*PollEngine, error) {
+func newPollEngine(ctx *Context, options Opts) (err error) {
 	pollEngine := &PollEngine{
 		process: safemap.New[M.ProbeType, *pollProcess](),
 	}
-	options := DefaultOpts()
-	for _, opt := range opts {
-		opt(&options)
-	}
 
 	if options.icmp {
-		err := pollEngine.multiSetup(M.ICMP, db, export, options)
+		err := pollEngine.multiSetup(M.ICMP, ctx.DB(), ctx.Export(), options)
 		if err != nil {
 			slog.Error("[POLL] icmp", "err", err)
-			return nil, err
+			return err
 		}
 	}
 	if options.snmp {
-		err := pollEngine.multiSetup(M.SNMP, db, export, options)
+		err := pollEngine.multiSetup(M.SNMP, ctx.DB(), ctx.Export(), options)
 		if err != nil {
 			slog.Error("[POLL] snmp", "err", err)
-			return nil, err
+			return err
 		}
 	}
-	return pollEngine, nil
+	ctx.WithPoll(pollEngine)
+	return nil
 }
 
 func (e *PollEngine) Get(id M.ProbeType) (*pollProcess, bool) {

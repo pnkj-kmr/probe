@@ -787,6 +787,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/profile/process/status": {
+            "get": {
+                "description": "Probe thread process detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Get Processes Info",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/profile/text/decrypt": {
             "post": {
                 "description": "decryption of payload",
@@ -1135,6 +1155,10 @@ const docTemplate = `{
         },
         "M.Env": {
             "type": "object",
+            "required": [
+                "API_PORT",
+                "NO_WORKER_THREADS"
+            ],
             "properties": {
                 "API_PORT": {
                     "type": "integer"

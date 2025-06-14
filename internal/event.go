@@ -7,21 +7,17 @@ type EventEngine struct {
 	process *eventProcess
 }
 
-func newEventEngine(e *actor.Engine, opts ...OptFunc) (*EventEngine, error) {
+func newEventEngine(ctx *Context, options Opts) (err error) {
+	eventEngine := &EventEngine{engine: ctx.Engine()}
 
-	eventEngine := &EventEngine{engine: e}
-	options := DefaultOpts()
-	for _, opt := range opts {
-		opt(&options)
-	}
-
-	process, err := newEventProcess(0, "Event", e)
+	process, err := newEventProcess(0, "Event", ctx.Engine())
 	if err != nil {
-		return nil, err
+		return err
 	}
 	eventEngine.process = process
 
-	return eventEngine, nil
+	ctx.WithEvent(eventEngine)
+	return nil
 }
 
 // func (e *EventEngine) Get(id int) (any, bool) {

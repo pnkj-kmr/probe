@@ -36,6 +36,8 @@ func (api *R) Mux() *chi.Mux {
 	api.mux.Get("/env", api.GetEnv)
 	api.mux.Post("/env", api.SaveEnv)
 
+	api.mux.Get("/process/status", api.GetProcessStatus)
+
 	return api.mux
 }
 
@@ -220,6 +222,29 @@ func (api *R) SaveEnv(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data, err := json.Marshal(payload)
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+	render.Status(r, http.StatusOK)
+	w.Write(data)
+}
+
+// GetProcessStatus godoc
+// @Summary Get Processes Info
+// @Description Probe thread process detail
+// @Tags Profile
+// @Accept  json
+// @Produce  json
+// @Success 200 {object}  nil
+// @Router /api/profile/process/status [get]
+func (api *R) GetProcessStatus(w http.ResponseWriter, r *http.Request) {
+	detail, err := api.getProcessStatus()
+	if err != nil {
+		render.Render(w, r, handler.ErrInvalidRequest(err))
+		return
+	}
+	data, err := json.Marshal(detail)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

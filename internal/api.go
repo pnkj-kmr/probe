@@ -12,25 +12,22 @@ type APIEngine struct {
 	process *safemap.SafeMap[M.ProbeType, *apiProcess]
 }
 
-func newAPIEngine(e *actor.Engine, db *DBEngine, opts ...OptFunc) (*APIEngine, error) {
+func newAPIEngine(ctx *Context, options Opts) (err error) {
 	apiEngine := &APIEngine{
-		engine:  e,
+		engine:  ctx.Engine(),
 		process: safemap.New[M.ProbeType, *apiProcess](),
-	}
-	options := DefaultOpts()
-	for _, opt := range opts {
-		opt(&options)
 	}
 
 	if options.api {
-		p, err := newApiProcess(M.API, e, db)
+		p, err := newApiProcess(M.API, ctx.Engine(), ctx.DB())
 		if err != nil {
-			return nil, err
+			return err
 		}
 		apiEngine.process.Set(M.API, p)
 	}
 
-	return apiEngine, nil
+	ctx.WithAPI(apiEngine)
+	return nil
 }
 
 func (e *APIEngine) Get(k M.ProbeType) (*apiProcess, bool) {

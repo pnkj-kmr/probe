@@ -13,69 +13,46 @@ import (
 type DBEngine struct {
 	engine *actor.Engine
 	db     *safemap.SafeMap[string, *repository.Repository]
-	// process *safemap.SafeMap[int, *dbProcess]
 }
 
-func newDBEngine(e *actor.Engine, opts ...OptFunc) (*DBEngine, error) {
+func newDBEngine(ctx *Context, _ Opts) (err error) {
 	dbEngine := &DBEngine{
-		engine: e,
+		engine: ctx.Engine(),
 		db:     safemap.New[string, *repository.Repository](),
-		// process: safemap.New[int, *dbProcess](),
 	}
-	options := DefaultOpts()
-	for _, opt := range opts {
-		opt(&options)
-	}
-
-	var err error
 
 	err = dbEngine.setup(string(M.CRED), "")
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = dbEngine.setup(string(M.CONFIG), "")
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = dbEngine.setup(string(M.ENV), "")
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = dbEngine.setup(string(M.PROCESS), "")
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = dbEngine.multiSetup(string(M.ICMP))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	err = dbEngine.multiSetup(string(M.SNMP))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return dbEngine, nil
+	ctx.WithDB(dbEngine)
+	return
 }
 
 func (e *DBEngine) GetDB(name string) (*repository.Repository, bool) {
 	return e.db.Get(name)
 }
-
-// func (e *DBEngine) GetProcess(id int) (*dbProcess, bool) {
-// 	return e.process.Get(id)
-// }
-
-// func (e *DBEngine) Start() {
-// 	e.process.ForEach(func(i int, s *dbProcess) {
-// 		s.start()
-// 	})
-// }
-
-// func (e *DBEngine) Stop() {
-// 	e.process.ForEach(func(i int, s *dbProcess) {
-// 		s.stop()
-// 	})
-// }
 
 func (e *DBEngine) setup(name, directory string) (err error) {
 	slog.Info("setting...", "name", name, "directory", directory)
@@ -85,13 +62,6 @@ func (e *DBEngine) setup(name, directory string) (err error) {
 		return err
 	}
 	e.db.Set(name, db)
-
-	// p, err := newDBProcess(id, fmt.Sprintf("db/%s/%d", filepath.Join(directory, name), id), e.engine, db)
-	// if err != nil {
-	// 	slog.Error("[DB] process error", "err", err)
-	// 	return err
-	// }
-	// e.process.Set(id, p)
 	return
 }
 

@@ -16,31 +16,29 @@ type ScheduleEngine struct {
 	process *safemap.SafeMap[M.ProbeType, *scheduleProcess]
 }
 
-func newScheduleEngine(e *actor.Engine, poll *PollEngine, opts ...OptFunc) (*ScheduleEngine, error) {
+func newScheduleEngine(ctx *Context, options Opts) (err error) {
 	schEngine := &ScheduleEngine{
-		engine:  e,
+		engine:  ctx.Engine(),
 		process: safemap.New[M.ProbeType, *scheduleProcess](),
-	}
-	options := DefaultOpts()
-	for _, opt := range opts {
-		opt(&options)
 	}
 
 	if options.icmp {
-		err := schEngine.multiSetup(M.ICMP, poll, options)
+		err := schEngine.multiSetup(M.ICMP, ctx.Poll(), options)
 		if err != nil {
 			slog.Error("[SCHEDULE]", "err", err)
-			return nil, err
+			return err
 		}
 	}
 	if options.snmp {
-		err := schEngine.multiSetup(M.SNMP, poll, options)
+		err := schEngine.multiSetup(M.SNMP, ctx.Poll(), options)
 		if err != nil {
 			slog.Error("[SCHEDULE]", "err", err)
-			return nil, err
+			return err
 		}
 	}
-	return schEngine, nil
+
+	ctx.WithSchdule(schEngine)
+	return nil
 }
 
 func (e *ScheduleEngine) Get(name M.ProbeType) (*scheduleProcess, bool) {

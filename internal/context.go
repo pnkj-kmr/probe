@@ -2,10 +2,14 @@ package probe
 
 import (
 	"context"
+
+	"github.com/anthdm/hollywood/actor"
 )
 
 type Context struct {
-	context  context.Context
+	c context.Context
+	e *actor.Engine
+	// inernal engine
 	event    *EventEngine
 	api      *APIEngine
 	db       *DBEngine
@@ -19,14 +23,23 @@ func newContext(c context.Context) *Context {
 		c = context.Background()
 	}
 	return &Context{
-		context: c,
+		c: c,
 	}
 }
 
 // Context returns a context.Context, user defined on spawn or
 // a context.Background as default
 func (c *Context) Context() context.Context {
-	return c.context
+	return c.c
+}
+
+func (c *Context) WithEngine(e *actor.Engine) *Context {
+	c.e = e
+	return c
+}
+
+func (c *Context) Engine() *actor.Engine {
+	return c.e
 }
 
 func (c *Context) WithEvent(e *EventEngine) *Context {
