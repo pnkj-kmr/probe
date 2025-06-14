@@ -21,7 +21,7 @@ export const PollTypeStat = () => {
         getResourceData()
           .then((response: any) => {
             const res = response.data;
-            console.log("--->response.data", res);
+            // console.log("--->response.data", res);
             const data = res["stats"];
             data.push({ name: "DUMMY", total: 100 });
             setData(data);
