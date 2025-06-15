@@ -18,7 +18,7 @@ export default function Navbar() {
           <HomeOutlined />
           {/* <Button ></Button> */}
         </Link>
-        <Link to="/stats">
+        <Link to="/search">
           <FileSearchOutlined />
           {/* <Button ></Button> */}
         </Link>

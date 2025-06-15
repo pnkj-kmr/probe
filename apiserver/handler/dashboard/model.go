@@ -35,3 +35,10 @@ type ResourceStats struct {
 }
 
 type PollingStats []PollStat
+
+type SearchModel struct {
+	L string `json:"label"`
+	V string `json:"value"`
+}
+
+type ModelList []SearchModel

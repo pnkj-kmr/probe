@@ -389,25 +389,23 @@ definitions:
       cores:
         type: integer
       usage:
-        items:
-          type: number
-        type: array
+        type: number
     type: object
   dashboard.Disk:
     properties:
       total:
-        type: number
+        type: string
       used:
-        type: number
+        type: string
       used_percent:
         type: number
     type: object
   dashboard.Memory:
     properties:
       total:
-        type: number
+        type: string
       used:
-        type: number
+        type: string
       used_percent:
         type: number
     type: object
@@ -428,6 +426,13 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  dashboard.SearchModel:
+    properties:
+      label:
+        type: string
+      value:
+        type: string
     type: object
   dashboard.SystemStats:
     properties:
@@ -696,6 +701,23 @@ paths:
         "200":
           description: OK
       summary: Get saved statistics params
+      tags:
+      - Dashboard
+  /api/dashboard/model:
+    get:
+      consumes:
+      - application/json
+      description: stats db models
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dashboard.SearchModel'
+            type: array
+      summary: Get search model name
       tags:
       - Dashboard
   /api/dashboard/poll:

@@ -30,6 +30,7 @@ func (api *R) Mux() *chi.Mux {
 	api.mux.Get("/resource", api.ResourceStats)
 	api.mux.Get("/poll", api.PollStats)
 	api.mux.Get("/data", api.GetStats)
+	api.mux.Get("/model", api.GetModelList)
 
 	return api.mux
 }
@@ -119,57 +120,6 @@ func (api *R) PollStats(w http.ResponseWriter, r *http.Request) {
 	stats = append(stats, PollStat{Name: "SNMP_300", Total: t, Polled: t2})
 
 	data, err := json.Marshal(stats)
-	if err != nil {
-		render.Render(w, r, handler.ErrInvalidRequest(err))
-		return
-	}
-	render.Status(r, http.StatusOK)
-	w.Write(data)
-}
-
-// GetStats godoc
-// @Summary Get saved statistics params
-// @Description helps to get the current save stats into system
-// @Tags Dashboard
-// @Accept  json
-// @Produce  json
-// @Param table query string icmp "ICMP collection table"
-// @Param cid query string test "CI_ID to query"
-// @Success 200 {object} nil
-// @Router /api/dashboard/data [get]
-func (api *R) GetStats(w http.ResponseWriter, r *http.Request) {
-	queryParams := r.URL.Query()
-	cid := queryParams.Get("cid")
-	dbName := queryParams.Get("table")
-
-	var stat = make(map[string]any)
-	db, ok := api.DB.Get(dbName)
-	if ok {
-		r, err := db.Find(cid)
-		if err != nil {
-			stat["config"] = err.Error()
-		} else {
-			stat["config"] = api.getData(dbName, r)
-		}
-	} else {
-		render.Render(w, r, handler.ErrInvalidRequest(fmt.Errorf("no db name: %s", dbName)))
-		return
-	}
-	dbName = fmt.Sprintf("%s_stat", dbName)
-	db, ok = api.DB.Get(dbName)
-	if ok {
-		r, err := db.Find(cid)
-		if err != nil {
-			stat["polled"] = err.Error()
-		} else {
-			stat["polled"] = api.getData(dbName, r)
-		}
-	} else {
-		render.Render(w, r, handler.ErrInvalidRequest(fmt.Errorf("no db name: %s_stat", dbName)))
-		return
-	}
-
-	data, err := json.Marshal(stat)
 	if err != nil {
 		render.Render(w, r, handler.ErrInvalidRequest(err))
 		return

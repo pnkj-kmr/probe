@@ -386,6 +386,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/dashboard/model": {
+            "get": {
+                "description": "stats db models",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get search model name",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dashboard.SearchModel"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/dashboard/poll": {
             "get": {
                 "description": "helps to get the current polling status along with poll result",
@@ -1464,10 +1490,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "usage": {
-                    "type": "array",
-                    "items": {
-                        "type": "number"
-                    }
+                    "type": "number"
                 }
             }
         },
@@ -1475,10 +1498,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "total": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "used": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "used_percent": {
                     "type": "number"
@@ -1489,10 +1512,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "total": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "used": {
-                    "type": "number"
+                    "type": "string"
                 },
                 "used_percent": {
                     "type": "number"
@@ -1524,6 +1547,17 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "dashboard.SearchModel": {
+            "type": "object",
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
                 }
             }
         },
