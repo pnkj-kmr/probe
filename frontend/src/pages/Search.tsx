@@ -36,7 +36,7 @@ export default function SearchPage() {
   const handleChange = (value: { value: string; label: React.ReactNode }) => {
     setSelected(value);
   };
-  const onSearch: SearchProps["onSearch"] = (value, _e, info) => {
+  const onSearch: SearchProps["onSearch"] = (value, _e, _info) => {
     // console.log(info?.source, value);
     try {
       getSearchResult({ params: { table: selected.value, cid: value } })
@@ -91,7 +91,7 @@ export default function SearchPage() {
                 }}
               >
                 {
-                  <p>
+                  <p className="text-[#0d51d9]">
                     <b>{selected.label} Configuration</b>
                   </p>
                 }
@@ -107,7 +107,7 @@ export default function SearchPage() {
                 }}
               >
                 {
-                  <p>
+                  <p className="text-[#0d51d9]">
                     <b>{selected.label} Polled result if any</b>
                   </p>
                 }

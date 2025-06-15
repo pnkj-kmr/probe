@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getResourceData } from "@/services/api";
 import { Card } from "antd";
 import {
@@ -60,7 +60,7 @@ export const ResourceStat = () => {
               className="first:fill-muted last:fill-background"
               polarRadius={[86, 74]}
             />
-            <RadialBar dataKey="count" background />
+            <RadialBar dataKey="count" background fill="#0d51d9" />
             <Tooltip />
             <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
               <Label

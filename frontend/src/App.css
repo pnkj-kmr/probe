@@ -1,1 +1,6 @@
-
+.custom-header-table .ant-table-thead {
+  /* display: none; */
+  font-size: medium;
+  padding: 8px;
+  margin: 8px;
+}

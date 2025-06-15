@@ -29,16 +29,15 @@ type TextPayload struct {
 	T string `json:"text"`
 }
 
-func (api *R) getAgentConfiguration() (data map[string]any, err error) {
+func (api *R) getAgentConfiguration() (data []M.Record, err error) {
 	db, ok := api.DB.Get(string(M.CONFIG))
 	if !ok {
 		return nil, fmt.Errorf("NO_CONFIGURATION")
 	}
 
-	data = make(map[string]any)
 	for _, k := range configurationKeys {
 		r, _ := db.Find(k)
-		data[k] = string(r)
+		data = append(data, M.Record{K: k, V: string(r)})
 	}
 
 	return

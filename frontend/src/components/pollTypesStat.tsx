@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getResourceData } from "@/services/api";
 import { Card } from "antd";
 import {
@@ -23,7 +23,7 @@ export const PollTypeStat = () => {
             const res = response.data;
             // console.log("--->response.data", res);
             const data = res["stats"];
-            data.push({ name: "DUMMY", total: 100 });
+            // data.push({ name: "DUMMY", total: 100 });
             setData(data);
           })
           .catch((error) => setError(error.message))
@@ -51,6 +51,7 @@ export const PollTypeStat = () => {
             <PolarGrid />
             <Tooltip />
             <Radar
+              fill="#0d51d9"
               dataKey="total"
               //   fill="var(--color-desktop)"
               // fill="blue"

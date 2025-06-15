@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSystemData } from "@/services/api";
 import { Card } from "antd";
 import {
@@ -88,7 +88,9 @@ export const PerfStat = () => {
             />
             {/* <Tooltip /> */}
             <Tooltip
-              formatter={(v, n, x) => [`${JSON.stringify(x.payload?.display)}`]}
+              formatter={(_v, _n, x) => [
+                `${JSON.stringify(x.payload?.display)}`,
+              ]}
               labelFormatter={(label) => label}
             />
             {/* <Bar dataKey="sales" fill="#1890ff" barSize={40} /> */}
@@ -96,22 +98,21 @@ export const PerfStat = () => {
             <Bar
               dataKey="usage"
               layout="vertical"
-              //   fill="var(--color-usage)"
               barSize={40}
               radius={4}
+              fill="#0d51d9"
             >
               <LabelList
                 dataKey="name"
                 position="insideLeft"
                 offset={8}
-                // className="fill-[--color-label]"
                 fontSize={12}
+                fill="#ffffff"
               />
               <LabelList
                 dataKey="usage"
                 position="right"
                 offset={8}
-                // className="fill-foreground"
                 fontSize={12}
               />
             </Bar>

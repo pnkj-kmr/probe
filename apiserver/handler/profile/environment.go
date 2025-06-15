@@ -44,20 +44,19 @@ func (api *R) saveEnvironmentVariable(env M.Env) (err error) {
 	return
 }
 
-func (api *R) getEnvironmentVariable() (data map[string]any, err error) {
+func (api *R) getEnvironmentVariable() (data []M.Record, err error) {
 	db, ok := api.DB.Get(string(M.ENV))
 	if !ok {
 		return data, fmt.Errorf("NO_ENV_VARIABLE")
 	}
 
-	var record M.Record
-	data = make(map[string]any)
 	for v := range db.Receive() {
+		var record M.Record
 		err := json.Unmarshal(v, &record)
 		if err != nil {
 			return data, err
 		}
-		data[record.K] = record.V
+		data = append(data, record)
 	}
 	return
 }

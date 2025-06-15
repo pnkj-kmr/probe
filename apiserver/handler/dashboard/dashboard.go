@@ -7,6 +7,7 @@ import (
 	"probe/apiserver/handler"
 	M "probe/model"
 	"probe/safemap"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -66,8 +67,12 @@ func (api *R) ResourceStats(w http.ResponseWriter, r *http.Request) {
 	var stats []PollStat
 	var total uint64
 
+	// credential profile count
+	t := api.resCount(string(M.CRED))
+	stats = append(stats, PollStat{Name: strings.ToUpper(string(M.CRED)), Total: t})
+
 	// getting icmp stats
-	t := api.resourceCount(M.ICMP)
+	t = api.resourceCount(M.ICMP)
 	stats = append(stats, PollStat{Name: "ICMP", Total: t})
 	total = total + t
 

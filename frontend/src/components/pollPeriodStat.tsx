@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getPollingData } from "@/services/api";
 import { Card } from "antd";
 import {
@@ -79,7 +79,7 @@ export const PollPeriodStat = () => {
             <Tooltip />
             <Legend />
             <ReferenceLine y={0} stroke="#000" />
-            <Bar dataKey="total" fill="#8884d8" stackId="stack" barSize={50} />
+            <Bar dataKey="total" fill="#0d51d9" stackId="stack" barSize={50} />
             <Bar dataKey="polled" fill="#82ca9d" stackId="stack" barSize={50} />
           </BarChart>
         </ResponsiveContainer>
