@@ -1,7 +1,10 @@
 package api
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
+	"log"
 	"net/http"
 	"probe/apiserver/handler/credential"
 	"probe/apiserver/handler/dashboard"
@@ -17,6 +20,9 @@ import (
 	"github.com/go-chi/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
+
+//go:embed static/*
+var staticFiles embed.FS
 
 /**
 API Server
@@ -45,7 +51,6 @@ func (server *Server) Run() error {
 func (server *Server) newRouter() *chi.Mux {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Use(AddDefaultHeader)
 
 	// Add CORS middleware
 	r.Use(cors.Handler(cors.Options{
@@ -56,16 +61,19 @@ func (server *Server) newRouter() *chi.Mux {
 		MaxAge:           300, // Maximum value not ignored by major browsers
 	}))
 
+	// Serve static files
+	uiFS, err := fs.Sub(staticFiles, "static")
+	if err != nil {
+		log.Fatal(err)
+	}
+	r.Handle("/*", spaHandler(uiFS))
+
 	// Swagger UI
 	r.Get("/docs/*", httpSwagger.WrapHandler)
-	// r.Get("/docs/*", httpSwagger.WrapHandler(liteFiles.Handler))
-	// // Serve your swagger.json file (optional)
-	// r.Get("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
-	// 	http.ServeFile(w, r, "./docs/swagger.json")
-	// })
 
 	// Group: /api
 	r.Route("/api", func(api chi.Router) {
+		api.Use(AddDefaultHeader)
 		// Group: /
 		api.Get("/", server.Ping)
 

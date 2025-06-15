@@ -23,7 +23,7 @@ export default function Navbar() {
         <Link to="/about">
           <InfoCircleOutlined />
         </Link>
-        <Link to="/docs">
+        <Link to="/docs/" target="_blank" rel="noopener noreferrer">
           <ApiOutlined />
         </Link>
         {/* <UnlockOutlined /> */}
