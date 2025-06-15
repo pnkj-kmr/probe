@@ -7,6 +7,7 @@ import (
 	"probe/apiserver/handler"
 	M "probe/model"
 	"probe/safemap"
+	util "probe/utilities"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
@@ -115,7 +116,7 @@ func (api *R) TextEncrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cryptText, err := handler.Encrypt([]byte(payload.T))
+	cryptText, err := util.Encrypt(payload.T)
 	if err != nil {
 		slog.Info("encypting issue", "err", err)
 		render.Render(w, r, handler.ErrInvalidRequest(err))
@@ -150,7 +151,7 @@ func (api *R) TextDecrypt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cryptText, err := handler.Decrypt([]byte(payload.T))
+	cryptText, err := util.Decrypt(payload.T)
 	if err != nil {
 		slog.Info("decruption issue", "err", err)
 		render.Render(w, r, handler.ErrInvalidRequest(err))
