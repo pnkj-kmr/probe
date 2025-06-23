@@ -1,0 +1,1058 @@
+definitions:
+  M.AuthHTTP:
+    properties:
+      credentialtype:
+        type: string
+      host:
+        type: string
+      login_profileid:
+        type: string
+      name:
+        type: string
+      no_of_custom_pairs:
+        type: integer
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - http
+        - https
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      type:
+        type: string
+      url:
+        type: string
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
+  M.AuthSFTP:
+    properties:
+      credentialtype:
+        type: string
+      login_profileid:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - sftp
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
+  M.AuthSNMP:
+    properties:
+      auth_pass:
+        type: string
+      auth_type:
+        type: string
+      community:
+        type: string
+      context_engine_id:
+        type: string
+      context_name:
+        type: string
+      login_profileid:
+        type: string
+      max_oids:
+        type: integer
+      name:
+        type: string
+      port:
+        type: integer
+      priv_pass:
+        type: string
+      priv_type:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - snmp
+      request_type:
+        $ref: '#/definitions/M.SNMPOperation'
+      retries:
+        type: integer
+      security_level:
+        type: string
+      timeout:
+        type: integer
+      username:
+        type: string
+      version:
+        $ref: '#/definitions/M.SNMPVersion'
+      wcommunity:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    - version
+    type: object
+  M.AuthSSH:
+    properties:
+      credentialtype:
+        type: string
+      linked_profiles:
+        items:
+          $ref: '#/definitions/M.LinkedProfile'
+        type: array
+      login_profileid:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - ssh
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
+  M.AuthTELNET:
+    properties:
+      credentialtype:
+        type: string
+      linked_profiles:
+        items:
+          $ref: '#/definitions/M.LinkedProfile'
+        type: array
+      login_profileid:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      protocol_type:
+        allOf:
+        - $ref: '#/definitions/M.ProtocolType'
+        enum:
+        - telnet
+      retries:
+        type: integer
+      timeout:
+        type: integer
+      username:
+        type: string
+    required:
+    - login_profileid
+    - name
+    - protocol_type
+    type: object
+  M.Env:
+    properties:
+      API_PORT:
+        type: integer
+      API_SERVER:
+        description: api server flag
+        type: boolean
+      DEBUG:
+        description: system parameter
+        type: boolean
+      EXPORTER_DBDUMP:
+        type: boolean
+      EXPORTER_KAFKA:
+        type: boolean
+      EXPORTER_WEBHOOK:
+        description: exporter flag
+        type: boolean
+      ICMP_POLLING:
+        description: poller flags
+        type: boolean
+      KAFAK_MAX_MESSAGE_SIZE:
+        type: integer
+      KAFAK_TOPIC_PARTITIONS:
+        type: integer
+      KAFKA_DEFAULT_TOPIC:
+        description: addition kafka flag
+        type: string
+      NO_WORKER_THREADS:
+        type: integer
+      PROCESS_MAX_RESTARTS:
+        type: integer
+      SNMP_POLLING:
+        type: boolean
+    required:
+    - API_PORT
+    - NO_WORKER_THREADS
+    type: object
+  M.ICMPReq:
+    properties:
+      ci_id:
+        type: string
+      input_stats:
+        items:
+          $ref: '#/definitions/M.InputStat'
+        type: array
+      params:
+        $ref: '#/definitions/M.PINGParams'
+      poll_addr:
+        type: string
+    required:
+    - ci_id
+    - poll_addr
+    type: object
+  M.InputStat:
+    properties:
+      dn:
+        type: string
+      oid:
+        type: string
+    type: object
+  M.LinkedProfile:
+    properties:
+      login_profileid:
+        type: string
+      protocol_type:
+        $ref: '#/definitions/M.ProtocolType'
+    required:
+    - login_profileid
+    - protocol_type
+    type: object
+  M.PINGParams:
+    properties:
+      mib_profile:
+        type: string
+      packsiz:
+        type: integer
+      parent_ci_id:
+        type: string
+      poll_addr:
+        type: string
+      poll_addr_list:
+        items:
+          type: string
+        type: array
+      poll_period:
+        enum:
+        - 60
+        - 300
+        type: integer
+      poll_type:
+        enum:
+        - ping
+        type: string
+    required:
+    - poll_period
+    - poll_type
+    type: object
+  M.ProcessBeat:
+    properties:
+      counter:
+        type: integer
+      error:
+        type: string
+      et:
+        type: string
+      given:
+        type: integer
+      name:
+        type: string
+      polled:
+        type: integer
+      st:
+        type: string
+      t:
+        type: string
+    type: object
+  M.ProtocolType:
+    enum:
+    - snmp
+    - http
+    - https
+    - ssh
+    - sftp
+    - telnet
+    type: string
+    x-enum-varnames:
+    - SNMPType
+    - HTTPType
+    - HTTPSType
+    - SSHType
+    - SFTPType
+    - TELNETType
+  M.SNMPOperation:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - GET
+    - WALK
+    - BULKWALK
+  M.SNMPParams:
+    properties:
+      ci_category:
+        type: string
+      ci_name:
+        type: string
+      custom_type:
+        description: OidIndex   string `json:"oidIndex"`
+        type: string
+      memory_size:
+        type: integer
+      mib_profile:
+        type: string
+      parent_ci_id:
+        type: string
+      poll_addr:
+        type: string
+      poll_addr_list:
+        items:
+          type: string
+        type: array
+      poll_period:
+        enum:
+        - 60
+        - 300
+        type: integer
+      poll_type:
+        enum:
+        - snmp
+        type: string
+      speed:
+        type: integer
+    required:
+    - poll_period
+    - poll_type
+    type: object
+  M.SNMPReq:
+    properties:
+      ci_id:
+        type: string
+      input_stats:
+        items:
+          $ref: '#/definitions/M.InputStat'
+        type: array
+      login_profileid:
+        type: string
+      params:
+        $ref: '#/definitions/M.SNMPParams'
+      poll_addr:
+        type: string
+    required:
+    - ci_id
+    - login_profileid
+    - poll_addr
+    type: object
+  M.SNMPVersion:
+    enum:
+    - "1"
+    - 2c
+    - "3"
+    type: string
+    x-enum-varnames:
+    - VERSION1
+    - VERSION2C
+    - VERSION3
+  dashboard.CPU:
+    properties:
+      cores:
+        type: integer
+      usage:
+        type: number
+    type: object
+  dashboard.Disk:
+    properties:
+      total:
+        type: string
+      used:
+        type: string
+      used_percent:
+        type: number
+    type: object
+  dashboard.Memory:
+    properties:
+      total:
+        type: string
+      used:
+        type: string
+      used_percent:
+        type: number
+    type: object
+  dashboard.PollStat:
+    properties:
+      name:
+        type: string
+      polled:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dashboard.ResourceStats:
+    properties:
+      stats:
+        items:
+          $ref: '#/definitions/dashboard.PollStat'
+        type: array
+      total:
+        type: integer
+    type: object
+  dashboard.SearchModel:
+    properties:
+      label:
+        type: string
+      value:
+        type: string
+    type: object
+  dashboard.SystemStats:
+    properties:
+      cpu:
+        $ref: '#/definitions/dashboard.CPU'
+      disk:
+        $ref: '#/definitions/dashboard.Disk'
+      memory:
+        $ref: '#/definitions/dashboard.Memory'
+    type: object
+  profile.TextPayload:
+    properties:
+      text:
+        type: string
+    type: object
+  profile.TokenPayload:
+    properties:
+      token:
+        type: string
+    type: object
+info:
+  contact:
+    email: pnkj3092@gmail.com
+    name: Pankaj Kumar
+    url: https://github.com/pnkj-kmr
+  description: agent
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://github.com/pnkj-kmr/probe
+  title: Probe
+  version: 1.0.0
+paths:
+  /api/:
+    get:
+      description: Responds with pong
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Ping
+      tags:
+      - Health
+  /api/credential/{credential_type}/:
+    delete:
+      consumes:
+      - application/json
+      description: delete all
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete all credentials for profile
+      tags:
+      - Credential
+    get:
+      consumes:
+      - application/json
+      description: total count
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Total records of credential
+      tags:
+      - Credential
+  /api/credential/{credential_type}/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete one
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      - description: credential id (login/device profile id)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete credential for profile id
+      tags:
+      - Credential
+    get:
+      consumes:
+      - application/json
+      description: creential profile view
+      parameters:
+      - description: 'type: snmp / ssh / telnet / sftp / http'
+        in: path
+        name: credential_type
+        required: true
+        type: string
+      - description: credential id (login/device profile id)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Get credential record
+      tags:
+      - Credential
+  /api/credential/http:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthHTTP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthHTTP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/sftp:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSFTP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSFTP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/snmp:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSNMP'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSNMP'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/ssh:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthSSH'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthSSH'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/credential/telnet:
+    post:
+      consumes:
+      - application/json
+      description: help to save login profile or device profile creds
+      parameters:
+      - description: Request payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.AuthTELNET'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.AuthTELNET'
+      summary: Save Login Credential
+      tags:
+      - Credential
+  /api/dashboard/data:
+    get:
+      consumes:
+      - application/json
+      description: helps to get the current save stats into system
+      parameters:
+      - description: ICMP collection table
+        in: query
+        name: table
+        type: string
+      - description: CI_ID to query
+        in: query
+        name: cid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get saved statistics params
+      tags:
+      - Dashboard
+  /api/dashboard/model:
+    get:
+      consumes:
+      - application/json
+      description: stats db models
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dashboard.SearchModel'
+            type: array
+      summary: Get search model name
+      tags:
+      - Dashboard
+  /api/dashboard/poll:
+    get:
+      consumes:
+      - application/json
+      description: helps to get the current polling status along with poll result
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dashboard.PollStat'
+            type: array
+      summary: Get polling stats
+      tags:
+      - Dashboard
+  /api/dashboard/resource:
+    get:
+      consumes:
+      - application/json
+      description: total resource which aligned to poll
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dashboard.ResourceStats'
+      summary: Get resource stats
+      tags:
+      - Dashboard
+  /api/dashboard/system:
+    get:
+      consumes:
+      - application/json
+      description: cpu, memory and disk usage
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dashboard.SystemStats'
+      summary: Get system stats
+      tags:
+      - Dashboard
+  /api/poll/{type}/{pollPeriod}:
+    delete:
+      consumes:
+      - application/json
+      description: deleting the poll config records
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Delete All Poll Config
+      tags:
+      - Poll
+    get:
+      consumes:
+      - application/json
+      description: get totel record of poll config
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Poll Config Total Count
+      tags:
+      - Poll
+  /api/poll/{type}/{pollPeriod}/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete poll config
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      - description: CI ID of resource
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: record
+          schema:
+            type: string
+      summary: Poll Config Delete
+      tags:
+      - Poll
+    get:
+      consumes:
+      - application/json
+      description: get poll config data
+      parameters:
+      - description: 'type: icmp / snmp'
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: 'Poll Period - like: 60/300'
+        in: path
+        name: pollPeriod
+        required: true
+        type: string
+      - description: CI ID of resource
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: poll config
+          schema:
+            type: string
+      summary: Poll Config Get View
+      tags:
+      - Poll
+  /api/poll/icmp:
+    post:
+      consumes:
+      - application/json
+      description: APIs helps to write poll parameter into db
+      parameters:
+      - description: ICMP Request body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.ICMPReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.ICMPReq'
+      summary: Polling Status update
+      tags:
+      - Poll
+  /api/poll/snmp:
+    post:
+      consumes:
+      - application/json
+      description: APIs helps to write poll parameter into db
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/M.SNMPReq'
+      security:
+      - BearerAuth: []
+      summary: Polling Status update
+      tags:
+      - Poll
+  /api/profile/agent/info:
+    get:
+      consumes:
+      - application/json
+      description: Probe configuration detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get Agent Info
+      tags:
+      - Profile
+  /api/profile/agent/token:
+    post:
+      consumes:
+      - application/json
+      description: Probe configuration update
+      parameters:
+      - description: Token Payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/profile.TokenPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/profile.TokenPayload'
+      summary: Update Agent Token
+      tags:
+      - Profile
+  /api/profile/env:
+    get:
+      consumes:
+      - application/json
+      description: Probe env detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get Env Info
+      tags:
+      - Profile
+    post:
+      consumes:
+      - application/json
+      description: Probe env detail
+      parameters:
+      - description: Request Payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/M.Env'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/M.Env'
+      summary: Save Env Info
+      tags:
+      - Profile
+  /api/profile/process/status:
+    get:
+      consumes:
+      - application/json
+      description: Probe thread process detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/M.ProcessBeat'
+            type: array
+      summary: Get Processes Info
+      tags:
+      - Profile
+  /api/profile/text/decrypt:
+    post:
+      consumes:
+      - application/json
+      description: decryption of payload
+      parameters:
+      - description: Request Payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/profile.TextPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/profile.TextPayload'
+      summary: Decrypt a text
+      tags:
+      - Profile
+  /api/profile/text/encrypt:
+    post:
+      consumes:
+      - application/json
+      description: encryption
+      parameters:
+      - description: Request Payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/profile.TextPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/profile.TextPayload'
+      summary: Encryting the text
+      tags:
+      - Profile
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer" followed by a space and JWT token. Example: "Bearer
+      {token}"'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

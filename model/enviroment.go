@@ -1,0 +1,26 @@
+package M
+
+type Env struct {
+	// system parameter
+	DEBUG                bool `json:"DEBUG"  db:"DEBUG"`
+	NO_WORKER_THREADS    int  `json:"NO_WORKER_THREADS" validate:"required" db:"NO_WORKER_THREADS"`
+	PROCESS_MAX_RESTARTS int  `json:"PROCESS_MAX_RESTARTS"  db:"PROCESS_MAX_RESTARTS"`
+
+	// api server flag
+	API_SERVER bool `json:"API_SERVER" db:"API_SERVER"`
+	API_PORT   int  `json:"API_PORT" validate:"required" db:"API_PORT"`
+
+	// poller flags
+	ICMP_POLLING bool `json:"ICMP_POLLING" db:"ICMP_POLLING"`
+	SNMP_POLLING bool `json:"SNMP_POLLING" db:"SNMP_POLLING"`
+
+	// exporter flag
+	EXPORTER_WEBHOOK bool `json:"EXPORTER_WEBHOOK" db:"EXPORTER_WEBHOOK"`
+	EXPORTER_DBDUMP  bool `json:"EXPORTER_DBDUMP" db:"EXPORTER_DBDUMP"`
+	EXPORTER_KAFKA   bool `json:"EXPORTER_KAFKA" db:"EXPORTER_KAFKA"`
+
+	//addition kafka flag
+	KAFKA_DEFAULT_TOPIC    string `json:"KAFKA_DEFAULT_TOPIC" db:"KAFKA_DEFAULT_TOPIC"`
+	KAFAK_MAX_MESSAGE_SIZE int    `json:"KAFAK_MAX_MESSAGE_SIZE" db:"KAFAK_MAX_MESSAGE_SIZE"`
+	KAFAK_TOPIC_PARTITIONS int    `json:"KAFAK_TOPIC_PARTITIONS" db:"KAFAK_TOPIC_PARTITIONS"`
+}

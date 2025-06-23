@@ -1,0 +1,7 @@
+
+name: "PROBE"
+port: 3000
+debug: true
+secretKey: "PROBE_JWT_SECRET_KEY"
+expiry: 1
+
