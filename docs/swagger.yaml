@@ -913,6 +913,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/M.SNMPReq'
+      security:
+      - BearerAuth: []
       summary: Polling Status update
       tags:
       - Poll
@@ -1046,4 +1048,11 @@ paths:
       summary: Encryting the text
       tags:
       - Profile
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer" followed by a space and JWT token. Example: "Bearer
+      {token}"'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

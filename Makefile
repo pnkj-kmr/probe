@@ -23,6 +23,9 @@ docsize:
 run:
 	go run main.go
 
+b:
+	go build -o probe main.go
+
 air:
 	air
 

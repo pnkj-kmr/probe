@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"probe/apiserver/handler"
 	"probe/apiserver/handler/credential"
 	"probe/apiserver/handler/dashboard"
 	"probe/apiserver/handler/poll"
@@ -66,7 +67,7 @@ func (server *Server) newRouter() *chi.Mux {
 	if err != nil {
 		log.Fatal(err)
 	}
-	r.Handle("/*", spaHandler(uiFS))
+	r.Handle("/*", handler.SPAHandler(uiFS))
 
 	// Swagger UI
 	r.Get("/docs/*", httpSwagger.WrapHandler)

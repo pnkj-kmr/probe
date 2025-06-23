@@ -15,6 +15,7 @@ import (
 //
 // @Summary      Polling Status update
 // @Description  APIs helps to write poll parameter into db
+// @Security 	 BearerAuth
 // @Tags         Poll
 // @Accept       json
 // @Produce      json

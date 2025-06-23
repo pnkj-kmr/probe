@@ -28,6 +28,8 @@ func NewRouter(id string, db *safemap.SafeMap[string, M.DB]) *R {
 }
 
 func (api *R) Mux() *chi.Mux {
+	// r.With(myMiddleware).Get("/protected", protectedHandler)
+
 	api.mux.Post("/", api.Save)
 	api.mux.Get("/{pollPeriod}/{id}", api.Get)
 	api.mux.Delete("/{pollPeriod}/{id}", api.Delete)
